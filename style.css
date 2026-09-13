@@ -1,0 +1,9 @@
+/* Encabezado */
+
+header {
+    display: flex; /*que es flex*/
+    justify-content: space-between;
+    align-items: center; /*cuestionable*/
+    padding: 20px 50px;
+    background-color: rgb(130, 229, 240);
+}
