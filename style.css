@@ -1,9 +1,54 @@
 /* Encabezado */
 
 header {
-    display: flex; /*que es flex*/
+    display: flex;
     justify-content: space-between;
     align-items: center; /*cuestionable*/
     padding: 20px 50px;
-    background-color: rgb(130, 229, 240);
+    background-color: white;
+}
+.logo h1 {
+    margin: 0;
+}
+.acciones {
+    display: flex;
+    gap: 10px;
+}
+.acciones button {
+    padding: 10px 18px;
+    border: none; 
+    border-radius: 8px;
+    cursor: pointer;
+}
+.acciones button:first-child {
+    background-color: transparent;
+    border: 1px solid #55c7c0;
+    color: #55c7c0;
+}
+.inicio {
+    padding: 80px 50px;
+    text-align: center;
+}
+.contenido-inicio {
+    max-width: 700px;
+    margin: 0 auto;
+}
+.inicio h2 {
+    font-size: 42px;
+    margin-bottom: 20px;
+    color: #2f8f8a;
+}
+.inicio p {
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+.inicio button {
+    padding: 12px 24px;
+    background-color: #55c7c0;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
 }
