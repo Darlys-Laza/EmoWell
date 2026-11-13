@@ -1,3 +1,19 @@
+/* Base Button System - asegura que ningún botón quede sin estilo por defecto */
+button {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    border-radius: 10px;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
 /* Encabezado */
 
 header {
@@ -25,9 +41,11 @@ header {
     border: 1px solid #55c7c0;
     color: #55c7c0;
 }
+
 .inicio {
     padding: 80px 50px;
     text-align: center;
+    background-color: #eaf8f6;
 }
 .contenido-inicio {
     max-width: 700px;
@@ -250,21 +268,35 @@ header {
 }
 
 
-.opcion button {
+.opcion {
+    cursor: pointer;
+}
+
+.opcion h3 {
+    margin: 0;
     padding: 0;
-    border: none;
-    background-color: transparent;
     color: #2f8f8a;
     font-size: 21px;
     font-weight: 700;
-    cursor: pointer;
     text-align: left;
     transition: color 0.2s ease;
 }
 
-
-.opcion button:hover {
+.opcion:hover h3 {
     color: #236f6b;
+}
+
+/* Indica visualmente que toda la tarjeta es interactiva */
+
+.opcion {
+    cursor: pointer;
+}
+
+/* Indica qué tarjeta está seleccionada con el teclado */
+
+.opcion:focus-visible {
+    outline: 3px solid #54c5c0;
+    outline-offset: 4px;
 }
 
 /* Texto de las tarjetas */
@@ -278,7 +310,7 @@ header {
 
 
 /* =========================
-   ADAPTACIÓN A CELULAR
+ADAPTACIÓN A CELULAR
 ========================= */
 
 @media (max-width: 750px) {
@@ -312,7 +344,7 @@ header {
         text-align: center;
     }
 
-    .opcion button {
+    .opcion h3 {
         text-align: center;
     }
 
@@ -322,3 +354,2310 @@ header {
     }
 }
 
+/* =========================================================
+ENCABEZADO DE LA APLICACIÓN
+========================================================= */
+
+.encabezado-app {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 90px;
+    padding: 15px 45px;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+ENCABEZADO OCULTO AL ENTRAR
+========================================================= */
+
+.encabezado-app.oculto {
+    display: none;
+}
+
+
+/* =========================================================
+LOGO DEL ENCABEZADO
+========================================================= */
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 120px;
+    height: auto;
+    display: block;
+}
+
+
+/* =========================================================
+NAVEGACIÓN
+========================================================= */
+
+.navegacion {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+/* Botones de Inicio, Charlar, Nivel emocional,
+   Autorregularme y Mi espacio */
+
+.navegacion button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background-color: transparent;
+    color: #2f8f8a;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Cuando pasas el mouse */
+
+.navegacion button:hover {
+
+    background-color: #e7f8f5;
+    color: #236f6b;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+BOTONES DE USUARIO
+========================================================= */
+
+.acciones {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+
+.acciones button {
+
+    padding: 11px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* Iniciar sesión */
+
+.acciones button:first-child {
+
+    border: 1px solid #54c5c0;
+    background-color: #ffffff;
+    color: #2f8f8a;
+}
+
+
+.acciones button:first-child:hover {
+
+    background-color: #e7f8f5;
+
+}
+
+
+/* Registrarse */
+
+.acciones button:last-child {
+
+    border: 1px solid #2f8f8a;
+    background-color: #2f8f8a;
+    color: #ffffff;
+}
+
+
+.acciones button:last-child:hover {
+
+    background-color: #236f6b;
+
+}
+
+
+/* =========================================================
+PRIMERA PANTALLA
+========================================================= */
+
+.inicio {
+
+    min-height: calc(100vh - 90px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 50px 30px;
+    box-sizing: border-box;
+}
+
+
+/* Logo grande de la primera pantalla */
+
+.logo-inicio {
+    margin-bottom: 25px;
+}
+
+.logo-inicio img {
+    width: 420px;
+    max-width: 80vw;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 8px 15px rgba(47, 143, 138, 0.12));
+}
+
+
+/* Texto inicial */
+
+.contenido-inicio {
+
+    max-width: 800px;
+
+}
+
+
+.contenido-inicio h2 {
+    margin-bottom: 18px;
+    color: #2f8f8a;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+
+.contenido-inicio p {
+
+    margin-bottom: 30px;
+    line-height: 1.6;
+
+}
+
+
+/* Botón Comenzar */
+
+.boton-comenzar {
+    padding: 15px 30px;
+    border: none;
+    border-radius: 12px;
+    background-color: #54c5c0;
+    color: #ffffff;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 5px 12px rgba(47, 143, 138, 0.20);
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.boton-comenzar:hover {
+
+    background-color: #2f8f8a;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 16px rgba(47, 143, 138, 0.25);
+}
+
+/* Acá termina la primera pantalla subir 1*/
+
+/* =========================================================
+    VISTAS DE LA APLICACIÓN
+========================================================= */
+
+.vista {
+    display: block;
+}
+
+
+/* Pantalla general de las secciones */
+
+.pantalla {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 50px 40px 80px;
+}
+
+
+/* =========================================================
+   ENCABEZADO DE CADA PANTALLA
+========================================================= */
+
+.encabezado-pantalla {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+
+    margin-bottom: 40px;
+}
+
+
+.encabezado-pantalla h2 {
+    margin: 0;
+
+    color: #2f8f8a;
+
+    font-size: 32px;
+}
+
+
+/* Botón Volver */
+
+.volver {
+    padding: 10px 18px;
+    border: 1px solid #54c5c0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #2f8f8a;
+    font-size: 15px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.volver:hover {
+    background-color: #e7f8f5;
+    transform: translateX(-3px);
+}
+    /* ==============================
+    SOBRE EMOWELL
+   ============================== */
+
+.sobre-emowell {
+    padding: 80px 30px;
+    background-color: #f7fcfb;
+    text-align: center;
+}
+
+.contenido-sobre {
+    max-width: 950px;
+    margin: 0 auto;
+}
+
+
+/* ==============================
+   ETIQUETA "SOBRE EMOWELL" */
+
+.etiqueta-sobre {
+    margin: 0 0 12px;
+    color: #54aaa5;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+
+/* ==============================
+   TÍTULO PRINCIPAL  */
+
+.contenido-sobre h2 {
+    margin: 0 0 25px;
+    color: #2f8f8a;
+    font-size: 34px;
+}
+
+
+/* ==============================
+   DESCRIPCIÓN */
+
+.descripcion-sobre {
+    max-width: 800px;
+    margin: 0 auto 18px;
+    color: #5c6f6d;
+    font-size: 17px;
+    line-height: 1.8;
+}
+
+
+/* ==============================
+   PROPÓSITO DE EMOWELL */
+
+.proposito-sobre {
+    max-width: 800px;
+    margin: 50px auto 0;
+    padding: 30px 35px;
+
+    background-color: #eaf7f5;
+
+    border-left: 4px solid #54c5c0;
+    border-radius: 15px;
+
+    text-align: left;
+}
+
+.proposito-sobre h3 {
+    margin: 0 0 12px;
+    color: #2f8f8a;
+    font-size: 23px;
+}
+
+.proposito-sobre p {
+    margin: 0;
+    color: #5c6f6d;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* ==============================
+   INTRODUCCIÓN A LAS FUNCIONES */
+
+.introduccion-principios {
+    margin-top: 55px;
+    margin-bottom: 25px;
+}
+
+.introduccion-principios h3 {
+    margin: 0 0 10px;
+    color: #2f8f8a;
+    font-size: 24px;
+}
+
+.introduccion-principios p {
+    max-width: 700px;
+    margin: 0 auto;
+    color: #5c6f6d;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* ==============================
+   TARJETAS */
+
+.principios-sobre {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.principio {
+    padding: 30px;
+    border-radius: 20px;
+    text-align: left;
+
+    border: 1px solid transparent;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+/* ==============================
+   INTERACCIÓN DE LAS TARJETAS */
+
+.principio:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 22px rgba(47, 143, 138, 0.14);
+}
+
+
+/* ==============================
+   FONDO DE CADA TARJETA */
+
+.principio.escuchar {
+    background-color: #e5f7f5;
+    border-color: #c8ebe7;
+}
+
+.principio.comprender {
+    background-color: #eaf4fb;
+    border-color: #d3e7f4;
+}
+
+.principio.regular {
+    background-color: #eef8f1;
+    border-color: #d8ecdc;
+}
+
+.principio.avanzar {
+    background-color: #f2eef9;
+    border-color: #e1d8ef;
+}
+
+
+/* ==============================
+   TÍTULO DE LAS TARJETAS */
+
+.principio h3 {
+    margin: 0 0 12px;
+    color: #2f8f8a;
+    font-size: 20px;
+}
+
+
+/* ==============================
+TEXTO DE LAS TARJETAS*/
+
+.principio p {
+    margin: 0;
+    color: #5c6f6d;
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   AYUDA INMEDIATA
+========================================================= */
+
+.linea-de-emergencia {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 60px 40px;
+
+    background-color: #f2fbfa;
+    border-radius: 25px;
+
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.linea-de-emergencia h2 {
+    margin-bottom: 18px;
+    color: #2f8f8a;
+    font-size: 30px;
+}
+
+.linea-de-emergencia p {
+    max-width: 650px;
+    margin: 0 auto 30px;
+
+    color: #5c6f6d;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.linea-de-emergencia button {
+    padding: 13px 25px;
+
+    border: none;
+    border-radius: 10px;
+
+    background-color: #2f8f8a;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.linea-de-emergencia button:hover {
+    background-color: #236f6b;
+}
+
+
+/* =========================================================
+   INVITACIÓN FINAL
+========================================================= */
+
+.invitacion {
+    padding: 90px 30px;
+    text-align: center;
+    background-color: #e7f8f5;
+}
+
+.invitacion h2 {
+    margin-bottom: 15px;
+    color: #2f8f8a;
+    font-size: 32px;
+}
+
+.invitacion p {
+    margin-bottom: 30px;
+    color: #55706d;
+    font-size: 17px;
+}
+
+.invitacion button {
+    padding: 14px 28px;
+
+    border: none;
+    border-radius: 11px;
+
+    background-color: #54c5c0;
+    color: white;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.invitacion button:hover {
+    background-color: #2f8f8a;
+}
+
+
+    /* =========================================================
+    PIE DE PÁGINA
+    ========================================================= */
+
+footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 35px 30px;
+    background-color: #dff5f2;
+    border-top: 1px solid #c8e8e5;
+    text-align: center;
+}
+
+.logo-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-footer img {
+    width: 110px;
+    height: auto;
+}
+
+.logo-footer p {
+    margin: 0;
+    color: #2f8f8a;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.copyright {
+    margin: 15px 0 0;
+    color: #55706d;
+    font-size: 13px;
+}
+
+/* Acá termina la segundasección subir 2*/
+
+/* =========================================================
+   CONTENIDO DE LAS VISTAS INTERNAS
+========================================================= */
+
+
+/* =========================================================
+   CHARLAR
+========================================================= */
+
+.contenido-charlar {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    align-items: stretch;
+}
+
+
+/* Panel de sugerencias */
+
+.sugerencias {
+    padding: 25px;
+    background-color: #e7f8f5;
+    border-radius: 20px;
+}
+
+.sugerencias h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    color: #2f8f8a;
+    font-size: 20px;
+}
+
+.sugerencias button {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 13px 15px;
+
+    border: 1px solid #c8e8e5;
+    border-radius: 10px;
+
+    background-color: white;
+    color: #365f5c;
+
+    text-align: left;
+    font-size: 14px;
+
+    cursor: pointer;
+}
+
+.sugerencias button:hover {
+    background-color: #dff5f2;
+    color: #2f8f8a;
+}
+
+
+/* Chat */
+
+.chat {
+    display: flex;
+    flex-direction: column;
+    min-height: 550px;
+
+    background-color: white;
+    border: 1px solid #dcebea;
+    border-radius: 20px;
+
+    box-shadow: 0 5px 20px rgba(47, 143, 138, 0.08);
+    overflow: hidden;
+}
+
+
+/* Encabezado del chat */
+
+.encabezado-chat {
+    padding: 22px 25px;
+    background-color: #e7f8f5;
+    border-bottom: 1px solid #d5ebe8;
+}
+
+.encabezado-chat h3 {
+    margin: 0 0 5px;
+    color: #2f8f8a;
+    font-size: 21px;
+}
+
+.encabezado-chat p {
+    margin: 0;
+    color: #5c6f6d;
+    font-size: 14px;
+}
+
+
+/* Área de mensajes */
+
+.mensajes {
+    flex: 1;
+    padding: 25px;
+    background-color: #fafdfc;
+}
+
+.mensaje {
+    max-width: 70%;
+    padding: 15px 18px;
+    border-radius: 15px;
+}
+
+.mensaje-emowell {
+    background-color: #e7f8f5;
+    color: #365f5c;
+}
+
+.mensaje p {
+    margin: 0 0 12px;
+    line-height: 1.6;
+}
+
+
+/* Botón escuchar */
+
+.reproducir-respuesta {
+    padding: 8px 12px;
+
+    border: 1px solid #54c5c0;
+    border-radius: 8px;
+
+    background-color: white;
+    color: #2f8f8a;
+
+    cursor: pointer;
+}
+
+.reproducir-respuesta:hover {
+    background-color: #dff5f2;
+}
+
+
+/* Entrada del chat */
+
+.entrada-chat {
+    display: flex;
+    gap: 10px;
+    padding: 18px;
+
+    border-top: 1px solid #dcebea;
+    background-color: white;
+}
+
+.entrada-chat input {
+    flex: 1;
+    padding: 12px 15px;
+
+    border: 1px solid #cbdedc;
+    border-radius: 10px;
+
+    font-size: 14px;
+    outline: none;
+}
+
+.entrada-chat input:focus {
+    border-color: #54c5c0;
+}
+
+.boton-audio,
+.boton-enviar {
+    padding: 12px 18px;
+
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.boton-audio {
+    border: 1px solid #54c5c0;
+    background-color: white;
+    color: #2f8f8a;
+}
+
+.boton-enviar {
+    border: none;
+    background-color: #2f8f8a;
+    color: white;
+}
+
+.boton-enviar:hover {
+    background-color: #236f6b;
+}
+
+
+/* Estado de voz */
+
+.estado-voz {
+    padding: 12px 20px;
+    background-color: #f5faf9;
+}
+
+.estado-voz p {
+    margin: 0;
+    color: #7a918e;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   NIVEL EMOCIONAL
+========================================================= */
+
+.contenido-nivel {
+    display: grid;
+    gap: 25px;
+}
+
+
+/* Tarjetas generales */
+
+.registro-emocional,
+.preguntas-emocionales,
+.resultado-emocional,
+.seguimiento-emocional {
+    padding: 30px;
+
+    background-color: white;
+    border: 1px solid #dcebea;
+    border-radius: 20px;
+
+    box-shadow: 0 5px 18px rgba(47, 143, 138, 0.07);
+}
+
+.contenido-nivel h3 {
+    margin-top: 0;
+    margin-bottom: 10px;
+
+    color: #2f8f8a;
+    font-size: 22px;
+}
+
+.contenido-nivel p {
+    color: #5c6f6d;
+    line-height: 1.6;
+}
+
+
+/* Emociones */
+
+.emociones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.emociones button {
+    padding: 14px;
+
+    border: 1px solid #c8e8e5;
+    border-radius: 10px;
+
+    background-color: #f5fbfa;
+    color: #2f8f8a;
+
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.emociones button:hover {
+    background-color: #dff5f2;
+    border-color: #54c5c0;
+}
+
+
+/* Preguntas */
+
+.preguntas {
+    min-height: 100px;
+    margin-top: 20px;
+    padding: 20px;
+
+    background-color: #f7fbfa;
+    border-radius: 12px;
+}
+
+.continuar-preguntas {
+    margin-top: 20px;
+    padding: 12px 22px;
+
+    border: none;
+    border-radius: 10px;
+
+    background-color: #2f8f8a;
+    color: white;
+
+    cursor: pointer;
+}
+
+
+/* Resultado */
+
+.resultado {
+    margin-top: 20px;
+    padding: 25px;
+
+    background-color: #e7f8f5;
+    border-radius: 15px;
+}
+
+.resultado h4 {
+    margin-top: 0;
+    color: #2f8f8a;
+}
+
+.acciones-resultado {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.acciones-resultado button {
+    padding: 11px 18px;
+
+    border: 1px solid #54c5c0;
+    border-radius: 10px;
+
+    background-color: white;
+    color: #2f8f8a;
+
+    cursor: pointer;
+}
+
+
+/* Historial */
+
+.historial {
+    margin-top: 20px;
+    padding: 25px;
+
+    background-color: #f7fbfa;
+    border-radius: 12px;
+}
+
+
+/* =========================================================
+   AUTORREGULARME
+========================================================= */
+
+.descripcion-pantalla {
+    max-width: 700px;
+    margin-bottom: 30px;
+
+    color: #5c6f6d;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* Botones de herramientas */
+
+.herramientas-regulacion {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.herramientas-regulacion button {
+    padding: 18px 12px;
+
+    border: 1px solid #c8e8e5;
+    border-radius: 15px;
+
+    background-color: white;
+    color: #2f8f8a;
+
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.herramientas-regulacion button:hover {
+    background-color: #e7f8f5;
+}
+
+
+/* Contenido de herramienta */
+
+.contenido-herramienta {
+    min-height: 300px;
+    padding: 35px;
+
+    background-color: #e7f8f5;
+    border-radius: 20px;
+
+    text-align: center;
+}
+
+.contenido-herramienta h3 {
+    color: #2f8f8a;
+    font-size: 24px;
+}
+
+.contenido-herramienta p {
+    color: #5c6f6d;
+}
+
+
+/* =========================================================
+   MI ESPACIO PERSONAL
+========================================================= */
+
+.contenido-espacio {
+    display: block;
+    padding: 10px 0 40px;
+}
+
+
+/* =========================================================
+   ESTRUCTURA GENERAL
+========================================================= */
+
+.sanctuary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    align-items: start;
+}
+
+
+/* =========================================================
+   TARJETAS PRINCIPALES
+========================================================= */
+
+.sanctuary-section-card {
+    padding: 30px;
+    background-color: #ffffff;
+
+    border: 1px solid #d8ebe8;
+    border-radius: 24px;
+
+    box-shadow: 0 8px 25px rgba(47, 143, 138, 0.07);
+
+    margin-bottom: 25px;
+
+    box-sizing: border-box;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.sanctuary-section-card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 30px rgba(47, 143, 138, 0.10);
+}
+
+
+/* =========================================================
+   ENCABEZADO DE CADA SECCIÓN
+========================================================= */
+
+.sanctuary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 15px;
+
+    margin-bottom: 18px;
+}
+
+
+.sanctuary-header h3 {
+    margin: 0;
+
+    color: #2f8f8a;
+
+    font-size: 23px;
+    font-weight: 700;
+}
+
+
+.texto-seccion {
+    margin: 0 0 20px;
+
+    color: #5c6f6d;
+
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   CONTADOR DE METAS
+========================================================= */
+
+.metas-contador {
+    padding: 7px 12px;
+
+    background-color: #e7f8f5;
+
+    border-radius: 999px;
+
+    color: #2f8f8a;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BARRA DE PROGRESO
+========================================================= */
+
+.quiz-progress-bar-container {
+    width: 100%;
+    height: 9px;
+
+    margin: 20px 0 18px;
+
+    background-color: #e8f4f2;
+
+    border-radius: 999px;
+
+    overflow: hidden;
+}
+
+
+.quiz-progress-bar {
+    width: 0%;
+    height: 100%;
+
+    background: linear-gradient(
+        90deg,
+        #54c5c0,
+        #2f8f8a
+    );
+
+    border-radius: 999px;
+
+    transition: width 0.4s ease;
+}
+
+
+/* =========================================================
+   LISTA DE METAS
+========================================================= */
+
+.lista-metas {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin: 20px 0;
+}
+
+
+/* Cada meta */
+
+.goal-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    padding: 14px 17px;
+
+    background-color: #f7fbfa;
+
+    border: 1px solid #dcebea;
+
+    border-radius: 14px;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.goal-item:hover {
+    background-color: #eef9f7;
+
+    border-color: #bfe2de;
+
+    transform: translateX(3px);
+}
+
+
+.goal-title {
+    color: #365f5c;
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+
+/* Etiqueta Personal / Académica / etc. */
+
+.goal-category-tag {
+    padding: 5px 11px;
+
+    background-color: #dff5f2;
+
+    border-radius: 999px;
+
+    color: #2f8f8a;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   FORMULARIOS DE MI ESPACIO
+========================================================= */
+
+.agregar-meta,
+.agregar-motivacion,
+.agregar-gratitud,
+.agregar-recurso {
+    display: flex;
+    align-items: stretch;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    margin-top: 18px;
+}
+
+
+/* Todos los inputs de Mi espacio */
+
+.contenido-espacio input,
+.contenido-espacio select {
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #cbdedc;
+
+    border-radius: 11px;
+
+    background-color: #ffffff;
+
+    color: #365f5c;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+.contenido-espacio input::placeholder {
+    color: #8ba19e;
+}
+
+
+.contenido-espacio input:focus,
+.contenido-espacio select:focus {
+    border-color: #54c5c0;
+
+    box-shadow:
+        0 0 0 3px rgba(84, 197, 192, 0.12);
+
+    background-color: #fbfefe;
+}
+
+
+/* Input de metas */
+
+.agregar-meta input {
+    flex: 2;
+
+    min-width: 180px;
+}
+
+
+.agregar-meta select {
+    flex: 1;
+
+    min-width: 140px;
+}
+
+
+/* =========================================================
+   BOTONES PRINCIPALES
+========================================================= */
+
+.contenido-espacio button {
+    font-family: inherit;
+}
+
+
+.contenido-espacio .btn-primary-action {
+    padding: 12px 18px;
+
+    border: none;
+
+    border-radius: 11px;
+
+    background-color: #2f8f8a;
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 10px rgba(47, 143, 138, 0.15);
+
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.contenido-espacio .btn-primary-action:hover {
+    background-color: #236f6b;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 15px rgba(47, 143, 138, 0.20);
+}
+
+
+.contenido-espacio .btn-primary-action:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   MURO DE MOTIVACIÓN
+========================================================= */
+
+.motivations-wall {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(190px, 1fr));
+
+    gap: 16px;
+
+    margin: 20px 0;
+}
+
+
+/* Tarjeta de motivación */
+
+.motivation-item-card {
+    overflow: hidden;
+
+    background-color: #f7fbfa;
+
+    border: 1px solid #dcebea;
+
+    border-radius: 16px;
+
+    box-shadow:
+        0 5px 15px rgba(47, 143, 138, 0.06);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+
+.motivation-item-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 10px 22px rgba(47, 143, 138, 0.12);
+}
+
+
+/* Imagen */
+
+.motivation-img {
+    display: block;
+
+    width: 100%;
+    height: 135px;
+
+    object-fit: cover;
+}
+
+
+/* Texto debajo de la imagen */
+
+.motivation-caption {
+    padding: 14px;
+
+    color: #365f5c;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* Formulario del muro */
+
+.agregar-motivacion {
+    margin-top: 18px;
+}
+
+
+.agregar-motivacion input {
+    flex: 1;
+
+    min-width: 180px;
+}
+
+
+/* =========================================================
+   ESPACIO DE GRATITUD
+========================================================= */
+
+.lista-gratitud {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    margin-bottom: 12px;
+}
+
+
+/* Cada elemento de gratitud */
+
+.lista-gratitud > * {
+    padding: 12px 15px;
+
+    background-color: #f7fbfa;
+
+    border-left: 4px solid #54c5c0;
+
+    border-radius: 10px;
+
+    color: #365f5c;
+}
+
+
+/* Formulario */
+
+.agregar-gratitud {
+    margin-top: 18px;
+}
+
+
+.agregar-gratitud input {
+    flex: 1;
+
+    min-width: 200px;
+}
+
+
+/* =========================================================
+   MÚSICA Y RECURSOS
+========================================================= */
+
+.personal-resources-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(250px, 1fr));
+
+    gap: 14px;
+
+    margin: 20px 0;
+}
+
+
+.personal-resource-card {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 15px;
+
+    background-color: #f7fbfa;
+
+    border: 1px solid #dcebea;
+
+    border-radius: 15px;
+
+    transition:
+        transform 0.2s ease,
+        background-color 0.2s ease;
+}
+
+
+.personal-resource-card:hover {
+    background-color: #eef9f7;
+
+    transform: translateY(-2px);
+}
+
+
+.resource-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.resource-icon-badge {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    background-color: #dff5f2;
+
+    border-radius: 50%;
+
+    color: #2f8f8a;
+}
+
+
+.resource-text-group {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.resource-title {
+    color: #365f5c;
+
+    font-size: 13.5px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.resource-sub {
+    margin-top: 3px;
+
+    color: #7a918e;
+
+    font-size: 11.5px;
+}
+
+
+.resource-actions {
+    display: flex;
+
+    gap: 5px;
+}
+
+
+.btn-icon-mini {
+    padding: 6px 8px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background-color: transparent;
+
+    color: #7a918e;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.btn-icon-mini:hover {
+    background-color: #dff5f2;
+
+    color: #2f8f8a;
+}
+
+
+/* Formulario */
+
+.agregar-recurso {
+    margin-top: 18px;
+}
+
+
+.agregar-recurso input {
+    flex: 2;
+
+    min-width: 180px;
+}
+
+
+.agregar-recurso select {
+    flex: 1;
+
+    min-width: 140px;
+}
+
+
+/* =========================================================
+   QUIÉN SOY Y QUÉ ME IMPORTA
+========================================================= */
+
+.identity-cards-grid {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 15px;
+
+    margin-top: 20px;
+}
+
+
+.identity-pillar-card {
+    position: relative;
+
+    padding: 20px;
+
+    background-color: #eaf7f5;
+
+    border: 1px solid #d4ebe8;
+
+    border-radius: 16px;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.identity-pillar-card:hover {
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 8px 18px rgba(47, 143, 138, 0.10);
+}
+
+
+.identity-pillar-card h4 {
+    margin: 0 0 8px;
+
+    color: #8b5cf6;
+
+    font-size: 15px;
+}
+
+
+.identity-pillar-card p {
+    margin: 0;
+
+    color: #365f5c;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ESTADO VACÍO
+========================================================= */
+
+.lista-metas:empty::before {
+    content: "Todavía no has agregado una meta";
+
+    display: block;
+
+    padding: 16px 18px;
+
+    background-color: #f7fbfa;
+
+    border: 1px dashed #c8e4e0;
+
+    border-radius: 13px;
+
+    color: #7a918e;
+
+    font-size: 14px;
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   CAMPOS DE TEXTO ANTERIORES
+========================================================= */
+
+.contenido-espacio .chat-input-field {
+    box-sizing: border-box;
+
+    padding: 12px 14px;
+
+    border: 1px solid #cbdedc;
+
+    border-radius: 11px;
+
+    background-color: white;
+
+    color: #365f5c;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.contenido-espacio .chat-input-field:focus {
+    border-color: #54c5c0;
+
+    box-shadow:
+        0 0 0 3px rgba(84, 197, 192, 0.12);
+}
+
+
+/* =========================================================
+   ADAPTACIÓN A CELULAR
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .sanctuary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .identity-cards-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .personal-resources-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .sanctuary-section-card {
+        padding: 22px;
+        border-radius: 18px;
+    }
+
+    .sanctuary-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .agregar-meta,
+    .agregar-motivacion,
+    .agregar-gratitud,
+    .agregar-recurso {
+        flex-direction: column;
+    }
+
+    .agregar-meta input,
+    .agregar-meta select,
+    .agregar-motivacion input,
+    .agregar-gratitud input,
+    .agregar-recurso input,
+    .agregar-recurso select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .contenido-espacio .btn-primary-action {
+        width: 100%;
+    }
+
+    .identity-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   EMERGENCIA
+========================================================= */
+
+.emergencia {
+    text-align: center;
+}
+
+.emergencia > p {
+    max-width: 700px;
+    margin: 0 auto 35px;
+
+    color: #5c6f6d;
+    line-height: 1.7;
+}
+
+.lineas-ayuda {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+
+    text-align: left;
+}
+
+.linea-ayuda {
+    padding: 25px;
+
+    background-color: #fffafa;
+    border: 1px solid #eadede;
+    border-radius: 18px;
+}
+
+.linea-ayuda h3 {
+    margin-top: 0;
+    color: #2f8f8a;
+}
+
+.linea-ayuda p {
+    color: #5c6f6d;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ADAPTACIÓN DE LAS VISTAS A CELULAR
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .contenido-charlar {
+        grid-template-columns: 1fr;
+    }
+
+    .herramientas-regulacion {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .contenido-espacio {
+        grid-template-columns: 1fr;
+    }
+
+    .lineas-ayuda {
+        grid-template-columns: 1fr;
+    }
+
+    .emociones {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .entrada-chat {
+        flex-wrap: wrap;
+    }
+
+    .entrada-chat input {
+        width: 100%;
+        flex-basis: 100%;
+    }
+}
+
+
+@media (max-width: 500px) {
+
+    .pantalla {
+        padding: 35px 20px 60px;
+    }
+
+    .encabezado-pantalla {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .herramientas-regulacion {
+        grid-template-columns: 1fr;
+    }
+
+    .emociones {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-resultado {
+        flex-direction: column;
+    }
+}
+
+/* Inicio público y acceso al prototipo */
+.oculto {
+    display: none !important;
+}
+
+.encabezado-app {
+    position: relative;
+    z-index: 5;
+    flex-wrap: wrap;
+    gap: 14px;
+}
+
+.sesion-no-iniciada .herramientas,
+.sesion-no-iniciada .linea-de-emergencia,
+.sesion-no-iniciada .invitacion {
+    display: none !important;
+}
+
+.boton-sobre {
+    border: 0;
+    background: transparent;
+    color: #2f8f8a;
+    cursor: pointer;
+    font: inherit;
+    padding: 10px 12px;
+}
+
+#acciones-publicas button:first-child {
+    border: 1px solid #54c5c0;
+    background: #fff;
+    color: #2f8f8a;
+}
+
+#acciones-publicas button:nth-child(2) {
+    border: 1px solid #2f8f8a;
+    background: #2f8f8a;
+    color: #fff;
+}
+
+#acciones-publicas button:nth-child(3) {
+    border: 0;
+    background: transparent;
+    color: #2f8f8a;
+}
+
+.pantalla-acceso {
+    min-height: calc(100vh - 100px);
+    display: grid;
+    place-items: center;
+    padding: 40px 20px;
+    background: #f4fbfa;
+}
+
+.tarjeta-acceso {
+    width: min(100%, 460px);
+    box-sizing: border-box;
+    padding: 36px;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 12px 40px rgba(47, 143, 138, 0.12);
+}
+
+.tarjeta-acceso h1 {
+    margin: 22px 0 8px;
+    color: #2f8f8a;
+}
+
+.tarjeta-acceso form {
+    display: grid;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.tarjeta-acceso label {
+    margin-top: 8px;
+    color: #365f5c;
+    font-weight: 600;
+}
+
+.tarjeta-acceso input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 14px;
+    border: 1px solid #bfdedb;
+    border-radius: 9px;
+    font: inherit;
+}
+
+.boton-acceso {
+    margin-top: 12px;
+    padding: 13px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #2f8f8a;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+}
+
+.volver-publico {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #2f8f8a;
+    cursor: pointer;
+    font: inherit;
+}
+
+.nota-prototipo {
+    margin: 20px 0 0;
+    color: #657875;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 800px) {
+    .encabezado-app {
+        justify-content: center;
+        padding: 16px 20px;
+    }
+
+    .encabezado-app .logo {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .encabezado-app .logo img {
+        width: 100px;
+    }
+
+    .navegacion,
+    .acciones {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tarjeta-acceso {
+        padding: 28px 22px;
+    }
+}
+
+/* =========================================================
+   ESTILOS COMPLETOS DE BOTONES EN TODAS LAS SECCIONES
+========================================================= */
+
+/* Encabezado del chat y selector de modo (Escribir vs Hablar) */
+.encabezado-chat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.selector-modo-chat {
+    display: flex;
+    gap: 8px;
+    background: #ffffff;
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid #d5ebe8;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.08);
+}
+
+.btn-modo-chat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #4a6c69;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+
+.btn-modo-chat:hover {
+    color: #2f8f8a;
+    background-color: #f0faf8;
+}
+
+.btn-modo-chat.activo {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(47, 143, 138, 0.25);
+}
+
+/* Panel interactivo de conversación continua por voz */
+.panel-conversacion-voz {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 24px;
+    margin: 15px 20px;
+    background: linear-gradient(135deg, #e7f8f5 0%, #f4fbf9 100%);
+    border: 1.5px solid #a3ded9;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(47, 143, 138, 0.1);
+    text-align: center;
+    gap: 12px;
+    animation: fadeInVoz 0.3s ease-out;
+}
+
+@keyframes fadeInVoz {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.onda-voz-animada {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 30px;
+}
+
+.onda-voz-animada span {
+    display: block;
+    width: 4px;
+    height: 12px;
+    background-color: #2f8f8a;
+    border-radius: 3px;
+    transition: height 0.2s ease;
+}
+
+.onda-voz-animada.activa span {
+    animation: ondaBounce 1s infinite ease-in-out;
+}
+
+.onda-voz-animada.activa span:nth-child(1) { animation-delay: 0.0s; }
+.onda-voz-animada.activa span:nth-child(2) { animation-delay: 0.15s; }
+.onda-voz-animada.activa span:nth-child(3) { animation-delay: 0.3s; }
+.onda-voz-animada.activa span:nth-child(4) { animation-delay: 0.45s; }
+.onda-voz-animada.activa span:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes ondaBounce {
+    0%, 100% { height: 8px; }
+    50% { height: 26px; }
+}
+
+.estado-voz-continua {
+    margin: 0;
+    color: #265e5b;
+    font-size: 14.5px;
+    font-weight: 600;
+}
+
+.btn-pausar-voz {
+    padding: 8px 18px;
+    font-size: 13px;
+    background-color: #ffffff;
+    color: #2f8f8a;
+    border: 1px solid #54c5c0;
+    border-radius: 8px;
+}
+
+.btn-pausar-voz:hover {
+    background-color: #dff5f2;
+}
+
+.boton-audio.escuchando {
+    background-color: #e55353;
+    border-color: #e55353;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(229, 83, 83, 0.25);
+    animation: pulsoVoz 1.5s infinite;
+}
+
+@keyframes pulsoVoz {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+}
+
+/* Botón iniciar respiración en autorregularme */
+#contenido-herramienta button,
+.contenido-herramienta button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 13px 26px;
+    background-color: #2f8f8a;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.2);
+}
+
+#contenido-herramienta button:hover,
+.contenido-herramienta button:hover {
+    background-color: #236f6b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(47, 143, 138, 0.25);
+}
+
+#contenido-herramienta button:disabled,
+.contenido-herramienta button:disabled {
+    background-color: #a0c9c6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Botones de acción en Mi Espacio (subir foto y eliminar) */
+.btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    border: 1px solid #54c5c0;
+    border-radius: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-back-home:hover {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(47, 143, 138, 0.15);
+}
+
+.btn-eliminar-item {
+    padding: 6px 12px;
+    background-color: #fff1f0;
+    color: #d32f2f;
+    border: 1px solid #ffccc7;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.btn-eliminar-item:hover {
+    background-color: #ff4d4f;
+    color: #ffffff;
+    border-color: #ff4d4f;
+    box-shadow: 0 2px 8px rgba(211, 47, 47, 0.2);
+}
+
+/* Alineación para elementos con botón eliminar en Mi Espacio */
+.gratitud-item,
+.resource-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    background-color: #f7fbfa;
+    border-left: 4px solid #54c5c0;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.gratitud-item p,
+.resource-item p {
+    margin: 0;
+    color: #365f5c;
+    flex: 1;
+}
+
+.resource-item a {
+    color: #2f8f8a;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background-color: #e7f8f5;
+}
+
+.resource-item a:hover {
+    text-decoration: underline;
+    background-color: #d5ebe8;
+}
+
+.motivation-item-card {
+    position: relative;
+}
+
+.motivation-item-card .btn-eliminar-item {
+    margin: 10px 14px 14px;
+    display: inline-block;
+}
