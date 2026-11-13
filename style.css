@@ -2661,3 +2661,1397 @@ footer {
     margin: 10px 14px 14px;
     display: inline-block;
 }
+
+
+
+/* ==========================================================================
+   ESTILOS MEJORADOS: CUESTIONARIOS, DIAGRAMAS, AUTORREGULACIÓN Y MULTIMEDIA
+   Paleta: Turquesa #2f8f8a, Verde menta #54c5c0, Fondos #f4fbf9 / #e7f8f5
+   ========================================================================== */
+
+/* 1. Formulario de 10 Preguntas Emocionales */
+.encabezado-cuestionario-lindo {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.badge-emocion-formulario {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #2f8f8a;
+    background-color: #e7f8f5;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.badge-emocion-formulario .icono-emoji {
+    font-size: 20px;
+}
+
+.instruccion-escala {
+    color: #4a6c69;
+    font-size: 14px;
+    margin: 0;
+}
+
+.escala-guia {
+    display: inline-block;
+    margin-top: 4px;
+    color: #265e5b;
+}
+
+.pregunta-item-card {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.05);
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pregunta-item-card:hover {
+    border-color: #54c5c0;
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.1);
+}
+
+.pregunta-item-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.numero-pregunta {
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+.texto-pregunta-personal {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f3d3b;
+    line-height: 1.45;
+}
+
+.opciones-intensidad-elegantes {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.opcion-radio-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 6px;
+    border: 1.5px solid #d4ebe8;
+    border-radius: 10px;
+    background-color: #f9fdfc;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    position: relative;
+}
+
+.opcion-radio-chip input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.opcion-radio-chip .chip-num {
+    font-size: 16px;
+    font-weight: 700;
+    color: #2f8f8a;
+    margin-bottom: 2px;
+}
+
+.opcion-radio-chip .chip-desc {
+    font-size: 11.5px;
+    color: #628380;
+    font-weight: 500;
+}
+
+.opcion-radio-chip:hover {
+    border-color: #54c5c0;
+    background-color: #eef9f7;
+}
+
+.opcion-radio-chip.seleccionado {
+    border-color: #2f8f8a;
+    background-color: #2f8f8a;
+    box-shadow: 0 4px 10px rgba(47, 143, 138, 0.25);
+}
+
+.opcion-radio-chip.seleccionado .chip-num,
+.opcion-radio-chip.seleccionado .chip-desc {
+    color: #ffffff;
+}
+
+/* 2. Tarjeta de Resultado Completo */
+.tarjeta-resultado-completo {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: linear-gradient(135deg, #ffffff 0%, #f4fbf9 100%);
+    border: 1.5px solid #a3ded9;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 6px 20px rgba(47, 143, 138, 0.08);
+}
+
+.resultado-nivel-circulo {
+    width: 120px;
+    height: 120px;
+    min-width: 120px;
+    border-radius: 50%;
+    border: 4px solid #2f8f8a;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(47, 143, 138, 0.15);
+}
+
+.resultado-emoji-destacado {
+    font-size: 26px;
+    margin-bottom: 2px;
+}
+
+.resultado-numero-grande {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.resultado-escala-max {
+    font-size: 11px;
+    color: #7b9e9b;
+    font-weight: 600;
+}
+
+.resultado-texto-bloque {
+    flex: 1;
+    text-align: left;
+}
+
+.badge-nivel-alerta {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.resultado-texto-bloque h4 {
+    margin: 0 0 6px;
+    color: #1f3d3b;
+    font-size: 18px;
+}
+
+.resultado-explicacion {
+    margin: 0 0 8px;
+    color: #365f5c;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.resultado-disclaimer {
+    margin: 0;
+    font-size: 11.5px;
+    color: #7b9e9b;
+}
+
+.btn-lineas-apoyo-resultado {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: #ffffff !important;
+}
+
+.btn-lineas-apoyo-resultado:hover {
+    background-color: #dc2626 !important;
+}
+
+/* 3. Diagrama Visual y Seguimiento Emocional */
+.contenedor-diagrama-emocional {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 15px;
+}
+
+.grafico-barras-emocional {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 12px;
+    height: 170px;
+    padding: 16px 12px 10px;
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.05);
+}
+
+.columna-barra-historial {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    justify-content: flex-end;
+    flex: 1;
+    max-width: 48px;
+}
+
+.valor-barra-tooltip {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2f8f8a;
+    margin-bottom: 4px;
+}
+
+.barra-relleno-wrapper {
+    width: 22px;
+    height: 95px;
+    background-color: #e7f8f5;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+.barra-relleno {
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    transition: height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.barra-emoji-etiqueta {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.emoji-bar {
+    font-size: 14px;
+}
+
+.fecha-bar {
+    font-size: 9.5px;
+    color: #628380;
+    font-weight: 600;
+}
+
+.lista-timeline-emocional {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.timeline-item-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 16px;
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(47, 143, 138, 0.05);
+}
+
+.timeline-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.timeline-info {
+    flex: 1;
+    text-align: left;
+}
+
+.timeline-header-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+}
+
+.timeline-header-line strong {
+    color: #1f3d3b;
+    font-size: 14px;
+}
+
+.timeline-fecha {
+    font-size: 11px;
+    color: #7b9e9b;
+}
+
+.timeline-descripcion {
+    margin: 0;
+    font-size: 12.5px;
+    color: #4a6c69;
+}
+
+.chip-nivel-tag {
+    padding: 3px 8px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+.chip-nivel-tag.nivel-bajo {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.chip-nivel-tag.nivel-moderado {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.chip-nivel-tag.nivel-alto {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.historial-vacio-card {
+    padding: 32px 20px;
+    background-color: #ffffff;
+    border: 1px dashed #a3ded9;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.icono-vacio {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.historial-vacio-card h4 {
+    margin: 0 0 6px;
+    color: #2f8f8a;
+    font-size: 16px;
+}
+
+.historial-vacio-card p {
+    margin: 0;
+    color: #628380;
+    font-size: 13.5px;
+}
+
+/* 4. Autorregulación: Respiración, Grounding y Controles */
+.herramienta-header-desc {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.herramienta-header-desc h3 {
+    margin: 0 0 8px;
+    color: #1f3d3b;
+    font-size: 20px;
+}
+
+.herramienta-header-desc p {
+    margin: 0 auto;
+    max-width: 650px;
+    color: #4a6c69;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.respiracion-selector-tecnica {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.respiracion-selector-tecnica label {
+    font-weight: 600;
+    color: #265e5b;
+    font-size: 14px;
+}
+
+.contenedor-circulo-respiracion {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 20px auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circulo-respiracion-halo {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(84, 197, 192, 0.25) 0%, transparent 70%);
+}
+
+.circulo-respiracion {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2f8f8a 0%, #1c5e5a 100%);
+    box-shadow: 0 8px 24px rgba(47, 143, 138, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1;
+}
+
+.texto-respiracion {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.contador-respiracion {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.respiracion-estadisticas {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.ciclos-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: #e7f8f5;
+    border: 1px solid #c8e8e5;
+    border-radius: 20px;
+    color: #2f8f8a;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.btn-secundario-lindo {
+    padding: 10px 20px;
+    border: 1px solid #c8e8e5;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #2f8f8a;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-secundario-lindo:hover {
+    background-color: #e7f8f5;
+    border-color: #2f8f8a;
+}
+
+/* 5. Grounding 5-4-3-2-1 */
+.pasos-grounding-wizard {
+    background-color: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #d4ebe8;
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.paso-numero {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #2f8f8a;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.paso-grounding h4 {
+    margin: 0 0 8px;
+    color: #1f3d3b;
+    font-size: 17px;
+}
+
+.instruccion-paso {
+    color: #4a6c69;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+}
+
+.badge-completado {
+    display: inline-block;
+    padding: 6px 14px;
+    background-color: #d1fae5;
+    color: #065f46;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13.5px;
+}
+
+/* 6. Músicas Reales y Videos Educativos */
+.filtro-repertorio-emocion {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.filtro-repertorio-emocion label {
+    font-weight: 600;
+    color: #265e5b;
+}
+
+.bloque-multimedia-seccion {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.subtitulo-multimedia {
+    color: #1f3d3b;
+    font-size: 16px;
+    margin-bottom: 14px;
+    border-bottom: 2px solid #e7f8f5;
+    padding-bottom: 6px;
+}
+
+.grid-repertorio-musical {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.tarjeta-cancion-real {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-cancion-real:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.1);
+}
+
+.icono-plataforma-tag {
+    align-self: flex-start;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.icono-plataforma-tag.tag-youtube {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.icono-plataforma-tag.tag-spotify {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.info-cancion-real h5 {
+    margin: 0 0 4px;
+    color: #1f3d3b;
+    font-size: 14px;
+}
+
+.info-cancion-real p {
+    margin: 0;
+    color: #628380;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.btn-abrir-musica {
+    text-decoration: none;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.btn-abrir-musica:hover {
+    background-color: #2f8f8a;
+    color: #ffffff;
+}
+
+.grid-videos-emocionales {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.tarjeta-video-pedagogico {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.05);
+}
+
+.video-responsive-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+}
+
+.video-responsive-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.info-video-pedagogico {
+    padding: 12px 14px;
+}
+
+.info-video-pedagogico h5 {
+    margin: 0 0 4px;
+    color: #1f3d3b;
+    font-size: 14px;
+}
+
+.canal-video-tag {
+    display: inline-block;
+    font-size: 11px;
+    color: #2f8f8a;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.info-video-pedagogico p {
+    margin: 0;
+    color: #628380;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.grid-sonidos-ambiente {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+}
+
+.tarjeta-sonido {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.tarjeta-sonido.reproduciendo {
+    border-color: #2f8f8a;
+    background-color: #f0faf8;
+    box-shadow: 0 0 0 2px rgba(47, 143, 138, 0.2);
+}
+
+.emoji-sonido {
+    font-size: 28px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.tarjeta-sonido h4 {
+    margin: 0 0 4px;
+    color: #1f3d3b;
+    font-size: 15px;
+}
+
+.tarjeta-sonido p {
+    margin: 0 0 12px;
+    color: #628380;
+    font-size: 12px;
+}
+
+/* 7. Desahogo y Relajación */
+.contenedor-desahogo-escritura {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.textarea-desahogo {
+    width: 100%;
+    resize: vertical;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14.5px;
+    line-height: 1.5;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.desintegrar-texto {
+    opacity: 0 !important;
+    transform: scale(0.95) !important;
+    filter: blur(4px) !important;
+}
+
+.btn-liberar-fuego {
+    margin-top: 12px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.btn-liberar-fuego:hover {
+    transform: translateY(-2px);
+}
+
+.pasos-relajacion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.tarjeta-paso-relajacion {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 14px;
+    padding: 18px;
+    text-align: left;
+    box-shadow: 0 2px 6px rgba(47, 143, 138, 0.04);
+}
+
+.tarjeta-paso-relajacion .icono-zona {
+    font-size: 24px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+.tarjeta-paso-relajacion h4 {
+    margin: 0 0 6px;
+    color: #1f3d3b;
+    font-size: 15px;
+}
+
+.tarjeta-paso-relajacion p {
+    margin: 0;
+    color: #4a6c69;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* 8. Mi Espacio: Subida local y Recursos completos */
+.opcion-archivo-recurso {
+    margin: 8px 0;
+    text-align: left;
+}
+
+.btn-subir-archivo-label {
+    display: inline-block;
+    padding: 8px 14px;
+    border: 1px dashed #2f8f8a;
+    border-radius: 8px;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-subir-archivo-label:hover {
+    background-color: #2f8f8a;
+    color: #ffffff;
+}
+
+.archivo-seleccionado-txt {
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 12px;
+    color: #059669;
+    font-weight: 600;
+}
+
+.resource-item-completo {
+    background-color: #ffffff;
+    border: 1px solid #d4ebe8;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 6px rgba(47, 143, 138, 0.04);
+}
+
+.resource-item-info {
+    flex: 1;
+    min-width: 160px;
+}
+
+.resource-item-info h5 {
+    margin: 0 0 4px;
+    color: #1f3d3b;
+    font-size: 14.5px;
+}
+
+.resource-tag-cat {
+    display: inline-block;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.player-audio-local {
+    height: 34px;
+    max-width: 200px;
+}
+
+.btn-recurso-enlace {
+    text-decoration: none;
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+}
+
+.btn-recurso-enlace.tag-youtube {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-recurso-enlace.tag-spotify {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.btn-recurso-enlace:hover {
+    opacity: 0.85;
+}
+
+.recursos-vacio-card {
+    padding: 24px 16px;
+    background-color: #fcfefe;
+    border: 1px dashed #c8e8e5;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.icono-recurso-vacio {
+    font-size: 26px;
+    margin-bottom: 6px;
+}
+
+.recursos-vacio-card p {
+    margin: 0 0 4px;
+    color: #2f8f8a;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.recursos-vacio-card small {
+    color: #7b9e9b;
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .tarjeta-resultado-completo {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .resultado-texto-bloque {
+        text-align: center;
+    }
+
+    .opciones-intensidad-elegantes {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+    }
+
+    .opcion-radio-chip {
+        padding: 8px 4px;
+    }
+
+    .opcion-radio-chip .chip-desc {
+        display: none;
+    }
+}
+
+
+/* ==========================================================================
+   ACTUALIZACIÓN ESTILOS: SELECTS NATIVOS, ENCUESTA, GRÁFICA TENDENCIA Y PEGATINA
+   ========================================================================== */
+
+/* 1. Estilizado uniforme para todos los selects (evita selects grises del sistema) */
+select,
+.select-estilizado,
+select.chat-input-field {
+    width: 100%;
+    max-width: 440px;
+    padding: 12px 18px;
+    border: 1.5px solid #a3ded9;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #235854;
+    font-size: 14.5px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.06);
+    outline: none;
+    transition: all 0.2s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f8f8a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px;
+}
+
+select:hover,
+.select-estilizado:hover {
+    border-color: #2f8f8a;
+    background-color: #f7fbfa;
+}
+
+select:focus,
+.select-estilizado:focus {
+    border-color: #2f8f8a;
+    box-shadow: 0 0 0 3px rgba(47, 143, 138, 0.18);
+    background-color: #ffffff;
+}
+
+.select-wrapper-custom {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 440px;
+}
+
+/* 2. Encuesta Interactiva Pregunta a Pregunta */
+.encuesta-wizard-container {
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.encuesta-header-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.encuesta-badge-emocion {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 16px;
+    background-color: #e7f8f5;
+    border: 1px solid #2f8f8a;
+    font-size: 13.5px;
+    font-weight: 500;
+}
+
+.encuesta-contador-pasos {
+    font-size: 13px;
+    color: #4a6c69;
+    font-weight: 500;
+}
+
+.encuesta-progress-bar-bg {
+    width: 100%;
+    height: 8px;
+    background-color: #dcebea;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.encuesta-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #54c5c0 0%, #2f8f8a 100%);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+.encuesta-card-cuestionario {
+    background-color: #ffffff;
+    border: 1px solid #c8e8e5;
+    border-radius: 18px;
+    padding: 28px 24px;
+    box-shadow: 0 4px 16px rgba(47, 143, 138, 0.08);
+}
+
+.encuesta-texto-pregunta {
+    font-size: 17px;
+    color: #1f3d3b;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0 0 8px;
+}
+
+.encuesta-subtexto-guia {
+    font-size: 13px;
+    color: #628380;
+    margin: 0 0 20px;
+}
+
+.encuesta-opciones-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.encuesta-opcion-btn {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 13px 18px;
+    border: 1px solid #d4ebe8;
+    border-radius: 12px;
+    background-color: #fcfefe;
+    color: #235854;
+    font-size: 14.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.encuesta-opcion-btn .opc-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.encuesta-opcion-btn .opc-txt {
+    flex: 1;
+}
+
+.encuesta-opcion-btn:hover {
+    border-color: #2f8f8a;
+    background-color: #f0faf8;
+    transform: translateX(4px);
+}
+
+.encuesta-opcion-btn.seleccionado {
+    border-color: #2f8f8a;
+    background-color: #2f8f8a;
+    color: #ffffff;
+}
+
+.encuesta-opcion-btn.seleccionado .opc-num {
+    background-color: #ffffff;
+    color: #2f8f8a;
+}
+
+.encuesta-controles-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+}
+
+.encuesta-finalizada-card {
+    text-align: center;
+    background-color: #ffffff;
+    border: 1.5px solid #a3ded9;
+    border-radius: 18px;
+    padding: 34px 24px;
+    box-shadow: 0 6px 20px rgba(47, 143, 138, 0.08);
+}
+
+.encuesta-finalizada-card h4 {
+    margin: 12px 0 6px;
+    color: #1f3d3b;
+    font-size: 19px;
+}
+
+.encuesta-finalizada-card p {
+    color: #5c6f6d;
+    margin: 0 0 20px;
+    font-size: 14.5px;
+}
+
+/* 3. Gráfica de Tendencia Semanal con Eje Y de Emociones y Eje X de Semanas */
+.contenedor-grafica-tendencia-emocional {
+    background-color: #ffffff;
+    border: 1px solid #dcebea;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 18px rgba(47, 143, 138, 0.07);
+    margin-top: 15px;
+}
+
+.grafica-subtitulo-leyenda {
+    font-size: 13px;
+    color: #4a5568;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #edf2f7;
+}
+
+.grafica-svg-scroll-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.svg-tendencia-emocional {
+    width: 100%;
+    min-width: 650px;
+    height: auto;
+    display: block;
+}
+
+.timeline-badge-texto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 130px;
+}
+
+.timeline-emocion-nombre {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: #1f3d3b;
+}
+
+/* 4. Barra de Filtro y Botón de Modo Cristiano */
+.barra-filtros-multimedia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.btn-toggle-cristiano {
+    padding: 11px 20px;
+    border: 1.5px solid #2f8f8a;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #2f8f8a;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.08);
+}
+
+.btn-toggle-cristiano:hover {
+    background-color: #e7f8f5;
+    transform: translateY(-1px);
+}
+
+.btn-toggle-cristiano.cristiano-activo {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.25);
+}
+
+/* 5. Inputs en Grounding y Relajación */
+.lista-inputs-grounding {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.lista-inputs-grounding input {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 13.5px;
+}
+
+.tarjeta-paso-relajacion-activa {
+    background-color: #f7fbfa;
+    border-left: 4px solid #2f8f8a;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 12px;
+}
+
+.tarjeta-paso-relajacion-activa h4 {
+    margin: 0 0 8px;
+    color: #2f8f8a;
+    font-size: 16.5px;
+}
+
+/* 6. Muro de Motivación y Fotos */
+.motivation-img-wrapper {
+    width: 100%;
+    max-height: 240px;
+    overflow: hidden;
+    border-radius: 12px 12px 0 0;
+    background-color: #edf7f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.motivation-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.muro-vacio-aviso {
+    padding: 30px 20px;
+    background-color: #ffffff;
+    border: 1px dashed #a3ded9;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.muro-vacio-aviso p {
+    color: #2f8f8a;
+    font-size: 14.5px;
+    margin: 0 0 4px;
+}
+
+.muro-vacio-aviso small {
+    color: #7b9e9b;
+}
+
+/* 7. Pegatina Inspiradora Mejorada (Más grande, colores dinámicos y rotación) */
+.frase-apoyo {
+    position: relative;
+    width: 320px;
+    max-width: 90vw;
+    min-height: 110px;
+    padding: 28px 26px 22px;
+    background-color: #fef08a;
+    color: #854d0e;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    transform: rotate(2deg);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.3s ease,
+                background-color 0.4s ease,
+                color 0.4s ease,
+                opacity 0.3s ease;
+    user-select: none;
+}
+
+.frase-apoyo::before {
+    content: "";
+    position: absolute;
+    width: 60px;
+    height: 14px;
+    background-color: var(--cinta-color, #fde047);
+    top: -7px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-1deg);
+    border-radius: 4px;
+    opacity: 0.9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.frase-apoyo:hover {
+    transform: rotate(0deg) scale(1.03);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.18);
+}
+
+.frase-apoyo.pegatina-cambiando {
+    opacity: 0.4;
+    transform: scale(0.96);
+}
+
+#frase {
+    margin: 0;
+    color: inherit;
+    font-size: 16px;
+    line-height: 1.5;
+    font-style: italic;
+    font-weight: 500;
+}
+
+/* 8. Ajuste de mensajes de chat para armonía visual sin negrillas */
+.mensaje p {
+    font-weight: 400 !important;
+}
+
+.mensaje-emowell p {
+    color: #265e5b;
+}
+
+.mensaje-usuario {
+    background-color: #2f8f8a !important;
+    color: #ffffff !important;
+    border-radius: 15px 15px 2px 15px !important;
+    align-self: flex-end;
+}
+
+.mensaje-usuario p {
+    color: #ffffff !important;
+}

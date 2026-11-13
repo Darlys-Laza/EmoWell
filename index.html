@@ -572,10 +572,10 @@
 
                             <div class="selector-modo-chat" role="radiogroup" aria-label="Modo de conversación">
                                 <button type="button" class="btn-modo-chat activo" id="modo-texto-btn" data-modo="texto" aria-pressed="true">
-                                    <span class="icono-modo">💬</span> Escribir
+                                    Escribir
                                 </button>
                                 <button type="button" class="btn-modo-chat" id="modo-voz-btn" data-modo="voz" aria-pressed="false">
-                                    <span class="icono-modo">🎙️</span> Hablar por voz
+                                    Hablar por voz
                                 </button>
                             </div>
 
@@ -595,13 +595,6 @@
                                     ¿Qué quieres contarme?
 
                                 </p>
-
-
-                                <button class="reproducir-respuesta" type="button">
-
-                                    Escuchar respuesta
-
-                                </button>
 
 
                             </div>
@@ -857,6 +850,10 @@
 
                             <button type="button" data-vista="vista-charlar">
                                 Hablar sobre esto
+                            </button>
+
+                            <button type="button" data-vista="vista-emergencia" class="btn-lineas-apoyo-resultado">
+                                Ver líneas de apoyo
                             </button>
 
 
@@ -1143,22 +1140,29 @@
                                         type="text"
                                         id="frase-motivacion"
                                         class="chat-input-field"
-                                        placeholder="Escribe una frase o recuerdo..."
+                                        placeholder="Escribe una frase, recuerdo o reflexión..."
                                     >
 
                                     <input
                                         type="text"
                                         id="imagen-motivacion-url"
                                         class="chat-input-field"
-                                        placeholder="URL de una imagen (opcional)"
+                                        placeholder="URL de imagen en internet (opcional)"
                                     >
+
+                                    <div class="opcion-archivo-recurso">
+                                        <label for="imagen-motivacion" class="btn-subir-archivo-label">
+                                            Subir imagen o foto desde tu dispositivo
+                                        </label>
+                                        <span id="nombre-archivo-foto-seleccionado" class="archivo-seleccionado-txt"></span>
+                                    </div>
 
                                     <button
                                         id="agregar-motivacion-btn"
                                         class="btn-primary-action"
                                         type="button"
                                     >
-                                        + Añadir
+                                        + Añadir al muro
                                     </button>
 
                                 </div>
@@ -1235,7 +1239,7 @@
                                     type="text"
                                     id="nombre-recurso"
                                     class="chat-input-field"
-                                    placeholder="Canción o recurso..."
+                                    placeholder="Nombre de la canción, video o recurso..."
                                 >
 
                                 <select
@@ -1252,15 +1256,28 @@
                                     type="text"
                                     id="url-recurso"
                                     class="chat-input-field"
-                                    placeholder="Enlace (opcional)"
+                                    placeholder="Enlace de YouTube o Spotify (opcional)"
                                 >
+
+                                <div class="opcion-archivo-recurso">
+                                    <label for="archivo-audio-recurso" class="btn-subir-archivo-label">
+                                        Subir archivo de música o audio desde tu dispositivo
+                                    </label>
+                                    <input
+                                        type="file"
+                                        id="archivo-audio-recurso"
+                                        accept="audio/*,video/*"
+                                        style="display: none;"
+                                    >
+                                    <span id="nombre-archivo-recurso-seleccionado" class="archivo-seleccionado-txt"></span>
+                                </div>
 
                                 <button
                                     id="agregar-recurso-btn"
                                     class="btn-primary-action"
                                     type="button"
                                 >
-                                    + Guardar
+                                    + Guardar recurso
                                 </button>
 
                             </div>
