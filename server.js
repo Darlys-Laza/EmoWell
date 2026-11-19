@@ -923,10 +923,10 @@ async function iniciarServidor() {
     await conectarMongoDB();
     app.listen(PORT, () => {
         console.log(`====================================================`);
-        console.log(` 🌟 Servidor EmoWell Backend v1.3.0 iniciado         `);
-        console.log(` 🌐 URL: http://localhost:${PORT}                   `);
-        console.log(` 🍃 MongoDB Atlas: ${isMongoConnected() ? 'Conectado y Listo' : 'Modo Resiliente'}`);
-        console.log(` 🤖 Modo Gemini: ${process.env.GEMINI_API_KEY ? 'Activado' : 'Heurístico Local'}`);
+        console.log(`  Servidor EmoWell Backend v1.3.0 iniciado         `);
+        console.log(`  URL: http://localhost:${PORT}                   `);
+        console.log(`  MongoDB Atlas: ${isMongoConnected() ? 'Conectado y Listo' : 'Modo Resiliente'}`);
+        console.log(`  Modo Gemini: ${process.env.GEMINI_API_KEY ? 'Activado' : 'Heurístico Local'}`);
         console.log(`====================================================`);
     });
 }
