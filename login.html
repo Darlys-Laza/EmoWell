@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión — EmoWell</title>
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <script src="script.js?v=2.7"></script>
+</head>
+
+<body>
+
+    <header id="encabezado-app" class="encabezado-app">
+        <div class="logo">
+            <a href="index.html">
+                <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            </a>
+        </div>
+        <div class="acciones">
+            <a href="index.html" class="boton-sobre" style="text-decoration: none; display: inline-flex; align-items: center;">Volver al inicio</a>
+            <a href="registro.html" class="boton-sobre" style="text-decoration: none; border: 1px solid #54c5c0; border-radius: 8px; padding: 8px 14px;">Registrarse</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="vista-login" class="vista pantalla-acceso activa" style="display: grid;" aria-labelledby="titulo-login">
+            <div class="tarjeta-acceso">
+                <a href="index.html" class="volver-publico" style="text-decoration: none; display: inline-block;">← Volver al inicio</a>
+                <h1 id="titulo-login">Iniciar sesión</h1>
+                <p>Ingresa para continuar a tu espacio personal en EmoWell.</p>
+                <div id="login-alerta" class="mensaje-alerta-acceso"></div>
+                <form id="form-login">
+                    <label for="correo-login">Correo electrónico o Usuario</label>
+                    <input id="correo-login" name="correo" type="text" autocomplete="username" placeholder="Tu correo o usuario (ej: 6dantesss)" required>
+                    <label for="clave-login">Contraseña</label>
+                    <input id="clave-login" name="clave" type="password" autocomplete="current-password" placeholder="Tu contraseña" required minlength="4">
+                    <button type="submit" class="boton-acceso" id="btn-submit-login">Continuar</button>
+                </form>
+                <p class="nota-prototipo">¿Aún no tienes cuenta? <a href="registro.html" class="enlace-texto-acceso" style="text-decoration: underline;">Crea tu cuenta aquí</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="pie-pagina" style="display: flex;">
+        <div class="logo-footer">
+            <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            <p>Un espacio para sentir.</p>
+        </div>
+        <p class="copyright">
+            © 2026 EmoWell. Todos los derechos reservados.
+        </p>
+    </footer>
+
+</body>
+
+</html>

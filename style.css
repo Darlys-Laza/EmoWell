@@ -584,7 +584,15 @@ PRIMERA PANTALLA
 ========================================================= */
 
 .vista {
+    display: none;
+}
+
+.vista.activa {
     display: block;
+}
+
+.vista.pantalla-acceso.activa {
+    display: grid;
 }
 
 
@@ -1708,65 +1716,48 @@ footer {
 
 .motivations-wall {
     display: grid;
-
-    grid-template-columns:
-        repeat(auto-fill, minmax(190px, 1fr));
-
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
     gap: 16px;
-
-    margin: 20px 0;
+    margin: 16px 0;
+    align-items: start; /* Impide que las tarjetas sin imagen se estiren verticalmente */
 }
 
-
-/* Tarjeta de motivación */
-
+/* Tarjeta de motivación compacta y balanceada */
 .motivation-item-card {
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
-
     background-color: #f7fbfa;
-
     border: 1px solid #dcebea;
-
-    border-radius: 16px;
-
-    box-shadow:
-        0 5px 15px rgba(47, 143, 138, 0.06);
-
-    transition:
-        transform 0.25s ease,
-        box-shadow 0.25s ease;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.06);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    align-self: start;
+    height: auto;
+    min-height: auto;
 }
-
 
 .motivation-item-card:hover {
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 10px 22px rgba(47, 143, 138, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(47, 143, 138, 0.12);
 }
 
-
-/* Imagen */
-
+/* Imagen proporcional */
 .motivation-img {
     display: block;
-
     width: 100%;
-    height: 135px;
-
+    max-height: 190px;
     object-fit: cover;
+    border-bottom: 1px solid #e2efed;
 }
 
-
-/* Texto debajo de la imagen */
-
+/* Texto proporcional sin exceso de espacio */
 .motivation-caption {
-    padding: 14px;
-
-    color: #365f5c;
-
-    font-size: 13px;
-    line-height: 1.6;
+    padding: 12px 14px 6px;
+    color: #244b48;
+    font-size: 13.5px;
+    line-height: 1.45;
+    word-break: break-word;
 }
 
 
@@ -1990,57 +1981,50 @@ footer {
 
 .identity-cards-grid {
     display: grid;
-
     grid-template-columns: 1fr 1fr;
-
     gap: 15px;
-
-    margin-top: 20px;
+    margin-top: 15px;
 }
-
 
 .identity-pillar-card {
     position: relative;
-
-    padding: 20px;
-
-    background-color: #eaf7f5;
-
-    border: 1px solid #d4ebe8;
-
-    border-radius: 16px;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    padding: 16px 18px;
+    background-color: #f7fcfb;
+    border: 1.5px solid #d6ece8;
+    border-radius: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
-
 
 .identity-pillar-card:hover {
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 8px 18px rgba(47, 143, 138, 0.10);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(47, 143, 138, 0.08);
+    border-color: #54c5c0;
 }
-
 
 .identity-pillar-card h4 {
-    margin: 0 0 8px;
-
-    color: #8b5cf6;
-
-    font-size: 15px;
+    margin: 0 0 6px;
+    color: #25726e;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-
 
 .identity-pillar-card p {
     margin: 0;
-
     color: #365f5c;
-
     font-size: 13px;
+    line-height: 1.55;
+    outline: none;
+    padding: 4px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
 
-    line-height: 1.6;
+.identity-pillar-card p:focus {
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px #54c5c0;
 }
 
 
@@ -2658,8 +2642,9 @@ footer {
 }
 
 .motivation-item-card .btn-eliminar-item {
-    margin: 10px 14px 14px;
+    margin: 4px 14px 12px;
     display: inline-block;
+    align-self: flex-start;
 }
 
 
@@ -3984,10 +3969,10 @@ select:focus,
 /* 7. Pegatina Inspiradora Mejorada (Más grande, colores dinámicos y rotación) */
 .frase-apoyo {
     position: relative;
-    width: 320px;
+    width: 330px;
     max-width: 90vw;
-    min-height: 110px;
-    padding: 28px 26px 22px;
+    min-height: 85px;
+    padding: 24px 22px 18px;
     background-color: #fef08a;
     color: #854d0e;
     border-radius: 16px;
@@ -4054,4 +4039,925 @@ select:focus,
 
 .mensaje-usuario p {
     color: #ffffff !important;
+}
+
+
+/* =====================================================
+   ESTILOS PARA EL GRAN MURO Y ESPACIO PERSONAL (MI ESPACIO)
+   ===================================================== */
+
+/* =====================================================
+   ESTILOS OPTIMIZADOS PARA EL MURO Y ESPACIO PERSONAL (MI ESPACIO)
+   Soluciona etiquetas sobredimensionadas, excesos de espacio blanco y desalineaciones.
+   ===================================================== */
+
+/* Contenedor principal */
+.contenido-espacio {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+/* Panel creador dinámico */
+.panel-creador-muro {
+    background: #ffffff;
+    border: 1px solid #d4ece8;
+    border-radius: 16px;
+    padding: 18px 22px;
+    box-shadow: 0 4px 20px rgba(47, 143, 138, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.creador-tabs-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.creador-tabs-titulo {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2f8f8a;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.creador-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.creador-tabs .tab-btn {
+    background-color: #f3faf9;
+    color: #43716d;
+    border: 1px solid #d0ebe7;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.creador-tabs .tab-btn:hover {
+    background-color: #e4f5f2;
+    border-color: #2f8f8a;
+    color: #1e635f;
+}
+
+.creador-tabs .tab-btn.activo {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    border-color: #2f8f8a;
+    box-shadow: 0 3px 10px rgba(47, 143, 138, 0.22);
+}
+
+.creador-formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.creador-inputs-row,
+.creador-fuentes-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input-flex-1 {
+    flex: 1 1 260px;
+    height: 42px;
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border: 1.5px solid #d0ebe7;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #365f5c;
+    box-sizing: border-box;
+}
+
+.input-flex-1:focus {
+    border-color: #54c5c0;
+    box-shadow: 0 0 0 3px rgba(84, 197, 192, 0.12);
+}
+
+.select-categoria {
+    flex: 0 0 180px;
+    height: 42px;
+    padding: 8px 12px;
+    font-size: 13px;
+    border: 1.5px solid #d0ebe7;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #365f5c;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.select-categoria:focus {
+    border-color: #54c5c0;
+    box-shadow: 0 0 0 3px rgba(84, 197, 192, 0.12);
+}
+
+.contenedor-subir-archivo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Etiqueta / Botón de subida estilizado y compacto (evita el aspecto tosco gigante) */
+.btn-subir-archivo-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #f0faf8;
+    color: #2f8f8a;
+    border: 1.5px dashed #2f8f8a;
+    border-radius: 9px;
+    padding: 8px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-subir-archivo-label:hover {
+    background-color: #ddf5f0;
+    border-style: solid;
+    transform: translateY(-1px);
+}
+
+.archivo-seleccionado-txt {
+    font-size: 12px;
+    color: #166534;
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.creador-acciones-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 2px;
+}
+
+.btn-primary-action {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(47, 143, 138, 0.2);
+    transition: all 0.2s ease;
+}
+
+.btn-primary-action:hover {
+    background-color: #236f6b;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(47, 143, 138, 0.28);
+}
+
+.btn-secundario-link {
+    background: none;
+    border: none;
+    color: #7f9996;
+    font-size: 12.5px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 4px;
+}
+
+.btn-secundario-link:hover {
+    color: #dc2626;
+}
+
+/* Toolbar de filtros */
+.muro-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 4px 2px;
+}
+
+.muro-filtros {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filtro-chip {
+    background-color: #ffffff;
+    color: #4a7571;
+    border: 1.5px solid #d4ebe7;
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filtro-chip:hover {
+    border-color: #2f8f8a;
+    color: #2f8f8a;
+}
+
+.filtro-chip.activo {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    border-color: #2f8f8a;
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.2);
+}
+
+.muro-stats {
+    font-size: 12.5px;
+    color: #618c88;
+    font-weight: 500;
+}
+
+/* Gran Muro en formato Grid Responsivo (reemplaza columns masonry para eliminar huecos blancos y deformaciones) */
+.muro-personal-masonry {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
+    align-items: start;
+    width: 100%;
+}
+
+@media (max-width: 640px) {
+    .muro-personal-masonry {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Tarjeta individual del muro (diseño proporcionado y balanceado) */
+.muro-card {
+    position: relative;
+    background-color: #ffffff;
+    border: 1px solid #dbeefc;
+    border: 1.5px solid #d8ede9;
+    border-radius: 15px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 3px 12px rgba(47, 143, 138, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.muro-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(47, 143, 138, 0.1);
+    border-color: #54c5c0;
+}
+
+/* Botón de borrado sutil en la esquina superior */
+.muro-card-btn-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #dbeefc;
+    border: 1px solid #d6e8e5;
+    color: #8fa6a3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s ease;
+    z-index: 5;
+    padding: 0;
+}
+
+.muro-card:hover .muro-card-btn-delete {
+    opacity: 1;
+}
+
+.muro-card-btn-delete:hover {
+    background-color: #fef2f2;
+    border-color: #fecaca;
+    color: #dc2626;
+    transform: scale(1.1);
+}
+
+/* Encabezado de la tarjeta */
+.muro-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-right: 24px;
+}
+
+/* Etiquetas de categoría proporcionales y estéticas (adiós al exceso de blanco) */
+.muro-card-categoria {
+    display: inline-block;
+    padding: 3px 9px;
+    background-color: #e6f7f5;
+    color: #1f7570;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+}
+
+.muro-card-categoria.cat-inspiracion { background-color: #e6f7f5; color: #1f7570; }
+.muro-card-categoria.cat-calma { background-color: #e8f3fa; color: #1c6799; }
+.muro-card-categoria.cat-motivacion { background-color: #fff6e6; color: #b36b00; }
+.muro-card-categoria.cat-recuerdo { background-color: #fdf0f7; color: #9b3780; }
+.muro-card-categoria.cat-meta { background-color: #eef9e8; color: #387b1c; }
+.muro-card-categoria.cat-gratitud { background-color: #fef9e7; color: #886c00; }
+
+.muro-card-fecha {
+    font-size: 11px;
+    color: #92aba8;
+    font-weight: 500;
+}
+
+/* Medios adaptables */
+.muro-card-media-wrap {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f4fbf9;
+}
+
+.muro-card-imagen {
+    width: 100%;
+    height: auto;
+    max-height: 380px;
+    object-fit: cover;
+    display: block;
+    border-radius: 10px;
+}
+
+.muro-card-video-wrap {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+}
+
+.muro-card-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.muro-card-video-element {
+    width: 100%;
+    max-height: 320px;
+    border-radius: 10px;
+    display: block;
+    background-color: #000000;
+}
+
+.muro-card-audio-wrap {
+    width: 100%;
+    padding: 4px 0;
+}
+
+.muro-card-audio-element {
+    width: 100%;
+    height: 38px;
+    outline: none;
+}
+
+.muro-card-spotify-wrap {
+    width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Notas y Reflexiones */
+.muro-card-nota {
+    background-color: #f8fdfc;
+    border-left: 3.5px solid #2f8f8a;
+}
+
+.muro-card-texto-nota {
+    color: #244b48;
+    font-size: 14px;
+    line-height: 1.6;
+    font-style: italic;
+    margin: 0;
+}
+
+.muro-card-texto {
+    color: #385f5c;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Metas */
+.muro-card-meta {
+    background-color: #ffffff;
+    border-left: 3.5px solid #54c5c0;
+}
+
+.muro-card-meta-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.muro-meta-checkbox {
+    width: 17px;
+    height: 17px;
+    accent-color: #2f8f8a;
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.muro-meta-titulo {
+    color: #244b48;
+    font-size: 13.5px;
+    line-height: 1.45;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.muro-meta-titulo.completada {
+    text-decoration: line-through;
+    color: #8fa8a5;
+}
+
+/* Aviso de muro vacío (cálido, compacto y limpio) */
+.muro-vacio-aviso {
+    grid-column: 1 / -1;
+    background-color: #ffffff;
+    border: 1.5px dashed #b7e5df;
+    border-radius: 16px;
+    padding: 30px 20px;
+    text-align: center;
+    color: #4a7571;
+    margin: 10px 0;
+}
+
+.muro-vacio-aviso h4 {
+    color: #2f8f8a;
+    font-size: 16.5px;
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.muro-vacio-aviso p {
+    font-size: 13.5px;
+    margin: 0 0 6px;
+    color: #4d7773;
+}
+
+.muro-vacio-aviso small {
+    color: #799d99;
+    font-size: 12px;
+}
+
+.santuario-pilares-card {
+    margin-top: 5px;
+    background: #ffffff;
+    border: 1px solid #d8ede9;
+    border-radius: 18px;
+    padding: 24px;
+    box-shadow: 0 4px 18px rgba(47, 143, 138, 0.05);
+}
+
+.santuario-pilares-card .subtitulo-seccion {
+    font-size: 12.5px;
+    color: #648c88;
+    font-weight: normal;
+}
+
+/* =====================================================
+   ESTILOS COMPLEMENTARIOS PARA CHAT INTELIGENTE Y ACCESO
+   ===================================================== */
+
+/* Indicador de escribiendo en el chat */
+.mensaje-escribiendo {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 12px 18px;
+    background-color: #e7f8f5;
+    border-radius: 15px 15px 15px 2px;
+    align-self: flex-start;
+    margin-bottom: 10px;
+    border: 1px solid #d5ebe7;
+}
+
+.punto-escribiendo {
+    width: 7px;
+    height: 7px;
+    background-color: #2f8f8a;
+    border-radius: 50%;
+    animation: pulsoEscribiendo 1.3s infinite ease-in-out;
+}
+
+.punto-escribiendo:nth-child(2) { animation-delay: 0.2s; }
+.punto-escribiendo:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes pulsoEscribiendo {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1.15); opacity: 1; }
+}
+
+/* Tarjeta de alerta de crisis en el chat */
+.tarjeta-alerta-crisis {
+    background-color: #fff8f7;
+    border: 1.5px solid #fecaca;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-top: 10px;
+    color: #991b1b;
+}
+
+.tarjeta-alerta-crisis h4 {
+    margin: 0 0 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tarjeta-alerta-crisis p {
+    margin: 0 0 10px !important;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: #7f1d1d;
+}
+
+.lineas-lista-crisis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    .lineas-lista-crisis { grid-template-columns: 1fr; }
+}
+
+.linea-crisis-item {
+    background-color: #ffffff;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+.linea-crisis-item strong {
+    display: block;
+    font-size: 12px;
+    color: #991b1b;
+}
+
+.linea-crisis-item span {
+    font-size: 11px;
+    color: #6b7280;
+}
+
+.btn-ir-lineas-ayuda {
+    display: inline-block;
+    background-color: #dc2626;
+    color: #ffffff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-ir-lineas-ayuda:hover {
+    background-color: #b91c1c;
+}
+
+/* Botón limpiar chat en encabezado */
+.chat-acciones-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-limpiar-chat {
+    background: transparent;
+    border: 1px solid #bce1dc;
+    color: #4a7a76;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-limpiar-chat:hover {
+    background-color: #d8f1ed;
+    color: #1e5f5b;
+}
+
+/* Feedback de login y registro */
+.mensaje-alerta-acceso {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: none;
+}
+
+.mensaje-alerta-acceso.error {
+    display: block !important;
+    background-color: #fef2f2 !important;
+    border: 1px solid #fecaca !important;
+    color: #dc2626 !important;
+}
+
+.mensaje-alerta-acceso.exito {
+    display: block !important;
+    background-color: #f0fdf4 !important;
+    border: 1px solid #bbf7d0 !important;
+    color: #166534 !important;
+}
+
+.enlace-texto-acceso {
+    background: none;
+    border: none;
+    color: #2f8f8a;
+    font-size: inherit;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0 4px;
+}
+
+.enlace-texto-acceso:hover {
+    color: #1e5f5b;
+}
+
+.badge-usuario-sesion {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background-color: #e6f6f4;
+    color: #247571;
+    font-size: 12.5px;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1px solid #bde6e1;
+}
+
+/* =========================================================
+   ESTILOS DINÁMICOS GEMINI IA
+========================================================= */
+
+.btn-ia-inspirar {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 15px;
+    background: linear-gradient(135deg, #e6f7f5 0%, #d5f2ee 100%);
+    color: #1e6b66;
+    border: 1px solid #a3ded7;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-ia-inspirar:hover {
+    background: linear-gradient(135deg, #d3f3ee 0%, #bdebe4 100%);
+    border-color: #2f8f8a;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(47, 143, 138, 0.15);
+}
+
+.btn-ia-inspirar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.orientacion-ia-box {
+    margin-top: 18px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #f0fbf9 0%, #e8f7f5 100%);
+    border: 1px solid #bce9e3;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(37, 114, 110, 0.06);
+    animation: fadeInOrientacion 0.4s ease;
+}
+
+.orientacion-ia-box h4 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1e6b66;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.orientacion-ia-box p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: #2b4d4b;
+}
+
+@keyframes fadeInOrientacion {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.autor-frase-dinamica {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2f8f8a;
+    opacity: 0.85;
+}
+
+/* =========================================================
+   ESTILOS DE SUBIDA Y MEDIOS EN MI ESPACIO PERSONAL
+========================================================= */
+
+.preview-archivo-subido {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #f0fdf4;
+    border: 1px solid #86efac;
+    color: #166534;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 8px 0 12px;
+}
+
+.preview-archivo-subido.oculto {
+    display: none !important;
+}
+
+.btn-cancelar-subida {
+    background: transparent;
+    border: none;
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: transform 0.15s ease;
+}
+
+.btn-cancelar-subida:hover {
+    transform: scale(1.2);
+}
+
+.resource-audio-player {
+    width: 100%;
+    margin-top: 8px;
+    height: 38px;
+    border-radius: 8px;
+}
+
+.motivation-img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0;
+    display: block;
+}
+
+/* Evitar etiquetas gigantes con excesivo espacio blanco en Mi Espacio */
+.goal-category-tag {
+    padding: 4px 10px;
+    background-color: #dff5f2;
+    border-radius: 999px;
+    color: #2f8f8a;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    display: inline-block;
+}
+
+.metas-contador {
+    padding: 5px 12px;
+    background-color: #e7f8f5;
+    border-radius: 999px;
+    color: #2f8f8a;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.btn-back-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background-color: #e7f8f5;
+    color: #2f8f8a;
+    border: 1px solid #54c5c0;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-back-home:hover {
+    background-color: #2f8f8a;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(47, 143, 138, 0.2);
+}
+
+
+
+
+/* =========================================================
+   ESTILOS PANEL ADMINISTRATIVO (RÚBRICA SLIDE 4)
+========================================================= */
+
+.admin-card-login {
+    margin: 40px auto;
+    max-width: 440px;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.kpi-titulo {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.kpi-valor {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0f766e;
+    margin: 6px 0;
+}
+
+.kpi-desc {
+    display: block;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.solicitud-admin-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px;
+    transition: box-shadow 0.2s ease;
+}
+
+.solicitud-admin-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }

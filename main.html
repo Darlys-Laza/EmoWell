@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmoWell — Mi Espacio de Bienestar</title>
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <script src="script.js?v=2.7"></script>
+</head>
+
+<body>
+
+    <header id="encabezado-app" class="encabezado-app">
+        <div class="logo">
+            <a href="main.html">
+                <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            </a>
+        </div>
+
+        <nav id="navegacion-privada" class="navegacion" aria-label="Herramientas de EmoWell">
+            <button type="button" data-vista="vista-inicio">Inicio</button>
+            <button type="button" data-vista="vista-charlar">Charlar</button>
+            <button type="button" data-vista="vista-nivel">Nivel emocional</button>
+            <button type="button" data-vista="vista-autorregularme">Autorregularme</button>
+            <button type="button" data-vista="vista-espacio">Mi espacio</button>
+            <button type="button" data-vista="vista-emergencia">Ver líneas de ayuda</button>
+        </nav>
+
+        <div id="acciones-privadas" class="acciones">
+            <span id="usuario-activo-badge" class="badge-usuario-sesion"></span>
+            <button type="button" id="cerrar-sesion">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="vista-inicio" class="vista activa" style="display: block;">
+
+            <section class="herramientas">
+
+
+                <div class="encabezado-herramientas">
+
+
+                    <h1 id="bienvenida">
+                        ¡Bienvenido!
+                    </h1>
+
+
+                    <div class="frase-apoyo">
+
+                        <p id="frase">
+
+                            No tienes que resolverlo todo hoy.
+                            Está bien avanzar poco a poco.
+
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <h2>
+                    ¿Cómo puede ayudarte EmoWell?
+                </h2>
+
+
+                <p class="descripcion">
+
+                    Explora diferentes espacios pensados para acompañarte
+                    y cuidar tu bienestar emocional.
+
+                </p>
+
+
+                <div class="opciones">
+
+
+                    <div class="opcion" data-vista="vista-charlar" role="button" tabindex="0">
+
+                        <h3>
+                            Charlar
+                        </h3>
+
+                        <p>
+                            Un espacio para expresar lo que sientes
+                            y sentirte escuchado.
+                        </p>
+
+                    </div>
+
+
+                    <div class="opcion" data-vista="vista-nivel" role="button" tabindex="0">
+
+                        <h3>
+                            Ver mi nivel emocional
+                        </h3>
+
+                        <p>
+                            Conoce y registra cómo te has sentido
+                            a lo largo del tiempo.
+                        </p>
+
+                    </div>
+
+
+                    <div class="opcion" data-vista="vista-autorregularme" role="button" tabindex="0">
+
+                        <h3>
+                            Autorregularme
+                        </h3>
+
+                        <p>
+                            Encuentra herramientas que te ayuden
+                            a gestionar tus emociones.
+                        </p>
+
+                    </div>
+
+
+                    <div class="opcion" data-vista="vista-espacio" role="button" tabindex="0">
+
+                        <h3>
+                            Mi espacio personal
+                        </h3>
+
+                        <p>
+                            Construye un espacio con tus metas,
+                            motivaciones y recursos que te ayuden
+                            a sentirte mejor.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+        </div>
+        
+
+        <!-- =================================================
+        VISTA: CHARLAR
+        ================================================== -->
+
+        <div
+            id="vista-charlar"
+            class="vista"
+        >
+
+
+            <section class="pantalla">
+
+
+                <div class="encabezado-pantalla">
+
+
+                    <button class="volver" type="button" data-volver="anterior">
+                        Volver
+                    </button>
+
+
+                    <h2>
+                        Charlar
+                    </h2>
+
+
+                </div>
+
+
+
+                <div class="contenido-charlar">
+
+
+                    <aside class="sugerencias">
+
+
+                        <h3>
+                            ¿De qué quieres hablar?
+                        </h3>
+
+
+                        <button type="button" data-sugerencia="desahogarme">
+                            Quiero desahogarme
+                        </button>
+
+
+                        <button type="button" data-sugerencia="no-se-como-me-siento">
+                            No sé cómo me siento
+                        </button>
+
+
+                        <button type="button" data-sugerencia="ordenar-mis-pensamientos">
+                            Necesito ordenar mis pensamientos
+                        </button>
+
+
+                        <button type="button" data-sugerencia="algo-me-preocupa">
+                            Quiero hablar de algo que me preocupa
+                        </button>
+
+
+                    </aside>
+
+
+
+                    <div class="chat">
+
+
+                        <div class="encabezado-chat">
+
+                            <div class="info-chat">
+                                <h3>
+                                    EmoWell
+                                </h3>
+
+                                <p>
+                                    Un espacio para escucharte.
+                                </p>
+                            </div>
+
+                            <div class="chat-acciones-header">
+                                <div class="selector-modo-chat" role="radiogroup" aria-label="Modo de conversación">
+                                    <button type="button" class="btn-modo-chat activo" id="modo-texto-btn" data-modo="texto" aria-pressed="true">
+                                        Escribir
+                                    </button>
+                                    <button type="button" class="btn-modo-chat" id="modo-voz-btn" data-modo="voz" aria-pressed="false">
+                                        Hablar por voz
+                                    </button>
+                                </div>
+                                <button type="button" class="btn-limpiar-chat" id="btn-limpiar-chat" title="Comenzar una nueva conversación">
+                                    Nueva conversación
+                                </button>
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="mensajes" id="mensajes-chat" aria-live="polite">
+
+
+                            <div class="mensaje mensaje-emowell">
+
+
+                                <p>
+
+                                    Estoy aquí para escucharte.
+                                    ¿Qué quieres contarme?
+
+                                </p>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <!-- Panel interactivo para cuando el modo de voz continua está activo -->
+                        <div class="panel-conversacion-voz oculto" id="panel-conversacion-voz">
+                            <div class="onda-voz-animada" id="onda-voz">
+                                <span></span><span></span><span></span><span></span><span></span>
+                            </div>
+                            <p class="estado-voz-continua" id="texto-estado-voz">
+                                Modo voz activo: habla naturalmente, te escucho sin necesidad de enviar.
+                            </p>
+                            <button type="button" class="btn-pausar-voz" id="btn-toggle-voz">
+                                Pausar escucha
+                            </button>
+                        </div>
+
+                        <div class="entrada-chat" id="contenedor-entrada-chat">
+
+
+                            <input
+                                type="text"
+                                id="entrada-chat"
+                                name="mensaje"
+                                placeholder="Escribe lo que quieras expresar..."
+                                autocomplete="off"
+                            >
+
+
+                            <button class="boton-audio" type="button">
+
+                                Hablar
+
+                            </button>
+
+
+                            <button class="boton-enviar" type="button">
+
+                                Enviar
+
+                            </button>
+
+
+                        </div>
+
+
+
+                        <div class="estado-voz" id="estado-voz" aria-live="polite">
+
+
+                            <p>
+
+                                Aquí aparecerá el estado
+                                de la conversación.
+
+                            </p>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             VISTA: NIVEL EMOCIONAL
+        ================================================== -->
+
+        <div
+            id="vista-nivel"
+            class="vista"
+        >
+
+
+            <section class="pantalla">
+
+
+                <div class="encabezado-pantalla">
+
+
+                    <button class="volver" type="button" data-volver="anterior">
+                        Volver
+                    </button>
+
+
+                    <h2>
+                        Mi nivel emocional
+                    </h2>
+
+
+                </div>
+
+
+
+                <div class="contenido-nivel">
+
+
+                    <section class="registro-emocional">
+
+
+                        <h3>
+                            ¿Cómo te sientes hoy?
+                        </h3>
+
+
+                        <p>
+
+                            Elige la emoción que más se acerca a lo que
+                            estás sintiendo en este momento.
+
+                        </p>
+
+
+                        <div class="emociones">
+
+
+                            <button type="button" data-emocion="tristeza">
+                                Tristeza
+                            </button>
+
+
+                            <button type="button" data-emocion="ansiedad">
+                                Ansiedad
+                            </button>
+
+
+                            <button type="button" data-emocion="estres">
+                                Estrés
+                            </button>
+
+
+                            <button type="button" data-emocion="enojo">
+                                Enojo
+                            </button>
+
+
+                            <button type="button" data-emocion="miedo">
+                                Miedo
+                            </button>
+
+
+                            <button type="button" data-emocion="soledad">
+                                Soledad
+                            </button>
+
+
+                            <button type="button" data-emocion="felicidad">
+                                Felicidad
+                            </button>
+
+
+                            <button type="button" data-emocion="tranquilidad">
+                                Tranquilidad
+                            </button>
+
+
+                            <button type="button" data-emocion="otra">
+                                Otra emoción
+                            </button>
+
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <section class="preguntas-emocionales">
+
+
+                        <h3>
+                            Conozcamos un poco más
+                        </h3>
+
+
+                        <p>
+
+                            Responde algunas preguntas para conocer
+                            mejor la intensidad de lo que estás sintiendo.
+
+                        </p>
+
+
+                        <div class="preguntas">
+
+
+                            <p>
+                                Selecciona una emoción para comenzar.
+                            </p>
+
+
+                        </div>
+
+
+                        <button type="button" class="continuar-preguntas" id="continuar-preguntas">
+                            Continuar
+                        </button>
+
+
+                    </section>
+
+
+
+                    <section class="resultado-emocional">
+
+
+                        <h3>
+                            Tu resultado
+                        </h3>
+
+
+                        <div class="resultado">
+
+
+                            <h4>
+                                Nivel emocional
+                            </h4>
+
+
+                            <p>
+                                Aquí aparecerá el nivel calculado
+                                después de responder las preguntas.
+                            </p>
+
+
+                        </div>
+
+                        <!-- Orientación personalizada con IA de Gemini -->
+                        <div id="orientacion-ia-resultado" class="orientacion-ia-box oculto">
+                            <h4>Orientación personalizada de EmoWell IA</h4>
+                            <p id="orientacion-ia-texto"></p>
+                        </div>
+
+
+
+                        <div class="acciones-resultado">
+
+
+                            <button type="button" data-vista="vista-autorregularme">
+                                Autorregularme
+                            </button>
+
+
+                            <button type="button" data-vista="vista-charlar">
+                                Hablar sobre esto
+                            </button>
+
+                            <button type="button" data-vista="vista-emergencia" class="btn-lineas-apoyo-resultado">
+                                Ver líneas de apoyo
+                            </button>
+
+
+                        </div>
+
+
+                    </section>
+
+
+
+                    <section class="seguimiento-emocional">
+
+
+                        <h3>
+                            Mi seguimiento
+                        </h3>
+
+
+                        <p>
+
+                            Aquí podrás observar cómo han cambiado
+                            tus emociones con el tiempo.
+
+                        </p>
+
+
+                        <div class="historial">
+
+
+                            <p>
+                                Todavía no tienes registros.
+                            </p>
+
+
+                        </div>
+
+
+                    </section>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             VISTA: AUTORREGULARME
+        ================================================== -->
+
+        <div
+            id="vista-autorregularme"
+            class="vista"
+        >
+
+
+            <section class="pantalla">
+
+
+                <div class="encabezado-pantalla">
+
+
+                    <button class="volver" type="button" data-volver="anterior">
+                        Volver
+                    </button>
+
+
+                    <h2>
+                        Autorregularme
+                    </h2>
+
+
+                </div>
+
+
+
+                <p class="descripcion-pantalla">
+
+                    Encuentra una herramienta que te ayude a sentirte
+                    un poco mejor en este momento.
+
+                </p>
+
+
+
+                <div class="herramientas-regulacion">
+
+
+                    <button type="button" data-herramienta="respiracion">
+                        Respiración
+                    </button>
+
+
+                    <button type="button" data-herramienta="sentidos-54321">
+                        5-4-3-2-1
+                    </button>
+
+
+                    <button type="button" data-herramienta="musica-sonidos">
+                        Música y sonidos
+                    </button>
+
+
+                    <button type="button" data-herramienta="escritura">
+                        Escribir lo que siento
+                    </button>
+
+
+                    <button type="button" data-herramienta="relajacion">
+                        Relajación
+                    </button>
+
+
+                </div>
+
+
+
+                <div class="contenido-herramienta" id="contenido-herramienta" aria-live="polite">
+
+
+                    <h3>
+                        Elige una herramienta
+                    </h3>
+
+
+                    <p>
+                        Aquí aparecerá la herramienta que selecciones.
+                    </p>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             VISTA: MI ESPACIO
+        ================================================== -->
+
+        <!-- VISTA: MI ESPACIO -->
+        <div id="vista-espacio" class="vista">
+
+            <section class="pantalla">
+
+                <div class="encabezado-pantalla">
+                    <button class="volver" type="button" data-volver="anterior">
+                        Volver
+                    </button>
+                    <h2>
+                        Mi espacio personal
+                    </h2>
+                </div>
+
+                <p class="descripcion-pantalla">
+                    Un espacio para guardar aquello que es importante para ti, tus metas, tu música y tus recuerdos para cuando necesites motivación.
+                </p>
+
+                <div class="contenido-espacio">
+
+                    <div class="sanctuary-grid">
+
+                        <!-- COLUMNA IZQUIERDA -->
+                        <div>
+
+                            <!-- METAS Y SUEÑOS -->
+                            <section class="sanctuary-section-card">
+
+                                <div class="sanctuary-header">
+                                    <h3>Mis metas y sueños</h3>
+                                    <span class="metas-contador" id="metas-contador">0 metas</span>
+                                </div>
+
+                                <div class="quiz-progress-bar-container">
+                                    <div class="quiz-progress-bar" id="barra-progreso-metas"></div>
+                                </div>
+
+                                <div class="lista-metas" id="lista-metas">
+                                    <div class="goal-item">
+                                        <div>
+                                            <span class="goal-title">Todavía no has agregado una meta</span>
+                                        </div>
+                                        <span class="goal-category-tag">Personal</span>
+                                    </div>
+                                </div>
+
+                                <div class="agregar-meta">
+                                    <input
+                                        type="text"
+                                        id="nueva-meta"
+                                        class="chat-input-field"
+                                        placeholder="¿Qué meta quieres proponerte?"
+                                    >
+
+                                    <select
+                                        id="categoria-meta"
+                                        class="chat-input-field"
+                                    >
+                                        <option value="Personal">Personal</option>
+                                        <option value="Académica">Académica</option>
+                                        <option value="Creativa">Creativa</option>
+                                        <option value="Emocional">Emocional</option>
+                                    </select>
+
+                                    <button
+                                        id="agregar-meta-btn"
+                                        class="btn-primary-action"
+                                        type="button"
+                                    >
+                                        + Agregar
+                                    </button>
+                                </div>
+
+                            </section>
+
+
+                            <!-- MURO DE MOTIVACIÓN -->
+                            <section class="sanctuary-section-card">
+
+                                <div class="sanctuary-header">
+                                    <h3>Mi muro de motivación</h3>
+
+                                    <label
+                                        for="imagen-motivacion"
+                                        class="btn-back-home"
+                                        id="label-subir-foto"
+                                        title="Subir foto o imagen desde tu equipo"
+                                    >
+                                        Subir foto
+                                    </label>
+
+                                    <input
+                                        type="file"
+                                        id="imagen-motivacion"
+                                        accept="image/*"
+                                        style="display: none;"
+                                    >
+                                </div>
+
+                                <p class="texto-seccion">
+                                    Guarda imágenes de tu dispositivo, recuerdos o frases que quieras tener presentes cuando necesites motivación.
+                                </p>
+
+                                <div id="preview-foto-dispositivo" class="preview-archivo-subido oculto">
+                                    <span id="nombre-foto-dispositivo" class="nombre-archivo-txt"></span>
+                                    <button type="button" id="btn-cancelar-foto" class="btn-cancelar-subida" title="Quitar archivo">✕</button>
+                                </div>
+
+                                <div
+                                    class="motivations-wall"
+                                    id="muro-motivacion"
+                                >
+                                    <div class="motivation-item-card">
+                                        <div class="motivation-caption">
+                                            Aquí podrás guardar aquello que te inspire.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="agregar-motivacion">
+                                    <input
+                                        type="text"
+                                        id="frase-motivacion"
+                                        class="chat-input-field"
+                                        placeholder="Escribe una frase o recuerdo..."
+                                    >
+
+                                    <input
+                                        type="text"
+                                        id="imagen-motivacion-url"
+                                        class="chat-input-field"
+                                        placeholder="URL de imagen web (opcional)"
+                                    >
+
+                                    <button
+                                        id="agregar-motivacion-btn"
+                                        class="btn-primary-action"
+                                        type="button"
+                                    >
+                                        + Añadir
+                                    </button>
+                                </div>
+
+                            </section>
+
+                        </div>
+
+
+                        <!-- COLUMNA DERECHA -->
+                        <div>
+
+                            <!-- GRATITUD -->
+                            <section class="sanctuary-section-card">
+
+                                <div class="sanctuary-header">
+                                    <h3>Mi espacio de gratitud</h3>
+                                </div>
+
+                                <p class="texto-seccion">
+                                    Escribe algo por lo que quieras agradecer hoy.
+                                </p>
+
+                                <div
+                                    class="lista-gratitud"
+                                    id="lista-gratitud"
+                                >
+                                </div>
+
+                                <div class="agregar-gratitud">
+                                    <input
+                                        type="text"
+                                        id="nueva-gratitud"
+                                        class="chat-input-field"
+                                        placeholder="Hoy agradezco por..."
+                                    >
+
+                                    <button
+                                        id="agregar-gratitud-btn"
+                                        class="btn-primary-action"
+                                        type="button"
+                                    >
+                                        + Guardar
+                                    </button>
+                                </div>
+
+                            </section>
+
+
+                            <!-- MÚSICA Y RECURSOS -->
+                            <section class="sanctuary-section-card">
+
+                                <div class="sanctuary-header">
+                                    <h3>Mi música y recursos</h3>
+
+                                    <label
+                                        for="archivo-recurso-dispositivo"
+                                        class="btn-back-home"
+                                        id="label-subir-recurso"
+                                        title="Subir archivo de audio o video desde tu equipo"
+                                    >
+                                        Subir audio / video
+                                    </label>
+
+                                    <input
+                                        type="file"
+                                        id="archivo-recurso-dispositivo"
+                                        accept="audio/*,video/*"
+                                        style="display: none;"
+                                    >
+                                </div>
+
+                                <p class="texto-seccion">
+                                    Guarda audios o videos de tu dispositivo, o pega enlaces de YouTube / Spotify para reproducir cuando quieras.
+                                </p>
+
+                                <div id="preview-recurso-dispositivo" class="preview-archivo-subido oculto">
+                                    <span id="nombre-recurso-dispositivo" class="nombre-archivo-txt"></span>
+                                    <button type="button" id="btn-cancelar-recurso" class="btn-cancelar-subida" title="Quitar archivo">✕</button>
+                                </div>
+
+                                <div
+                                    class="personal-resources-grid"
+                                    id="lista-recursos"
+                                >
+                                </div>
+
+                                <div class="agregar-recurso">
+                                    <input
+                                        type="text"
+                                        id="nombre-recurso"
+                                        class="chat-input-field"
+                                        placeholder="Nombre del audio, video o recurso..."
+                                    >
+
+                                    <select
+                                        id="categoria-recurso"
+                                        class="chat-input-field"
+                                    >
+                                        <option value="Calma y paz">Calma y paz</option>
+                                        <option value="Subir el ánimo">Subir el ánimo</option>
+                                        <option value="Concentración">Concentración</option>
+                                        <option value="Dormir mejor">Dormir mejor</option>
+                                    </select>
+
+                                    <input
+                                        type="text"
+                                        id="url-recurso"
+                                        class="chat-input-field"
+                                        placeholder="Enlace YouTube/Spotify (opcional)"
+                                    >
+
+                                    <button
+                                        id="agregar-recurso-btn"
+                                        class="btn-primary-action"
+                                        type="button"
+                                    >
+                                        + Guardar
+                                    </button>
+                                </div>
+
+                            </section>
+
+                        </div>
+
+                    </div>
+
+                    <!-- QUIÉN SOY Y QUÉ ME IMPORTA -->
+                    <section class="sanctuary-section-card santuario-pilares-card">
+
+                        <div class="sanctuary-header">
+                            <h3>Quién soy y qué me importa</h3>
+                            <span class="metas-contador">Pilares editables</span>
+                        </div>
+
+                        <p class="texto-seccion">
+                            Un espacio íntimo para recordar tus fortalezas, tus valores y lo que te sostiene en momentos difíciles (haz clic en el texto para editar).
+                        </p>
+
+                        <div class="identity-cards-grid">
+                            <div class="identity-pillar-card">
+                                <h4>Mis fortalezas</h4>
+                                <p contenteditable="true" id="pilar-fortalezas">Soy resiliente, reflexivo/a y tengo la capacidad de aprender y comenzar de nuevo.</p>
+                            </div>
+
+                            <div class="identity-pillar-card">
+                                <h4>Lo que disfruto</h4>
+                                <p contenteditable="true" id="pilar-disfruto">Escuchar buena música, pasear al aire libre, conversar en confianza y momentos de tranquilidad.</p>
+                            </div>
+
+                            <div class="identity-pillar-card">
+                                <h4>Lo que valoro</h4>
+                                <p contenteditable="true" id="pilar-valoro">La honestidad, la paz mental, el respeto propio y la empatía con los demás.</p>
+                            </div>
+
+                            <div class="identity-pillar-card">
+                                <h4>Mi recordatorio</h4>
+                                <p contenteditable="true" id="pilar-recordatorio">Esto que siento es temporal. No tengo que tener todo resuelto hoy; un día a la vez es suficiente.</p>
+                            </div>
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </section>
+
+        </div>
+
+        <div
+            id="vista-emergencia"
+            class="vista"
+        >
+
+
+            <section class="pantalla emergencia">
+
+
+                <div class="encabezado-pantalla">
+
+
+                    <button class="volver" type="button" data-volver="anterior">
+                        Volver
+                    </button>
+
+
+                    <h2>
+                        Líneas de emergencia
+                    </h2>
+
+
+                </div>
+
+
+
+                <p>
+
+                    Si estás pasando por una situación difícil
+                    y necesitas ayuda inmediata, puedes comunicarte
+                    con los siguientes servicios.
+
+                </p>
+
+
+
+                <div class="lineas-ayuda">
+
+
+                    <div class="linea-ayuda">
+
+
+                        <h3>
+                            Línea 106
+                        </h3>
+
+
+                        <p>
+
+                            Apoyo emocional, escucha e intervención
+                            en crisis de salud mental.
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="linea-ayuda">
+
+
+                        <h3>
+                            WhatsApp Línea 106
+                        </h3>
+
+
+                        <p>
+                            300 754 8933
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="linea-ayuda">
+
+
+                        <h3>
+                            Línea de Emergencias 123
+                        </h3>
+
+
+                        <p>
+
+                            Para situaciones de emergencia
+                            o riesgo inmediato.
+
+                        </p>
+
+
+                    </div>
+
+
+                    <div class="linea-ayuda">
+                        <h3>
+                            Línea Salvavidas
+                        </h3>
+
+                        <p>
+                            311 766 8666.
+                            Apoyo para niños, adolescentes y jóvenes
+                            en riesgo de suicidio.
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </section>
+
+
+        </div>
+
+
+    
+        <!-- =====================================================
+        VISTA: PANEL ADMINISTRATIVO (RÚBRICA SLIDE 4)
+        ====================================================== -->
+    </main>
+
+    <footer id="pie-pagina" style="display: flex;">
+        <div class="logo-footer">
+            <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            <p>Un espacio para sentir.</p>
+        </div>
+        <p class="copyright">
+            © 2026 EmoWell. Todos los derechos reservados.
+        </p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "emowell",
+  "version": "2.0.0",
+  "description": "EmoWell - Plataforma Full Stack de Bienestar y Gestión Emocional para Jóvenes (React + Node + MongoDB + Gemini IA)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "build": "cd frontend && npm install && npm run build",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "node --watch server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "emowell",
+    "react",
+    "nodejs",
+    "mongodb",
+    "gemini",
+    "bienestar",
+    "salud-mental",
+    "jovenes-creativos"
+  ],
+  "author": "EmoWell Team",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongoose": "^9.12.1"
+  }
+}

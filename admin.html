@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Gestión Interna — EmoWell Admin</title>
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <script src="script.js?v=2.7"></script>
+</head>
+
+<body>
+
+    <header id="encabezado-app" class="encabezado-app">
+        <div class="logo">
+            <a href="index.html">
+                <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            </a>
+        </div>
+        <div class="acciones">
+            <a href="index.html" class="boton-sobre" style="text-decoration: none;">Volver al portal público</a>
+        </div>
+    </header>
+
+    <main>
+        <div id="vista-admin" class="vista activa" style="display: block;">
+            <section class="pantalla admin-pantalla">
+                <div class="encabezado-pantalla">
+                    <a href="index.html" class="volver" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">Volver</a>
+                    <h2>Panel de Gestión Interna (Admin)</h2>
+                </div>
+
+                <!-- Formulario Login de Admin -->
+                <div id="admin-seccion-login" class="tarjeta-acceso admin-card-login">
+                    <h3 style="text-align: center; color: #2f8f8a; margin: 0 0 8px;">Acceso de Administración</h3>
+                    <p style="text-align: center; color: #64748b; font-size: 14px; margin-bottom: 20px;">
+                        Acceso exclusivo para evaluación y gestión interna de EmoWell.
+                    </p>
+                    
+                    <div id="admin-login-alerta" class="mensaje-alerta-acceso" style="display: none;"></div>
+
+                    <form id="form-admin-login">
+                        <label for="admin-correo-input">Correo o usuario administrativo</label>
+                        <input id="admin-correo-input" type="text" placeholder="darlys o dlazab@unal.edu.co" autocomplete="username" required>
+                        <label for="admin-clave-input">Contraseña</label>
+                        <input id="admin-clave-input" type="password" placeholder="••••••••" autocomplete="current-password" required>
+                        <button type="submit" class="boton-acceso" style="width: 100%; margin-top: 15px;">Ingresar al Panel de Control</button>
+                    </form>
+                </div>
+
+                <!-- Dashboard de Admin (visible tras login) -->
+                <div id="admin-seccion-dashboard" class="oculto">
+                    <div class="admin-dashboard-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0;">
+                        <div>
+                            <span style="display: inline-block; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 6px;">
+                                Administradora General: Darlys Laza
+                            </span>
+                            <h3 style="margin: 0; color: #1e293b; font-size: 22px;">Gestión Interna y Monitoreo</h3>
+                            <p style="margin: 4px 0 0; color: #64748b; font-size: 14px;">Métricas en tiempo real y solicitudes sincronizadas con MongoDB Atlas.</p>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" id="btn-refrescar-admin" class="btn-back-home" style="cursor: pointer;">Actualizar</button>
+                            <button type="button" id="btn-cerrar-admin" class="btn-eliminar-item" style="cursor: pointer;">Cerrar sesión Admin</button>
+                        </div>
+                    </div>
+
+                    <!-- Métricas / KPIs -->
+                    <div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                        <div class="kpi-card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                            <span style="color: #64748b; font-size: 13px; font-weight: 500;">Total Usuarios</span>
+                            <div id="admin-kpi-usuarios" style="font-size: 28px; font-weight: 700; color: #0f766e; margin: 6px 0;">-</div>
+                            <span style="color: #94a3b8; font-size: 12px;">Registrados en el sistema</span>
+                        </div>
+                        <div class="kpi-card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                            <span style="color: #64748b; font-size: 13px; font-weight: 500;">Emociones Registradas</span>
+                            <div id="admin-kpi-emociones" style="font-size: 28px; font-weight: 700; color: #0f766e; margin: 6px 0;">-</div>
+                            <span style="color: #94a3b8; font-size: 12px;">Seguimiento emocional</span>
+                        </div>
+                        <div class="kpi-card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                            <span style="color: #64748b; font-size: 13px; font-weight: 500;">Solicitudes de Contacto</span>
+                            <div id="admin-kpi-contactos" style="font-size: 28px; font-weight: 700; color: #0f766e; margin: 6px 0;">-</div>
+                            <span style="color: #94a3b8; font-size: 12px;">Peticiones recibidas</span>
+                        </div>
+                        <div class="kpi-card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
+                            <span style="color: #64748b; font-size: 13px; font-weight: 500;">Base de Datos</span>
+                            <div style="font-size: 22px; font-weight: 700; color: #10b981; margin: 6px 0;">Atlas Activo</div>
+                            <span style="color: #94a3b8; font-size: 12px;">Cluster: emowell / EmoWell</span>
+                        </div>
+                    </div>
+
+                    <!-- Lista de solicitudes de contacto -->
+                    <div style="background: white; border-radius: 16px; padding: 25px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+                        <h4 style="margin: 0 0 15px; color: #1e293b; font-size: 18px;">Solicitudes de Servicios y Contacto</h4>
+                        <div id="admin-lista-solicitudes" style="display: flex; flex-direction: column; gap: 12px;">
+                            <p style="color: #94a3b8; font-size: 14px;">Cargando solicitudes...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer id="pie-pagina" style="display: flex;">
+        <div class="logo-footer">
+            <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            <p>Un espacio para sentir.</p>
+        </div>
+        <p class="copyright">
+            © 2026 EmoWell. Todos los derechos reservados.
+        </p>
+    </footer>
+
+</body>
+
+</html>

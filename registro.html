@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta — EmoWell</title>
+    <link rel="stylesheet" href="style.css?v=2.7">
+    <script src="script.js?v=2.7"></script>
+</head>
+
+<body>
+
+    <header id="encabezado-app" class="encabezado-app">
+        <div class="logo">
+            <a href="index.html">
+                <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            </a>
+        </div>
+        <div class="acciones">
+            <a href="index.html" class="boton-sobre" style="text-decoration: none; display: inline-flex; align-items: center;">Volver al inicio</a>
+            <a href="login.html" class="boton-sobre" style="text-decoration: none; border: 1px solid #54c5c0; border-radius: 8px; padding: 8px 14px;">Iniciar sesión</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="vista-registro" class="vista pantalla-acceso activa" style="display: grid;" aria-labelledby="titulo-registro">
+            <div class="tarjeta-acceso">
+                <a href="index.html" class="volver-publico" style="text-decoration: none; display: inline-block;">← Volver al inicio</a>
+                <h1 id="titulo-registro">Crear una cuenta</h1>
+                <p>Crea tu cuenta segura para guardar tus emociones, metas y muro personal.</p>
+                <div id="registro-alerta" class="mensaje-alerta-acceso"></div>
+                <form id="form-registro">
+                    <label for="nombre-registro">Nombre</label>
+                    <input id="nombre-registro" name="nombre" type="text" autocomplete="given-name" placeholder="Tu nombre" required>
+                    <label for="correo-registro">Correo electrónico</label>
+                    <input id="correo-registro" name="correo" type="email" autocomplete="email" placeholder="ejemplo@correo.com" required>
+                    <label for="clave-registro">Contraseña</label>
+                    <input id="clave-registro" name="clave" type="password" autocomplete="new-password" placeholder="Mínimo 4 caracteres" required minlength="4">
+                    <button type="submit" class="boton-acceso" id="btn-submit-registro">Crear cuenta</button>
+                </form>
+                <p class="nota-prototipo">¿Ya tienes una cuenta? <a href="login.html" class="enlace-texto-acceso" style="text-decoration: underline;">Inicia sesión aquí</a></p>
+            </div>
+        </section>
+    </main>
+
+    <footer id="pie-pagina" style="display: flex;">
+        <div class="logo-footer">
+            <img src="./Imagenes.png/logoJC.png" alt="Logo de EmoWell">
+            <p>Un espacio para sentir.</p>
+        </div>
+        <p class="copyright">
+            © 2026 EmoWell. Todos los derechos reservados.
+        </p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+# Dependencias de Node
+node_modules/
+frontend/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de entorno local con credenciales
+.env
+.env.local
+.env.*.local
+
+# Archivos del sistema operativo y copias de seguridad
+.DS_Store
+Thumbs.db
+*.bak
