@@ -29,6 +29,11 @@
       "token": "86b0d831829275aec9a1a90fba483ac435cda243772620c3edc8fa3cfec01561",
       "userId": "6affb1b7c7e4239a3c4c5686",
       "createdAt": "2026-11-20T02:49:45.744Z"
+    },
+    {
+      "token": "7d31e8c887076b012b876ed78efca74dcc91088148007c208604000ef98d54ae",
+      "userId": "6affa044bebc133c09dea4f2",
+      "createdAt": "2026-11-20T06:07:11.804Z"
     }
   ],
   "emociones": [],
@@ -55,5 +60,68 @@
     }
   ],
   "pilares": {},
-  "chatHistory": {}
+  "chatHistory": {
+    "6affa044bebc133c09dea4f2": [
+      {
+        "emisor": "usuario",
+        "texto": "Hola",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:37.821Z"
+      },
+      {
+        "emisor": "emowell",
+        "texto": "Hola. Qué bueno que estés por aquí. ¿Cómo viene tu día y cómo te sientes en este momento? Tómate un instante para respirar y cuéntame lo que necesites, aquí estoy para escucharte sin prisas.",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:37.821Z"
+      },
+      {
+        "emisor": "usuario",
+        "texto": "Qué bueno que estés por aquí",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:43.215Z"
+      },
+      {
+        "emisor": "emowell",
+        "texto": "Me alegra mucho leer eso. A veces, entre tantas cosas pendientes, clases y el ritmo del día a día, se agradece un rincón donde simplemente se pueda bajar el ritmo y ser uno mismo, ¿verdad? \n\n¿Cómo te ha tratado el día hasta ahora? Si hay algo rondando en tu cabeza o si solo quieres descansar un momento y desconectar, este espacio es completamente tuyo. Cuéntame qué tal te sientes.",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:43.215Z"
+      },
+      {
+        "emisor": "usuario",
+        "texto": "leer eso",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:46.539Z"
+      },
+      {
+        "emisor": "emowell",
+        "texto": "Parece que te ha llamado la atención esa frase, o tal vez simplemente se quedó resonando en ti al leerla. A veces, una pequeña palabra o una frase suelta es justo lo único que logramos procesar cuando la mente está a mil por hora o un poco cansada. \n\n¿Hay algo de lo que leíste que te hizo eco, o es solo que hoy las palabras cuestan un poquito más de lo habitual? Respira hondo y tómate todo el tiempo que necesites; aquí no hay prisa ninguna.",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:46.539Z"
+      },
+      {
+        "emisor": "usuario",
+        "texto": "te ha llamado la atención",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:50.192Z"
+      },
+      {
+        "emisor": "emowell",
+        "texto": "Quizá me lo quedé resonando porque, a veces, las palabras más sencillas son las que más nos devuelven al presente. Entre tantas notificaciones, tareas y pendientes universitarios, detenernos a leer algo que simplemente nos acompaña se siente inusual, pero muy necesario.\n\n¿Cómo vas tú con eso hoy? Si tu mente está un poco saturada de tanto procesar información, está bien hacer una pausa y no tener que descifrar nada complejo. ¿Te apetece contarme qué es lo que más te pesa o te da vueltas en la cabeza en este momento?",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:50.192Z"
+      },
+      {
+        "emisor": "usuario",
+        "texto": "quedé resonando porque a veces",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:55.180Z"
+      },
+      {
+        "emisor": "emowell",
+        "texto": "Esas palabras tienen una forma muy suya de quedarse dando vueltas en la cabeza, ¿verdad? A veces nos atrapa una sola frase y nos invita a detenernos, casi como si el mismo cuerpo nos estuviera pidiendo un respiro en medio del ruido de la rutina.\n\nSi hoy las ideas se sienten un poco fragmentadas o pesadas, no tienes que forzarte a armar oraciones perfectas. Solo déjalas salir tal como vienen, o si prefieres, permítete soltar las pantallas por un momento y descasar la vista. ¿Qué necesitas más en este instante?",
+        "esAlerta": false,
+        "timestamp": "2026-11-20T06:07:55.180Z"
+      }
+    ]
+  }
 }

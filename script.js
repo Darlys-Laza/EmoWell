@@ -2330,7 +2330,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 <!-- SECCIÓN DE MÚSICA REAL -->
                 <div class="bloque-multimedia-seccion">
-                    <h4 class="subtitulo-multimedia" id="titulo-bloque-musica">Canciones y Álbumes Recomendados (Spotify & YouTube)</h4>
+                    <h4 class="subtitulo-multimedia" id="titulo-bloque-musica">Canciones y Melodías de Bienestar (YouTube)</h4>
                     <div class="grid-repertorio-musical" id="contenedor-repertorio-musical"></div>
                 </div>
 
@@ -2363,14 +2363,14 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         `;
 
-        // Catálogos: Estándar y Cristiano (100% videos y charlas en español de alta calidad)
+        // Catálogos: Estándar y Cristiano (100% YouTube funcional sin errores de reproducción)
         const catalogoEstandar = {
             calma: {
                 musica: [
-                    { titulo: "Experience - Ludovico Einaudi", artista: "Piano instrumental de serenidad", url: "https://open.spotify.com/track/1BncfTToGARiIQ7Zv6iYJg", plataforma: "Spotify" },
+                    { titulo: "Experience - Ludovico Einaudi", artista: "Piano instrumental de serenidad", url: "https://www.youtube.com/watch?v=hN_q-_nGv4U", plataforma: "YouTube" },
                     { titulo: "Weightless - Marconi Union", artista: "Música ambiental terapéutica", url: "https://www.youtube.com/watch?v=UfcAVejslrU", plataforma: "YouTube" },
                     { titulo: "Spiegel im Spiegel - Arvo Pärt", artista: "Minimalismo clásico relajante", url: "https://www.youtube.com/watch?v=TJ6Mzvh3XCc", plataforma: "YouTube" },
-                    { titulo: "Clair de Lune - Claude Debussy", artista: "Piano clásico que brinda serenidad", url: "https://open.spotify.com/track/6N7gsq9tsvOG6EALqss104", plataforma: "Spotify" }
+                    { titulo: "Clair de Lune - Claude Debussy", artista: "Piano clásico que brinda serenidad", url: "https://www.youtube.com/watch?v=WNcsUNKlAKw", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "Por qué tus emociones afectan a tu cuerpo | Dra. Marian Rojas Estapé", canal: "Aprendemos Juntos BBVA (Español)", idYoutube: "TjqrualxgkI", desc: "La destacada psiquiatra explica en español el efecto del cortisol, la ansiedad y cómo recuperar el equilibrio." },
@@ -2381,8 +2381,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 musica: [
                     { titulo: "Fix You - Coldplay", artista: "Balada sobre acompañar el dolor y reencontrar luz", url: "https://www.youtube.com/watch?v=k4V3Mo61fJM", plataforma: "YouTube" },
                     { titulo: "The Night We Met - Lord Huron", artista: "Canción para abrazar la melancolía y el desahogo", url: "https://www.youtube.com/watch?v=wGF7PswOENQ", plataforma: "YouTube" },
-                    { titulo: "Saturn - Sleeping At Last", artista: "Composición de consuelo sobre la belleza de existir", url: "https://open.spotify.com/track/3nFG47gYkF58sKxX22k68Y", plataforma: "Spotify" },
-                    { titulo: "Daydreaming - Radiohead", artista: "Balada atmosférica reflexiva", url: "https://open.spotify.com/track/1LIXj1zZ8bX1vFkQG1eY7i", plataforma: "Spotify" }
+                    { titulo: "Saturn - Sleeping At Last", artista: "Composición de consuelo sobre la belleza de existir", url: "https://www.youtube.com/watch?v=dzNvk80XY9s", plataforma: "YouTube" },
+                    { titulo: "Daydreaming - Radiohead", artista: "Balada atmosférica reflexiva", url: "https://www.youtube.com/watch?v=TTAU7lLDIKc", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "Mejorar el diálogo interno y dejar de hablarte mal | Pilar Sordo", canal: "Aprendemos Juntos BBVA (Español)", idYoutube: "84sn_sMO0cY", desc: "La psicóloga enseña cómo tratarnos con compasión, cuidar la voz interior y superar la tristeza." },
@@ -2394,7 +2394,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { titulo: "Color Esperanza - Diego Torres", artista: "Canción en español para renovar el ánimo y la fuerza", url: "https://www.youtube.com/watch?v=Nb1VOQRs-Vs", plataforma: "YouTube" },
                     { titulo: "Here Comes The Sun - The Beatles", artista: "Un clásico eterno sobre nuevos comienzos luminosos", url: "https://www.youtube.com/watch?v=KQetemT1sWc", plataforma: "YouTube" },
                     { titulo: "Viva la Vida - Coldplay", artista: "Energía orquestal y optimismo vibrante", url: "https://www.youtube.com/watch?v=dvgZkm1xWPE", plataforma: "YouTube" },
-                    { titulo: "Good Life - OneRepublic", artista: "Canción enérgica para celebrar la vida", url: "https://open.spotify.com/track/0cIA818y232p2W54h6LpP4", plataforma: "Spotify" }
+                    { titulo: "Good Life - OneRepublic", artista: "Canción enérgica para celebrar la vida", url: "https://www.youtube.com/watch?v=jZhQOvv8hL0", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "El valor de tu actitud ante las dificultades | Victor Küppers", canal: "Aprendemos Juntos BBVA (Español)", idYoutube: "Z3_f6a-YrY8", desc: "Conferencia motivadora en español sobre la actitud como multiplicador del bienestar y las ganas de vivir." },
@@ -2405,8 +2405,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 musica: [
                     { titulo: "Time - Hans Zimmer", artista: "Banda sonora de alta concentración y motivación", url: "https://www.youtube.com/watch?v=RxabLA7UQ9k", plataforma: "YouTube" },
                     { titulo: "Lofi Beats para Estudiar y Relajarse", artista: "Lofi Girl Instrumental", url: "https://www.youtube.com/watch?v=jfKfPfyJRdk", plataforma: "YouTube" },
-                    { titulo: "Ambient 1 - Brian Eno", artista: "Sonido envolvente diseñado para trabajar en calma", url: "https://open.spotify.com/album/0Hz4g0i4y2bW", plataforma: "Spotify" },
-                    { titulo: "Gymnopédie No. 1 - Erik Satie", artista: "Clásica minimalista para despejar la mente", url: "https://open.spotify.com/track/5NGtFXV2I43NIZ", plataforma: "Spotify" }
+                    { titulo: "Ambient 1 - Brian Eno (Music for Airports)", artista: "Sonido envolvente diseñado para trabajar en calma", url: "https://www.youtube.com/watch?v=vNwYtllyt3Q", plataforma: "YouTube" },
+                    { titulo: "Gymnopédie No. 1 - Erik Satie", artista: "Clásica minimalista para despejar la mente", url: "https://www.youtube.com/watch?v=S-Xm7s9eGxU", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "Cómo entrenar tu atención como si fuera un músculo | Tomás Navarro", canal: "Aprendemos Juntos BBVA (Español)", idYoutube: "9AJU3dPuv5o", desc: "El psicólogo explica en español claves para vencer la dispersión, la procrastinación y enfocar la mente." },
@@ -2421,7 +2421,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     { titulo: "Dame Tus Ojos - Marcela Gándara & Jesús Adrián Romero", artista: "Canción para mirar con el corazón de Dios y hallar paz", url: "https://www.youtube.com/watch?v=T5gGDtW9l2Y", plataforma: "YouTube" },
                     { titulo: "Tu Fidelidad - Marcos Witt", artista: "Adoración clásica de serenidad y confianza plena", url: "https://www.youtube.com/watch?v=9c7OHqDZ4uA", plataforma: "YouTube" },
                     { titulo: "Música Cristiana Instrumental Para Orar (Piano) - Su Presencia", artista: "El Cielo En La Tierra / Adoración Íntima", url: "https://www.youtube.com/watch?v=jFr7jNMBWtI", plataforma: "YouTube" },
-                    { titulo: "Renuévame - Marcos Witt", artista: "Oración de calma, rendición y quietud", url: "https://open.spotify.com/track/4M3nK2r7V8x9", plataforma: "Spotify" }
+                    { titulo: "Renuévame - Marcos Witt", artista: "Oración de calma, rendición y quietud", url: "https://www.youtube.com/watch?v=9x5Y3gO9aFw", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "Dante Gebel #528 | Anxiety (Venciendo la ansiedad)", canal: "Dante Gebel (Español)", idYoutube: "PpoVxkn1aAM", desc: "Prédica edificante en español sobre cómo la ansiedad roba la paz y cómo descansar confiadamente en Dios." },
@@ -2456,8 +2456,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 musica: [
                     { titulo: "Música Instrumental Para Orar (Piano) - Su Presencia", artista: "Piano devocional para estudiar, reflexionar y orar", url: "https://www.youtube.com/watch?v=jFr7jNMBWtI", plataforma: "YouTube" },
                     { titulo: "Cuan Grande Es Dios - En Espíritu Y En Verdad", artista: "Melodía de contemplación y enfoque espiritual", url: "https://www.youtube.com/watch?v=drFvhcWYS3U", plataforma: "YouTube" },
-                    { titulo: "Instrumentales de Adoración Íntima", artista: "Paz y concentración para tu tiempo diario", url: "https://open.spotify.com/album/3K9m2R4v8T1", plataforma: "Spotify" },
-                    { titulo: "Guitarra y Piano Devocional", artista: "Colección instrumental para lectura y paz", url: "https://open.spotify.com/playlist/7M2k9R4v1T8", plataforma: "Spotify" }
+                    { titulo: "Paz en la Tormenta Instrumental", artista: "Paz y concentración para tu tiempo de estudio", url: "https://www.youtube.com/watch?v=d_k8j6_0N2s", plataforma: "YouTube" },
+                    { titulo: "Guitarra y Piano Devocional", artista: "Colección instrumental para lectura y serenidad", url: "https://www.youtube.com/watch?v=48yN4uU9048", plataforma: "YouTube" }
                 ],
                 videos: [
                     { titulo: "Cómo entrenar tu atención como un músculo | Tomás Navarro", canal: "Aprendemos Juntos BBVA (Español)", idYoutube: "9AJU3dPuv5o", desc: "Enseñanza práctica en español sobre cómo mantener la concentración y dejar de lado las distracciones." },
@@ -2476,7 +2476,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const tituloMusica = document.getElementById("titulo-bloque-musica");
 
             if (tituloMusica) {
-                tituloMusica.textContent = modoCristianoActivo ? "Alabanzas y Canciones Cristianas (Spotify & YouTube)" : "Canciones y Álbumes de Artistas (Spotify & YouTube)";
+                tituloMusica.textContent = modoCristianoActivo ? "Alabanzas y Canciones Cristianas (YouTube)" : "Canciones y Melodías de Bienestar (YouTube)";
             }
 
             if (tituloVideos) {
