@@ -1811,7 +1811,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let datosGrafica = [];
         if (registrosEmocionales.length >= 2) {
             // Agrupar por semana o tomar los últimos registros
-            const ultimos = registrosEmocionales.slice(-7);
+            const ultimos = [...registrosEmocionales]
+                .sort((a, b) =>
+                    new Date(a.timestamp).getTime() -
+                    new Date(b.timestamp).getTime()
+                )
+                .slice(-7);
             datosGrafica = ultimos.map((reg, idx) => ({
                 emocion: reg.emocion,
                 etiquetaX: reg.semanaMes || reg.fecha,
@@ -1939,25 +1944,62 @@ document.addEventListener("DOMContentLoaded", function () {
             listaDetallada.className = "lista-timeline-emocional";
             listaDetallada.style.marginTop = "20px";
 
-            registrosEmocionales.slice().reverse().forEach(registro => {
-                const meta = metaEmociones[registro.emocion] || { nombre: registro.emocion, color: "#2f8f8a" };
-                const item = document.createElement("div");
-                item.className = "timeline-item-card";
+            
+                registrosEmocionales.slice().reverse().forEach(registro => {
 
-                item.innerHTML = `
-                    <div class="timeline-badge-texto" style="border-left: 4px solid ${meta.color}; padding-left: 8px;">
-                        <span class="timeline-emocion-nombre">${meta.nombre}</span>
-                    </div>
-                    <div class="timeline-info">
-                        <div class="timeline-header-line">
-                            <span class="timeline-fecha">${registro.fecha} - ${registro.hora || "Reciente"}</span>
-                            <span class="chip-nivel-tag nivel-${registro.etiqueta.toLowerCase()}">${registro.nivel} / 5 (${registro.etiqueta})</span>
+                    const meta = metaEmociones[registro.emocion] || {
+                        nombre: registro.emocion || "Otra emoción",
+                        color: "#2f8f8a"
+                    };
+
+                    // Recuperar el nivel numérico
+                    const nivelNumerico = Number(registro.nivel);
+
+                    // Si el registro no tiene etiqueta, calcularla
+                    let etiqueta = registro.etiqueta;
+
+                    if (!etiqueta) {
+                        if (nivelNumerico < 2.2) {
+                            etiqueta = "Bajo";
+                        } else if (nivelNumerico < 3.8) {
+                            etiqueta = "Moderado";
+                        } else {
+                            etiqueta = "Alto";
+                        }
+                    }
+
+                    const claseEtiqueta = etiqueta.toLowerCase();
+
+                    const item = document.createElement("div");
+                    item.className = "timeline-item-card";
+
+                    item.innerHTML = `
+                        <div class="timeline-badge-texto"
+                            style="border-left: 4px solid ${meta.color}; padding-left: 8px;">
+                            <span class="timeline-emocion-nombre">${meta.nombre}</span>
                         </div>
-                        <p class="timeline-descripcion">${registro.mensajeOrientador || "Registro completado con éxito."}</p>
-                    </div>
-                `;
-                listaDetallada.appendChild(item);
-            });
+
+                        <div class="timeline-info">
+                            <div class="timeline-header-line">
+                                <span class="timeline-fecha">
+                                    ${registro.fecha || "Fecha no disponible"} -
+                                    ${registro.hora || "Reciente"}
+                                </span>
+
+                                <span class="chip-nivel-tag nivel-${claseEtiqueta}">
+                                    ${registro.nivel} / 5 (${etiqueta})
+                                </span>
+                            </div>
+
+                            <p class="timeline-descripcion">
+                                ${registro.mensajeOrientador || "Registro completado con éxito."}
+                            </p>
+                        </div>
+                    `;
+
+                    listaDetallada.appendChild(item);
+                });
+
 
             contenedorGraficaCompleta.appendChild(listaDetallada);
         }
