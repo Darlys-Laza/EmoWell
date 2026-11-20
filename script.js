@@ -1807,30 +1807,41 @@ document.addEventListener("DOMContentLoaded", function () {
             return 4;
         }
 
-        // Construir datos de puntos exclusivamente a partir de los registros reales de este usuario
+        // Construir datos de puntos a partir de registros reales o datos demostrativos si está recién abierto
         let datosGrafica = [];
-        const tieneRegistros = Array.isArray(registrosEmocionales) && registrosEmocionales.length > 0;
-
-        if (tieneRegistros) {
-            const ultimos = registrosEmocionales.slice(-10);
-            datosGrafica = ultimos.map((reg) => ({
+        if (registrosEmocionales.length >= 2) {
+            // Agrupar por semana o tomar los últimos registros
+            const ultimos = registrosEmocionales.slice(-7);
+            datosGrafica = ultimos.map((reg, idx) => ({
                 emocion: reg.emocion,
-                etiquetaX: reg.semanaMes || reg.fecha || "Hoy",
+                etiquetaX: reg.semanaMes || reg.fecha,
                 valorY: obtenerIndiceY(reg.emocion),
-                conteo: Math.max(1, Math.round(parseFloat(reg.nivel) || 1))
+                conteo: Math.max(1, Math.round(parseFloat(reg.nivel)))
             }));
         } else {
-            // Si el usuario aún no tiene registros, mostramos la cuadrícula limpia con la fecha actual
-            const ahoraRef = new Date();
-            const diaMes = ahoraRef.getDate();
-            const numSemana = Math.ceil(diaMes / 7);
-            const mesesCortos = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-            const anioCorto = String(ahoraRef.getFullYear()).slice(-2);
-            const fechaActualEtiqueta = `${mesesCortos[ahoraRef.getMonth()]} S${numSemana} ${anioCorto}`;
-
+            // Datos iniciales de referencia idénticos a la gráfica de la guía del usuario
             datosGrafica = [
-                { emocion: "tranquilidad", etiquetaX: fechaActualEtiqueta, valorY: 4, conteo: 0, esPlaceholder: true }
+                { emocion: "tristeza", etiquetaX: "Mar S4 26", valorY: 4, conteo: 2 },
+                { emocion: "tristeza", etiquetaX: "Mar S5 26", valorY: 4, conteo: 1 },
+                { emocion: "amor", etiquetaX: "Abr S2 26", valorY: 1, conteo: 3 },
+                { emocion: "amor", etiquetaX: "Abr S3 26", valorY: 1, conteo: 2 },
+                { emocion: "enojo", etiquetaX: "Abr S5 26", valorY: 3, conteo: 4 },
+                { emocion: "tristeza", etiquetaX: "May S1 26", valorY: 4, conteo: 1 },
+                { emocion: "amor", etiquetaX: "May S3 26", valorY: 1, conteo: 3 },
+                { emocion: "miedo", etiquetaX: "May S4 26", valorY: 5, conteo: 1 },
+                { emocion: "tristeza", etiquetaX: "Jun S1 26", valorY: 4, conteo: 2 }
             ];
+
+            // Si hay 1 registro del usuario, lo colocamos al final
+            if (registrosEmocionales.length === 1) {
+                const unico = registrosEmocionales[0];
+                datosGrafica.push({
+                    emocion: unico.emocion,
+                    etiquetaX: unico.semanaMes || unico.fecha,
+                    valorY: obtenerIndiceY(unico.emocion),
+                    conteo: Math.max(1, Math.round(parseFloat(unico.nivel)))
+                });
+            }
         }
 
         const contenedorGraficaCompleta = document.createElement("div");
@@ -1890,16 +1901,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let etiquetasXHtml = "";
 
         puntosCoordenadas.forEach((pt, idx) => {
-            if (pt.esPlaceholder) {
-                // Si es solo la grilla inicial sin registros aún
-                etiquetasXHtml += `
-                    <text x="${pt.x}" y="${altoSvg - paddingBottom + 22}" text-anchor="end" transform="rotate(-30, ${pt.x}, ${altoSvg - paddingBottom + 22})" fill="#718096" font-size="11" font-weight="500">
-                        ${pt.etiquetaX}
-                    </text>
-                `;
-                return;
-            }
-
             const colorPunto = pt.valorY <= 2 ? "#ec4899" : pt.valorY === 3 ? "#dc2626" : "#6366f1";
 
             // Halo semitransparente
@@ -1917,8 +1918,6 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
         });
 
-        const rutaSvgConectar = (!tieneRegistros || puntosCoordenadas.length <= 1) ? "" : `<polyline points="${rutaPuntos}" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
-
         const svgGrafica = `
             <div class="grafica-svg-scroll-wrapper">
                 <svg viewBox="0 0 ${anchoSvg} ${altoSvg}" class="svg-tendencia-emocional" xmlns="http://www.w3.org/2000/svg">
@@ -1926,7 +1925,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ${lineasVerticales}
                     ${etiquetasYHtml}
                     ${etiquetasXHtml}
-                    ${rutaSvgConectar}
+                    <polyline points="${rutaPuntos}" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
                     ${elementosPuntos}
                 </svg>
             </div>
