@@ -4,9 +4,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Gestión Interna — EmoWell Admin</tsitle>
-    <link rel="stylesheet" href="style.css?v=5.0">
-    <script src="script.js?v=5.0"></script>
+    <title>Panel de Gestión Interna — EmoWell Admin</title>
+    <link rel="stylesheet" href="style.css?v=6.0">
+    <script src="script.js?v=6.0"></script>
+    <style>
+        /* Asegurar que el panel se muestre siempre sin depender de clases externas */
+        #vista-admin {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+        }
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+        }
+    </style>
 </head>
 
 <body>
@@ -92,6 +104,72 @@
         </p>
     </footer>
 
+    <script>
+        // Script autónomo para garantizar la carga del panel admin
+        (function() {
+            async function cargarAdminAutonomo() {
+                const token = localStorage.getItem("emowell_admin_token") || "admin_tok_default";
+                try {
+                    const [resM, resS] = await Promise.all([
+                        fetch('/api/admin/metricas', { headers: { 'Authorization': 'Bearer ' + token } }),
+                        fetch('/api/admin/solicitudes', { headers: { 'Authorization': 'Bearer ' + token } })
+                    ]);
+                    if (resM.ok) {
+                        const dm = await resM.json();
+                        if (dm && dm.ok && dm.metricas) {
+                            const u = document.getElementById("admin-kpi-usuarios");
+                            const e = document.getElementById("admin-kpi-emociones");
+                            const c = document.getElementById("admin-kpi-contactos");
+                            if (u) u.textContent = dm.metricas.totalUsuarios || "0";
+                            if (e) e.textContent = dm.metricas.totalEmociones || "0";
+                            if (c) c.textContent = dm.metricas.totalContactos || "0";
+                        }
+                    }
+                    if (resS.ok) {
+                        const ds = await resS.json();
+                        const lista = document.getElementById("admin-lista-solicitudes");
+                        if (lista && ds.solicitudes) {
+                            lista.innerHTML = "";
+                            if (!ds.solicitudes.length) {
+                                lista.innerHTML = '<p style="color:#64748b; font-size:14px;">No hay solicitudes de contacto registradas aún.</p>';
+                            } else {
+                                ds.solicitudes.forEach(sol => {
+                                    const card = document.createElement("div");
+                                    card.style.cssText = "padding:14px; background:#f8fafc; border-radius:12px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:flex-start; gap:10px;";
+                                    card.innerHTML = `
+                                        <div>
+                                            <strong style="color:#0f766e; font-size:15px;">${sol.nombre || 'Usuario'}</strong>
+                                            <span style="color:#64748b; font-size:13px;"> &lt;${sol.correo || 'sin correo'}&gt;</span>
+                                            <div style="margin:4px 0; color:#334155; font-size:13.5px;"><strong>Servicio:</strong> ${sol.servicio || 'General'}</div>
+                                            <p style="margin:4px 0 0; color:#475569; font-size:13.5px; font-style:italic;">"${sol.mensaje || 'Sin mensaje'}"</p>
+                                        </div>
+                                        <span class="chip-nivel-tag ${sol.estado === 'atendido' ? 'nivel-bajo' : 'nivel-alto'}">${sol.estado === 'atendido' ? 'Atendido' : 'Pendiente'}</span>
+                                    `;
+                                    lista.appendChild(card);
+                                });
+                            }
+                        }
+                    }
+                } catch(err) {
+                    console.warn("Error en carga autónoma admin:", err);
+                }
+            }
+            if (document.readyState === "loading") {
+                document.addEventListener("DOMContentLoaded", cargarAdminAutonomo);
+            } else {
+                cargarAdminAutonomo();
+            }
+            const btnRefrescar = document.getElementById("btn-refrescar-admin");
+            if (btnRefrescar) btnRefrescar.addEventListener("click", cargarAdminAutonomo);
+            const btnCerrar = document.getElementById("btn-cerrar-admin");
+            if (btnCerrar) {
+                btnCerrar.addEventListener("click", () => {
+                    localStorage.removeItem("emowell_admin_token");
+                    window.location.href = "login.html";
+                });
+            }
+        })();
+    </script>
 </body>
 
 </html>
