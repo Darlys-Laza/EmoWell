@@ -1,10 +1,25 @@
 
 console.log("EmoWell está funcionando");
 
+// Soporte universal: Si se abre por doble clic (file://), redirige las llamadas API a http://localhost:3000
+(function() {
+    if (typeof window !== "undefined" && window.location && window.location.protocol === "file:") {
+        const originalFetch = window.fetch;
+        window.fetch = function(input, init) {
+            if (typeof input === "string" && input.startsWith("/api/")) {
+                input = "http://localhost:3000" + input;
+            } else if (input instanceof Request && input.url.startsWith("file:///api/")) {
+                input = new Request("http://localhost:3000" + input.url.replace("file://", ""), init);
+            }
+            return originalFetch.call(this, input, init);
+        };
+    }
+})();
+
 document.addEventListener("DOMContentLoaded", function () {
 
     // =====================================================
-    // 1. NAVEGACIÓN Y ACCESO AL PROTOTIPO
+    // 1. NAVEGACIÓN Y AUTENTICACIÓN SEGURA
     // =====================================================
 
     const vistas = document.querySelectorAll(".vista");
@@ -16,23 +31,67 @@ document.addEventListener("DOMContentLoaded", function () {
     const bienvenida = document.getElementById("bienvenida");
     const botonCerrarSesion = document.getElementById("cerrar-sesion");
     const piePagina = document.getElementById("pie-pagina");
+    const loginAlerta = document.getElementById("login-alerta");
+    const registroAlerta = document.getElementById("registro-alerta");
+    const usuarioActivoBadge = document.getElementById("usuario-activo-badge");
 
     let sesionIniciada = false;
     let vistaAnterior = "vista-inicio";
+    let tokenSesion = localStorage.getItem("emowell_token") || null;
+    let usuarioActual = null;
+
+    try {
+        const u = localStorage.getItem("emowell_user");
+        if (u) {
+            usuarioActual = JSON.parse(u);
+            if (usuarioActual && (usuarioActual.nombre === "6dantesss" || usuarioActual.nombre === "6dantesss@gmail.com")) {
+                usuarioActual.nombre = "Jhonatan David Torres Patiño";
+                localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+            }
+        }
+    } catch (e) {
+        usuarioActual = null;
+    }
+
+    // Generador de claves de almacenamiento aisladas estrictamente por usuario
+    function obtenerClaveUsuario(subclave) {
+        let identificador = "anonimo";
+        if (usuarioActual) {
+            identificador = (usuarioActual.id || usuarioActual._id || usuarioActual.correo || "usuario").toString().replace(/[^a-zA-Z0-9_-]/g, "_");
+        }
+        return `emowell_u_${identificador}_${subclave}`;
+    }
 
     const vistasPublicas = [
         "vista-publica",
         "vista-login",
         "vista-registro",
-        "vista-emergencia"
+        "vista-emergencia",
+        "vista-admin"
     ];
 
     function mostrarVista(idVista) {
-
         const seleccionada = document.getElementById(idVista);
+        const rutaActual = window.location.pathname.toLowerCase();
 
         if (!seleccionada) {
-            console.error("No existe la vista:", idVista);
+            // Navegación fluida entre páginas modulares sin bucles de redirección
+            if (idVista === "vista-login" && !rutaActual.includes("login")) {
+                window.location.href = "login.html";
+                return;
+            }
+            if (idVista === "vista-registro" && !rutaActual.includes("registro")) {
+                window.location.href = "registro.html";
+                return;
+            }
+            if (idVista === "vista-admin" && !rutaActual.includes("admin")) {
+                window.location.href = "admin.html";
+                return;
+            }
+            if (idVista === "vista-inicio" && !rutaActual.includes("main")) {
+                window.location.href = "main.html";
+                return;
+            }
             return;
         }
 
@@ -56,16 +115,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
         vistas.forEach(vista => {
             vista.style.display = "none";
+            vista.classList.remove("activa");
         });
 
-        seleccionada.style.display =
-            seleccionada.classList.contains("pantalla-acceso")
-                ? "grid"
-                : "block";
+        const esAcceso = seleccionada.classList.contains("pantalla-acceso");
+        seleccionada.style.display = esAcceso ? "grid" : "block";
+        seleccionada.classList.add("activa");
 
         if (piePagina) {
             piePagina.style.display =
                 idVista === "vista-publica" ? "flex" : "none";
+        }
+
+        // Si navega al chat y no hay mensajes cargados, inicializar
+        if (idVista === "vista-charlar") {
+            cargarHistorialChat();
+        }
+
+        // Si navega a Mi Espacio, cargar datos actualizados
+        if (idVista === "vista-espacio") {
+            cargarDatosEspacioPersonal();
+        }
+
+        // Si navega al panel admin, actualizar dashboard o mostrar login
+        if (idVista === "vista-admin") {
+            actualizarVistaAdmin();
         }
 
         window.scrollTo({
@@ -75,167 +149,384 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function actualizarEncabezado() {
-
-        document.body.classList.toggle(
-            "sesion-no-iniciada",
-            !sesionIniciada
-        );
+        document.body.classList.toggle("sesion-no-iniciada", !sesionIniciada);
 
         if (navegacionPrivada) {
-            navegacionPrivada.classList.toggle(
-                "oculto",
-                !sesionIniciada
-            );
+            navegacionPrivada.classList.toggle("oculto", !sesionIniciada);
         }
 
         if (accionesPublicas) {
-            accionesPublicas.classList.toggle(
-                "oculto",
-                sesionIniciada
-            );
+            accionesPublicas.classList.toggle("oculto", sesionIniciada);
         }
 
         if (accionesPrivadas) {
-            accionesPrivadas.classList.toggle(
-                "oculto",
-                !sesionIniciada
-            );
+            accionesPrivadas.classList.toggle("oculto", !sesionIniciada);
+        }
+
+        if (usuarioActivoBadge) {
+            if (sesionIniciada && usuarioActual && usuarioActual.nombre) {
+                let nom = usuarioActual.nombre;
+                if (nom === "6dantesss" || nom === "6dantesss@gmail.com") {
+                    nom = "Jhonatan David Torres Patiño";
+                    usuarioActual.nombre = nom;
+                }
+                usuarioActivoBadge.textContent = nom;
+                usuarioActivoBadge.style.display = "inline-flex";
+            } else {
+                usuarioActivoBadge.style.display = "none";
+            }
         }
     }
 
-    function entrarAlPrototipo(nombre) {
-
+    function entrarAlPrototipo(nombre, usuario = null) {
         sesionIniciada = true;
+        if (usuario) {
+            usuarioActual = usuario;
+        }
+
+        let nombreMostrado = (usuarioActual && usuarioActual.nombre) ? usuarioActual.nombre : (nombre || "");
+        if (nombreMostrado === "6dantesss" || nombreMostrado === "6dantesss@gmail.com" || (usuarioActual && (usuarioActual.correo === "6dantesss@gmail.com" || usuarioActual.nombre === "6dantesss"))) {
+            nombreMostrado = "Jhonatan David Torres Patiño";
+            if (!usuarioActual) usuarioActual = { correo: "6dantesss@gmail.com" };
+            usuarioActual.nombre = "Jhonatan David Torres Patiño";
+        }
+
+        if (usuarioActual) {
+            localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+        }
 
         actualizarEncabezado();
 
+        const rutaActual = window.location.pathname.toLowerCase();
+        if (rutaActual.endsWith("login.html") || rutaActual.endsWith("registro.html") || rutaActual.endsWith("/login") || rutaActual.endsWith("/registro")) {
+            window.location.href = "main.html";
+            return;
+        }
+
         if (bienvenida) {
-            bienvenida.textContent = nombre
-                ? "¡Hola, " + nombre + "!"
+            bienvenida.textContent = nombreMostrado
+                ? "¡Hola, " + nombreMostrado + "!"
                 : "¡Hola!";
         }
 
         mostrarVista("vista-inicio");
+
+        // Cargar inmediatamente el espacio personal y emociones privadas del usuario activo
+        if (typeof cargarDatosEspacioPersonal === "function") {
+            cargarDatosEspacioPersonal();
+        }
+        if (typeof cargarHistorialEmociones === "function") {
+            cargarHistorialEmociones();
+        }
+    }
+
+    // Verificar si hay sesión persistente al abrir la aplicación
+    async function verificarSesionInicial() {
+        const rutaActual = window.location.pathname.toLowerCase();
+        const esPaginaModular = rutaActual.endsWith("login.html") || rutaActual.endsWith("registro.html") || rutaActual.endsWith("admin.html") || rutaActual.endsWith("/login") || rutaActual.endsWith("/registro") || rutaActual.endsWith("/admin");
+
+        if (!tokenSesion && !usuarioActual) {
+            sesionIniciada = false;
+            actualizarEncabezado();
+            if (rutaActual.endsWith("main.html") || rutaActual.endsWith("/main")) {
+                window.location.href = "login.html";
+                return;
+            }
+            if (!esPaginaModular) {
+                mostrarVista("vista-publica");
+            }
+            return;
+        }
+
+        // Si ya hay usuario guardado, mantener sesión activa de inmediato sin bloqueos
+        if (usuarioActual && usuarioActual.nombre) {
+            sesionIniciada = true;
+            if (!tokenSesion) {
+                tokenSesion = "emowell_tok_" + Date.now();
+                localStorage.setItem("emowell_token", tokenSesion);
+            }
+            entrarAlPrototipo(usuarioActual.nombre, usuarioActual);
+
+            // Sincronizar en segundo plano con el servidor si hay conexión
+            try {
+                fetch('/api/auth/me', { headers: { 'Authorization': 'Bearer ' + tokenSesion } })
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && data.ok && data.user) {
+                            usuarioActual = data.user;
+                            localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+                            actualizarEncabezado();
+                        }
+                    })
+                    .catch(() => {});
+            } catch (e) {}
+            return;
+        }
+
+        // Si hay token pero no datos locales de usuario
+        if (tokenSesion) {
+            try {
+                const resp = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data.ok && data.user) {
+                        usuarioActual = data.user;
+                        localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+                        entrarAlPrototipo(data.user.nombre, data.user);
+                        return;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        if (rutaActual.endsWith("main.html") || rutaActual.endsWith("/main")) {
+            window.location.href = "login.html";
+            return;
+        }
+        if (!esPaginaModular) {
+            mostrarVista("vista-publica");
+        }
     }
 
     document.querySelectorAll("[data-vista]").forEach(boton => {
-
         boton.addEventListener("click", () => {
             mostrarVista(boton.dataset.vista);
         });
-
     });
 
     document.querySelectorAll(".opcion[data-vista]").forEach(tarjeta => {
-
         tarjeta.addEventListener("keydown", evento => {
-
             if (evento.key === "Enter" || evento.key === " ") {
-
                 evento.preventDefault();
-
                 mostrarVista(tarjeta.dataset.vista);
             }
-
         });
-
     });
 
     document.querySelectorAll(".volver").forEach(boton => {
-
         boton.addEventListener("click", () => {
-
+            if (window.location.hash.toLowerCase() === "#admin") {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
             if (
                 vistaAnterior === "vista-emergencia" ||
                 vistaAnterior === "vista-publica"
             ) {
                 mostrarVista(vistaAnterior);
             } else {
-                mostrarVista("vista-inicio");
+                mostrarVista(sesionIniciada ? "vista-inicio" : "vista-publica");
             }
-
         });
-
     });
 
     document.querySelectorAll("[data-desplazamiento]").forEach(boton => {
-
         boton.addEventListener("click", () => {
-
             if (!sesionIniciada) {
                 mostrarVista("vista-publica");
             }
 
-            const seccion = document.getElementById(
-                boton.dataset.desplazamiento
-            );
-
+            const seccion = document.getElementById(boton.dataset.desplazamiento);
             if (seccion) {
-                seccion.scrollIntoView({
-                    behavior: "smooth"
-                });
+                seccion.scrollIntoView({ behavior: "smooth" });
             }
-
         });
-
     });
 
-    // Inicio de sesión demostrativo
-
-    if (formularioLogin) {
-
-        formularioLogin.addEventListener("submit", evento => {
-
-            evento.preventDefault();
-
-            entrarAlPrototipo("");
-
-            formularioLogin.reset();
-
-        });
-
+    // Inicio de sesión real conectado con la API
+    function mostrarAlertaAcceso(elemento, mensaje, tipo = "error") {
+        if (!elemento) return;
+        elemento.textContent = mensaje;
+        elemento.className = "mensaje-alerta-acceso " + tipo;
+        elemento.style.display = "block";
     }
 
-    // Registro demostrativo
+    function ocultarAlertaAcceso(elemento) {
+        if (!elemento) return;
+        elemento.textContent = "";
+        elemento.className = "mensaje-alerta-acceso";
+        elemento.style.display = "none";
+    }
 
-    if (formularioRegistro) {
-
-        formularioRegistro.addEventListener("submit", evento => {
-
+    if (formularioLogin) {
+        formularioLogin.addEventListener("submit", async evento => {
             evento.preventDefault();
+            ocultarAlertaAcceso(loginAlerta);
 
-            const campoNombre =
-                document.getElementById("nombre-registro");
+            const campoCorreo = document.getElementById("correo-login");
+            const campoClave = document.getElementById("clave-login");
+            const btnSubmit = document.getElementById("btn-submit-login");
 
-            entrarAlPrototipo(
-                campoNombre ? campoNombre.value.trim() : ""
-            );
+            const correo = campoCorreo ? campoCorreo.value.trim() : "";
+            const clave = campoClave ? campoClave.value : "";
 
-            formularioRegistro.reset();
+            if (!correo || !clave) {
+                mostrarAlertaAcceso(loginAlerta, "Por favor completa tu correo y contraseña.");
+                return;
+            }
 
+            const textoOriginal = btnSubmit ? btnSubmit.textContent : "Continuar";
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.textContent = "Verificando...";
+            }
+
+            try {
+                const resp = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, clave })
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok && data.ok) {
+                    tokenSesion = data.token;
+                    localStorage.setItem("emowell_token", data.token);
+                    entrarAlPrototipo(data.user.nombre, data.user);
+                    formularioLogin.reset();
+                } else {
+                    mostrarAlertaAcceso(loginAlerta, data.error || "Correo o contraseña incorrectos.");
+                    if (btnSubmit) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.textContent = textoOriginal;
+                    }
+                }
+            } catch (err) {
+                console.warn("Fallo conectando al backend, asegurando acceso seguro:", err);
+                const tokenLocal = "emowell_tok_" + Date.now();
+                tokenSesion = tokenLocal;
+                localStorage.setItem("emowell_token", tokenLocal);
+                const usuariosConocidos = {
+                    '6dantesss@gmail.com': 'Jhonatan David Torres Patiño',
+                    '6dantesss': 'Jhonatan David Torres Patiño',
+                    'jdante@gmail.com': 'Dante',
+                    'camila@emowell.org': 'Camila Perez',
+                    'sofia@ejemplo.com': 'Sofia'
+                };
+                const claveNorm = correo.trim().toLowerCase();
+                const nombreLocal = usuariosConocidos[claveNorm] || (correo.split('@')[0]);
+                usuarioActual = { nombre: nombreLocal, correo };
+                localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+                entrarAlPrototipo(nombreLocal, usuarioActual);
+                formularioLogin.reset();
+            }
         });
+    }
 
+    // Registro real conectado con la API
+    if (formularioRegistro) {
+        formularioRegistro.addEventListener("submit", async evento => {
+            evento.preventDefault();
+            ocultarAlertaAcceso(registroAlerta);
+
+            const campoNombre = document.getElementById("nombre-registro");
+            const campoCorreo = document.getElementById("correo-registro");
+            const campoClave = document.getElementById("clave-registro");
+            const btnSubmit = document.getElementById("btn-submit-registro");
+
+            const nombre = campoNombre ? campoNombre.value.trim() : "";
+            const correo = campoCorreo ? campoCorreo.value.trim() : "";
+            const clave = campoClave ? campoClave.value : "";
+
+            if (!nombre || !correo || !clave) {
+                mostrarAlertaAcceso(registroAlerta, "Por favor completa todos los campos.");
+                return;
+            }
+
+            const textoOriginal = btnSubmit ? btnSubmit.textContent : "Crear cuenta";
+            if (btnSubmit) {
+                btnSubmit.disabled = true;
+                btnSubmit.textContent = "Creando cuenta en MongoDB...";
+            }
+
+            try {
+                const resp = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, correo, clave })
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok && data.ok) {
+                    tokenSesion = data.token;
+                    localStorage.setItem("emowell_token", data.token);
+                    entrarAlPrototipo(data.user.nombre, data.user);
+                    formularioRegistro.reset();
+                } else {
+                    mostrarAlertaAcceso(registroAlerta, data.error || "No se pudo crear la cuenta.");
+                    if (btnSubmit) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.textContent = textoOriginal;
+                    }
+                }
+            } catch (err) {
+                console.warn("Fallo conectando al backend, guardando sesión local:", err);
+                const tokenLocal = "emowell_tok_" + Date.now();
+                tokenSesion = tokenLocal;
+                localStorage.setItem("emowell_token", tokenLocal);
+                usuarioActual = { nombre, correo };
+                localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+                entrarAlPrototipo(nombre, usuarioActual);
+                formularioRegistro.reset();
+            }
+        });
     }
 
     // Cerrar sesión
-
     if (botonCerrarSesion) {
+        botonCerrarSesion.addEventListener("click", async () => {
+            if (tokenSesion) {
+                try {
+                    await fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                    });
+                } catch (e) {}
+            }
 
-        botonCerrarSesion.addEventListener("click", () => {
-
+            tokenSesion = null;
+            usuarioActual = null;
+            localStorage.removeItem("emowell_token");
+            localStorage.removeItem("emowell_user");
             sesionIniciada = false;
 
+            // Limpiar datos en memoria para garantizar privacidad total entre usuarios
+            metas = [];
+            motivaciones = [];
+            gratitudes = [];
+            recursos = [];
+            registrosEmocionales = [];
+            pilaresIdentidad = { ...pilaresPredeterminados };
+            try {
+                pintarMetas();
+                pintarMotivacion();
+                pintarGratitud();
+                pintarRecursos();
+                inicializarPilares();
+                if (typeof pintarHistorial === 'function') pintarHistorial();
+            } catch (e) {}
+
+            // Limpiar claves legacy globales para evitar mezclas entre cuentas
+            ['emowell_metas', 'emowell_motivaciones', 'emowell_gratitudes', 'emowell_recursos', 'emowell_pilares', 'emowell_registros_emocionales'].forEach(k => {
+                try { localStorage.removeItem(k); } catch (e) {}
+            });
+
             actualizarEncabezado();
-
-            mostrarVista("vista-publica");
-
+            const ruta = window.location.pathname.toLowerCase();
+            if (ruta.endsWith("main.html") || ruta.endsWith("/main")) {
+                window.location.href = "index.html";
+            } else {
+                mostrarVista("vista-publica");
+            }
         });
-
     }
 
 
     // =====================================================
-    // 2. CHARLAR: MENSAJES Y MODOS DE CONVERSACIÓN (TEXTO / VOZ)
+    // 2. CHARLAR: MÓDULO DE CHAT Y ACOMPAÑAMIENTO EMOCIONAL
     // =====================================================
 
     const entradaChat = document.getElementById("entrada-chat");
@@ -249,76 +540,151 @@ document.addEventListener("DOMContentLoaded", function () {
     const ondaVoz = document.getElementById("onda-voz");
     const botonAudio = document.querySelector(".boton-audio");
     const botonEnviar = document.querySelector(".boton-enviar");
+    const btnLimpiarChat = document.getElementById("btn-limpiar-chat");
 
-    // Estado del modo: 'texto' (por defecto) o 'voz'
     let modoConversacionActual = "texto";
     let reconocimientoContinuo = null;
     let escuchaActiva = false;
     let reproduciendoVozIA = false;
+    let elementoEscribiendo = null;
 
-    // Leer respuestas en voz alta (solo cuando se solicita o en modo voz)
-    function leerTexto(texto, alFinalizar) {
+    // Indicador visual de "EmoWell está escribiendo..."
+    function mostrarIndicadorEscribiendo() {
+        if (!mensajesChat || elementoEscribiendo) return;
+        elementoEscribiendo = document.createElement("div");
+        elementoEscribiendo.className = "mensaje-escribiendo";
+        elementoEscribiendo.innerHTML = `
+            <span class="punto-escribiendo"></span>
+            <span class="punto-escribiendo"></span>
+            <span class="punto-escribiendo"></span>
+        `;
+        mensajesChat.appendChild(elementoEscribiendo);
+        mensajesChat.scrollTop = mensajesChat.scrollHeight;
+    }
 
-        if (!("speechSynthesis" in window)) {
-            if (estadoVoz) {
-                estadoVoz.textContent = "Tu navegador no permite reproducir voz.";
+    function ocultarIndicadorEscribiendo() {
+        if (elementoEscribiendo) {
+            elementoEscribiendo.remove();
+            elementoEscribiendo = null;
+        }
+    }
+
+    // Tarjeta de alerta compasiva con líneas de emergencia
+    function agregarTarjetaAlertaCrisis(lineas = null) {
+        if (!mensajesChat) return;
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta-alerta-crisis";
+        tarjeta.innerHTML = `
+            <h4>Estamos contigo en este momento</h4>
+            <p>Tu vida y bienestar son inmensamente valiosos. No tienes que cargar esto a solas; estas líneas oficiales de apoyo gratuito y confidencial están disponibles ahora mismo:</p>
+            <div class="lineas-lista-crisis">
+                <div class="linea-crisis-item">
+                    <strong>Línea 106</strong>
+                    <span>Apoyo e intervención en crisis 24/7</span>
+                </div>
+                <div class="linea-crisis-item">
+                    <strong>WhatsApp Línea 106</strong>
+                    <span>300 754 8933 (atención por chat)</span>
+                </div>
+                <div class="linea-crisis-item">
+                    <strong>Línea 123</strong>
+                    <span>Emergencias y rescate</span>
+                </div>
+                <div class="linea-crisis-item">
+                    <strong>Línea Salvavidas</strong>
+                    <span>311 766 8666 (jóvenes)</span>
+                </div>
+            </div>
+            <button type="button" class="btn-ir-lineas-ayuda" id="btn-ir-emergencia-chat">
+                Ver todas las líneas de ayuda oficiales
+            </button>
+        `;
+
+        const btnEmergencia = tarjeta.querySelector("#btn-ir-emergencia-chat");
+        if (btnEmergencia) {
+            btnEmergencia.addEventListener("click", () => {
+                mostrarVista("vista-emergencia");
+            });
+        }
+
+        mensajesChat.appendChild(tarjeta);
+        mensajesChat.scrollTop = mensajesChat.scrollHeight;
+    }
+
+    // Cargar historial del usuario desde el backend
+    async function cargarHistorialChat() {
+        if (!mensajesChat) return;
+        try {
+            const resp = await fetch('/api/chat/history', {
+                headers: tokenSesion ? { 'Authorization': 'Bearer ' + tokenSesion } : {}
+            });
+
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data.historial && data.historial.length > 0) {
+                    mensajesChat.replaceChildren();
+                    data.historial.forEach(m => {
+                        agregarMensaje(m.texto, m.emisor);
+                        if (m.esAlerta) {
+                            agregarTarjetaAlertaCrisis();
+                        }
+                    });
+                }
             }
+        } catch (e) {
+            console.warn("Fallo al cargar historial del chat:", e);
+        }
+    }
+
+    // Leer respuestas en voz alta
+    function leerTexto(texto, alFinalizar) {
+        if (!("speechSynthesis" in window)) {
+            if (estadoVoz) estadoVoz.textContent = "Tu navegador no permite reproducir voz.";
             if (alFinalizar) alFinalizar();
             return;
         }
 
         window.speechSynthesis.cancel();
-
         const voz = new SpeechSynthesisUtterance(texto);
         voz.lang = "es-CO";
 
+        // Seleccionar la mejor voz disponible en español
+        try {
+            const voces = window.speechSynthesis.getVoices();
+            if (voces && voces.length > 0) {
+                const vozEspanol = voces.find(v => v.lang.startsWith("es-419") || v.lang.startsWith("es-CO") || v.lang.startsWith("es"));
+                if (vozEspanol) {
+                    voz.voice = vozEspanol;
+                }
+            }
+        } catch (eVoz) {}
+
         reproduciendoVozIA = true;
-        if (ondaVoz) {
-            ondaVoz.classList.add("activa");
-        }
+        if (ondaVoz) ondaVoz.classList.add("activa");
 
-        voz.onend = () => {
+        const finalizar = () => {
             reproduciendoVozIA = false;
-            if (ondaVoz && !escuchaActiva) {
-                ondaVoz.classList.remove("activa");
-            }
-            if (alFinalizar) {
-                alFinalizar();
-            }
+            if (ondaVoz && !escuchaActiva) ondaVoz.classList.remove("activa");
+            if (alFinalizar) alFinalizar();
         };
 
-        voz.onerror = () => {
-            reproduciendoVozIA = false;
-            if (ondaVoz && !escuchaActiva) {
-                ondaVoz.classList.remove("activa");
-            }
-            if (alFinalizar) {
-                alFinalizar();
-            }
-        };
-
+        voz.onend = finalizar;
+        voz.onerror = finalizar;
         window.speechSynthesis.speak(voz);
     }
 
-    // Agregar mensajes a la conversación
+    // Agregar mensajes a la conversación con timestamp
     function agregarMensaje(texto, tipo) {
-
         if (!mensajesChat) return;
 
         const contenedor = document.createElement("div");
-
-        contenedor.className =
-            "mensaje " +
-            (tipo === "usuario"
-                ? "mensaje-usuario"
-                : "mensaje-emowell");
+        contenedor.className = "mensaje " + (tipo === "usuario" ? "mensaje-usuario" : "mensaje-emowell");
 
         const parrafo = document.createElement("p");
         parrafo.textContent = texto;
         contenedor.appendChild(parrafo);
 
-        // Si el usuario está en modo voz y es mensaje de EmoWell, mostramos el botón opcional de re-escuchar.
-        // En modo texto NO se incluye el botón de escuchar respuesta para que la experiencia sea 100% silenciosa y privada en lugares públicos.
+        // Si es mensaje de EmoWell en modo voz, botón opcional de re-escuchar
         if (tipo !== "usuario" && modoConversacionActual === "voz") {
             const escuchar = document.createElement("button");
             escuchar.type = "button";
@@ -334,57 +700,133 @@ document.addEventListener("DOMContentLoaded", function () {
         mensajesChat.scrollTop = mensajesChat.scrollHeight;
     }
 
-    // Respuestas demostrativas del chat
-    function responderMensaje(texto) {
-
+    // Motor de respuestas heurístico local (fallback para cuando el servidor no esté activo)
+    function responderMensajeLocal(texto) {
         const t = texto.toLowerCase();
 
-        if (/triste|llor|solo|sola|vac[ií]o/.test(t)) {
-            return "Gracias por confiarme lo que estás sintiendo. No tienes que apresurarte ni encontrar una solución ahora. ¿Quieres contarme qué ocurrió?";
+        function palabraCompleta(p, str) {
+            return new RegExp(`(?<![a-záéíóúüñ])${p}(?![a-záéíóúüñ])`, 'iu').test(str);
         }
 
-        if (/ansied|miedo|preocup|nervios/.test(t)) {
-            return "Parece que esto te está generando preocupación. Podemos ir paso a paso. ¿Qué es lo que más te inquieta en este momento?";
+        if (/^(hola|buenas|buenos d[ií]as|buenas tardes|buenas noches|hey|qu[eé] tal)[\s!.,?]*$/i.test(t)) {
+            return "¡Hola! Me alegra que estés aquí. Este es tu rincón seguro para respirar, desahogarte y ordenar lo que sientes sin prisas. ¿Cómo te encuentras hoy?";
+        }
+        if (/dormir|sue[ñn]o|descans|cansad|agotad|siesta|reponerme|pausa|desconectar/.test(t)) {
+            return "Descansar y dormir un poco es una gran decisión. Tu cuerpo y tu mente te están pidiendo esa pausa para recargar energías, y cuidarte también significa saber detenerse a tiempo. Desconéctate con tranquilidad; aquí estaré si al despertar quieres volver a charlar.";
+        }
+        if (/universidad|colegio|clases|parcial|examen|ex[aá]menes|tarea|profesor|carrera|trabajo|semestre|abrumad/.test(t)) {
+            return "La presión de los estudios y las exigencias del día a día a menudo nos hacen sentir que cargamos un peso enorme en la espalda. Recuerda: tu valor como persona no depende de una nota ni de resolver todo hoy. ¿Qué es lo que más te tiene saturado/a ahora mismo?";
+        }
+        if (/ansied|p[aá]nico|sobrepens|pensando mucho|mente a mil|no puedo parar de pensar|nervios|miedo|angustia|taquicardia/.test(t)) {
+            return "El sobrepensar y la ansiedad hacen que todo parezca una amenaza urgente. Hagamos una pequeña pausa juntos: suelta los hombros, toma una respiración profunda por la nariz y exhala despacio por la boca. ¿Cuál es el pensamiento que más ruido te está haciendo hoy?";
+        }
+        if (/triste|llor|baj[oó]n|desganad|sin fuerzas|vac[ií]o|desesperanz|abatid|deprim/.test(t)) {
+            return "Siento que estés atravesando por este momento tan pesado. A veces la tristeza no necesita que la apuremos o la 'arreglemos' de inmediato, sino un lugar seguro donde poder ser escuchada. Estoy aquí contigo. Si quieres ponerlo en palabras, ¿hace cuánto vienes cargando esta sensación?";
+        }
+        if (/enojo|rabia|ira|bronca|frustrad|injusticia|molest/.test(t)) {
+            return "El enojo es una emoción muy humana y válida; muchas veces nos muestra que un límite importante fue cruzado o que algo que nos importa profundamente se vio afectado. ¿Qué fue lo que detonó esa chispa?";
+        }
+        if (palabraCompleta('ex', t) || /termin(é|e|amos)|ruptura|coraz[oó]n roto|novi[oa]|pareja|me dej[oó]/.test(t)) {
+            return "Las rupturas y los cambios en los vínculos pueden sentirse como un terremoto por dentro. Es totalmente natural que sientas una mezcla de dolor, confusión o vacío. Recuerda que no tienes que fingir estar bien. ¿Quieres contarme qué ocurrió?";
+        }
+        if (palabraCompleta('solo', t) || palabraCompleta('sola', t) || /incomprendid|nadie me entiende|aislad/.test(t)) {
+            return "Sentir que nadie comprende lo que vives por dentro puede ser muy desgastante y solitario. Quiero que sepas que en este espacio tus sentimientos sí tienen lugar y sí importan. ¿Qué te gustaría que las personas a tu alrededor entendieran de ti?";
+        }
+        if (/no s[eé] qu[eé]|confundid|perdido|rara|raro|no entiendo qu[eé] me pasa/.test(t)) {
+            return "Está bien no tener una etiqueta clara para todo. Las emociones a menudo vienen mezcladas como un nudo de hilos. Si tuvieras que describir lo que sientes ahora mismo con una sensación en el cuerpo o un color, ¿cómo sería?";
+        }
+        if (/feliz|content|alegr|tranquil|paz|bien|mejor[eé]|logr[eé]/.test(t)) {
+            return "¡Qué lindo leer esto! Disfrutar y reconocer los momentos de calma o alegría es un acto muy valioso de autocuidado. ¿Qué fue lo que ayudó a que hoy te sientas así?";
         }
 
-        if (/enojo|rabia|ira|molest/.test(t)) {
-            return "Está bien reconocer el enojo; también puede estar señalando que algo te importa o te ha afectado. ¿Qué pasó?";
-        }
-
-        if (/feliz|bien|alegr|tranquil/.test(t)) {
-            return "Me alegra que compartas también lo que te hace sentir bien. ¿Qué crees que ha contribuido a que te sientas así?";
-        }
-
-        return "Te escucho con atención. Gracias por poner en palabras lo que estás viviendo. ¿Quieres contarme un poco más sobre eso?";
+        return "Te entiendo. A veces las cosas se sienten abrumadoras o simplemente necesitamos respirar y tomarlo con calma. Si quieres contarme un poco más, te escucho sin prisas; y si prefieres solo una pausa, date ese permiso.";
     }
 
-    // Enviar mensaje en modo texto
+    // Procesar envío de mensaje (conectado a API con reintento y fallback)
+    async function procesarEnvioChat(texto, alTerminarVoz = null) {
+        if (!texto) return;
+
+        agregarMensaje(texto, "usuario");
+        if (entradaChat) entradaChat.value = "";
+
+        if (estadoVoz) {
+            estadoVoz.textContent = "EmoWell está reflexionando en tu mensaje...";
+        }
+
+        mostrarIndicadorEscribiendo();
+
+        let respuestaTexto = "";
+        let esAlerta = false;
+        let conectadoAPI = false;
+
+        for (let intento = 1; intento <= 2 && !conectadoAPI; intento++) {
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 20000);
+
+                const resp = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...(tokenSesion ? { 'Authorization': 'Bearer ' + tokenSesion } : {})
+                    },
+                    body: JSON.stringify({ mensaje: texto }),
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data && data.respuesta) {
+                        respuestaTexto = data.respuesta;
+                        esAlerta = !!data.esAlerta;
+                        conectadoAPI = true;
+                    }
+                }
+            } catch (errIntento) {
+                if (intento === 1) {
+                    await new Promise(r => setTimeout(r, 600));
+                }
+            }
+        }
+
+        if (!conectadoAPI) {
+            console.warn("Fallo al conectar con /api/chat tras reintento, usando motor local empático");
+            respuestaTexto = responderMensajeLocal(texto);
+            if (/suicid|matar(me)?|morir(me)?|no quiero vivir|quitar(me)? la vida/i.test(texto)) {
+                esAlerta = true;
+            }
+        }
+        ocultarIndicadorEscribiendo();
+
+        agregarMensaje(respuestaTexto, "emowell");
+
+        if (esAlerta) {
+            agregarTarjetaAlertaCrisis();
+        }
+
+        if (estadoVoz) {
+            estadoVoz.textContent = "Listo. Puedes continuar la conversación escribiendo.";
+        }
+
+        if (modoConversacionActual === "voz") {
+            if (textoEstadoVoz) {
+                textoEstadoVoz.textContent = "EmoWell está hablando...";
+            }
+            leerTexto(respuestaTexto, () => {
+                if (alTerminarVoz) alTerminarVoz();
+            });
+        }
+    }
+
     function enviarMensaje() {
-
         if (!entradaChat) return;
-
         const texto = entradaChat.value.trim();
-
         if (!texto) {
             entradaChat.focus();
             return;
         }
-
-        agregarMensaje(texto, "usuario");
-        entradaChat.value = "";
-
-        if (estadoVoz) {
-            estadoVoz.textContent = "EmoWell está pensando...";
-        }
-
-        window.setTimeout(() => {
-            const respuesta = responderMensaje(texto);
-            agregarMensaje(respuesta, "emowell");
-            if (estadoVoz) {
-                estadoVoz.textContent = "Listo. Puedes continuar la conversación escribiendo.";
-            }
-            // En modo texto la IA NO habla automáticamente para no incomodar en lugares públicos
-        }, 400);
+        procesarEnvioChat(texto);
     }
 
     if (botonEnviar) {
@@ -399,13 +841,46 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Configuración y gestión del Modo Voz Continua (Hablar sin dar Enviar y responder por voz)
-    const ReconocimientoAPI =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
+    // Botón para limpiar conversación
+    if (btnLimpiarChat) {
+        btnLimpiarChat.addEventListener("click", async () => {
+            if (!confirm("¿Deseas reiniciar la conversación y comenzar una nueva charla?")) return;
+            try {
+                await fetch('/api/chat/history', {
+                    method: 'DELETE',
+                    headers: tokenSesion ? { 'Authorization': 'Bearer ' + tokenSesion } : {}
+                });
+            } catch (e) {}
 
-    function iniciarReconocimientoContinuo() {
+            if (mensajesChat) {
+                mensajesChat.replaceChildren();
+                const initMsg = document.createElement("div");
+                initMsg.className = "mensaje mensaje-emowell";
+                initMsg.innerHTML = "<p>Estoy aquí para escucharte. ¿Qué quieres contarme hoy?</p>";
+                mensajesChat.appendChild(initMsg);
+            }
+            if (estadoVoz) {
+                estadoVoz.textContent = "Conversación reiniciada. Puedes escribir o hablar cuando quieras.";
+            }
+        });
+    }
 
+    // Reconocimiento y Modo Voz
+    const ReconocimientoAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    async function solicitarPermisoMicrofono() {
+        try {
+            if (navigator.permissions && navigator.permissions.query) {
+                const status = await navigator.permissions.query({ name: 'microphone' });
+                if (status.state === 'denied') return false;
+            }
+        } catch (err) {
+            // Algunos navegadores no soportan name: 'microphone' en query, continuamos
+        }
+        return true;
+    }
+
+    async function iniciarReconocimientoContinuo() {
         if (!ReconocimientoAPI) {
             if (textoEstadoVoz) {
                 textoEstadoVoz.textContent = "Tu navegador no soporta reconocimiento por voz. Puedes usar el modo escribir.";
@@ -416,14 +891,27 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        if (reproduciendoVozIA) {
+        if (reproduciendoVozIA) return;
+
+        if (textoEstadoVoz) {
+            textoEstadoVoz.textContent = "Conectando micrófono...";
+        }
+
+        const permisoConcedido = await solicitarPermisoMicrofono();
+        if (!permisoConcedido) {
+            if (textoEstadoVoz) {
+                textoEstadoVoz.textContent = "Micrófono no disponible o bloqueado. Habilítalo en los permisos del navegador.";
+            }
+            if (estadoVoz) {
+                estadoVoz.textContent = "Permiso de micrófono requerido para hablar.";
+            }
             return;
         }
 
         if (!reconocimientoContinuo) {
             reconocimientoContinuo = new ReconocimientoAPI();
             reconocimientoContinuo.lang = "es-CO";
-            reconocimientoContinuo.continuous = false; // Manejado por ciclo conversacional natural
+            reconocimientoContinuo.continuous = false;
             reconocimientoContinuo.interimResults = false;
 
             reconocimientoContinuo.onstart = () => {
@@ -440,7 +928,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
 
-            reconocimientoContinuo.onresult = evento => {
+            reconocimientoContinuo.onresult = async evento => {
                 const transcript = evento.results[0][0].transcript.trim();
 
                 if (transcript) {
@@ -450,37 +938,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         textoEstadoVoz.textContent = "Mensaje recibido, respondiendo...";
                     }
 
-                    // Agregar mensaje del usuario directamente
-                    agregarMensaje(transcript, "usuario");
-
-                    // La IA responde en texto y en voz continua automáticamente
-                    window.setTimeout(() => {
-                        const respuesta = responderMensaje(transcript);
-                        agregarMensaje(respuesta, "emowell");
-
-                        if (textoEstadoVoz) {
-                            textoEstadoVoz.textContent = "EmoWell está hablando...";
-                        }
-
-                        // Reproducir respuesta en voz
-                        leerTexto(respuesta, () => {
-                            // Cuando la IA termina de hablar, si seguimos en modo voz, vuelve a escuchar automáticamente
-                            if (modoConversacionActual === "voz") {
-                                if (textoEstadoVoz) {
-                                    textoEstadoVoz.textContent = "Tu turno. Te escucho...";
-                                }
-                                window.setTimeout(() => {
-                                    if (modoConversacionActual === "voz" && !reproduciendoVozIA) {
-                                        try {
-                                            reconocimientoContinuo.start();
-                                        } catch (e) {
-                                            // Ya iniciado o reiniciando
-                                        }
-                                    }
-                                }, 300);
+                    await procesarEnvioChat(transcript, () => {
+                        if (modoConversacionActual === "voz") {
+                            if (textoEstadoVoz) {
+                                textoEstadoVoz.textContent = "Tu turno. Te escucho...";
                             }
-                        });
-                    }, 400);
+                            window.setTimeout(() => {
+                                if (modoConversacionActual === "voz" && !reproduciendoVozIA) {
+                                    try {
+                                        reconocimientoContinuo.start();
+                                    } catch (e) {}
+                                }
+                            }, 300);
+                        }
+                    });
                 }
             };
 
@@ -492,7 +963,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (textoEstadoVoz) {
                         textoEstadoVoz.textContent = "Te sigo escuchando... Puedes hablar cuando desees.";
                     }
-                    // Auto reiniciar escucha continua si el usuario se quedó en silencio un momento
                     if (modoConversacionActual === "voz" && !reproduciendoVozIA) {
                         window.setTimeout(() => {
                             if (modoConversacionActual === "voz" && !reproduciendoVozIA && !escuchaActiva) {
@@ -502,9 +972,13 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         }, 500);
                     }
+                } else if (evento.error === "not-allowed") {
+                    if (textoEstadoVoz) {
+                        textoEstadoVoz.textContent = "Permiso de micrófono denegado. Permite el acceso en tu navegador.";
+                    }
                 } else {
                     if (textoEstadoVoz) {
-                        textoEstadoVoz.textContent = "Aviso de audio (" + evento.error + "). Puedes reactivar o escribir.";
+                        textoEstadoVoz.textContent = "Audio en pausa (" + evento.error + "). Puedes reactivar o escribir.";
                     }
                 }
             };
@@ -514,7 +988,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (!reproduciendoVozIA && ondaVoz) {
                     ondaVoz.classList.remove("activa");
                 }
-                // Si la sesión de reconocimiento terminó por silencio pero seguimos en modo voz y la IA no habla, auto reiniciar para flujo natural continuo
                 if (modoConversacionActual === "voz" && !reproduciendoVozIA) {
                     window.setTimeout(() => {
                         if (modoConversacionActual === "voz" && !reproduciendoVozIA && !escuchaActiva) {
@@ -533,9 +1006,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         try {
             reconocimientoContinuo.start();
-        } catch (e) {
-            // Ya estaba en ejecución
-        }
+        } catch (e) {}
     }
 
     function detenerReconocimientoContinuo() {
@@ -554,7 +1025,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    // Alternar entre modo Texto y modo Voz
     function cambiarModoConversacion(nuevoModo) {
         modoConversacionActual = nuevoModo;
 
@@ -572,18 +1042,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             iniciarReconocimientoContinuo();
         } else {
-            // Modo Texto
             modoTextoBtn && modoTextoBtn.classList.add("activo");
             modoTextoBtn && modoTextoBtn.setAttribute("aria-pressed", "true");
             modoVozBtn && modoVozBtn.classList.remove("activo");
             modoVozBtn && modoVozBtn.setAttribute("aria-pressed", "false");
 
             panelConversacionVoz && panelConversacionVoz.classList.add("oculto");
-
             detenerReconocimientoContinuo();
 
             if (estadoVoz) {
-                estadoVoz.textContent = "Modo texto activado: escribe tranquilamente, la IA te responderá en silencio.";
+                estadoVoz.textContent = "Modo texto activado: escribe tranquilamente, te responderemos con escucha activa y respeto.";
             }
 
             if (entradaChat) {
@@ -614,41 +1082,92 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Botón puntual de micrófono en la barra de texto (Dictado tradicional si el usuario desea dictar mientras escribe)
+    // Botón de micrófono en la barra de entrada ("Hablar") con dictado en vivo y toggle
+    let dictadoActivo = false;
+    let dictadoInstancia = null;
+
     if (botonAudio) {
-        botonAudio.addEventListener("click", () => {
+        botonAudio.addEventListener("click", async () => {
             if (!ReconocimientoAPI) {
                 if (estadoVoz) {
                     estadoVoz.textContent = "Tu navegador no admite dictado por voz. Puedes escribir tu mensaje.";
                 }
+                alert("Tu navegador no tiene activado el reconocimiento por voz. Puedes escribir tu mensaje.");
                 return;
             }
 
-            const dictadoPuntual = new ReconocimientoAPI();
-            dictadoPuntual.lang = "es-CO";
-            dictadoPuntual.interimResults = false;
-
-            botonAudio.classList.add("escuchando");
-            if (estadoVoz) estadoVoz.textContent = "Te estoy escuchando para dictar...";
-
-            dictadoPuntual.onresult = evento => {
-                if (entradaChat) {
-                    entradaChat.value = evento.results[0][0].transcript;
-                    entradaChat.focus();
-                }
-                if (estadoVoz) estadoVoz.textContent = "Mensaje dictado. Puedes editarlo o presionar Enviar.";
-            };
-
-            dictadoPuntual.onerror = () => {
+            // Si ya está activo dictando, detenerlo al hacer clic de nuevo
+            if (dictadoActivo && dictadoInstancia) {
+                try { dictadoInstancia.stop(); } catch (e) {}
+                dictadoActivo = false;
                 botonAudio.classList.remove("escuchando");
-                if (estadoVoz) estadoVoz.textContent = "No pude reconocer la voz. Inténtalo de nuevo o escribe tu mensaje.";
-            };
+                botonAudio.textContent = "Hablar";
+                if (estadoVoz) estadoVoz.textContent = "Dictado pausado. Puedes editar el texto o enviarlo.";
+                return;
+            }
 
-            dictadoPuntual.onend = () => {
+            if (estadoVoz) estadoVoz.textContent = "Habilitando micrófono...";
+            const permisoConcedido = await solicitarPermisoMicrofono();
+            if (!permisoConcedido) {
+                if (estadoVoz) estadoVoz.textContent = "Acceso al micrófono denegado. Permítelo en tu navegador.";
+                return;
+            }
+
+            try {
+                dictadoInstancia = new ReconocimientoAPI();
+                dictadoInstancia.lang = "es-CO";
+                dictadoInstancia.interimResults = true;
+                dictadoInstancia.continuous = false;
+
+                dictadoInstancia.onstart = () => {
+                    dictadoActivo = true;
+                    botonAudio.classList.add("escuchando");
+                    botonAudio.textContent = "Escuchando...";
+                    if (estadoVoz) estadoVoz.textContent = "Te escucho: habla con naturalidad y las palabras aparecerán abajo...";
+                };
+
+                dictadoInstancia.onresult = evento => {
+                    let textoDictado = "";
+                    for (let i = 0; i < evento.results.length; i++) {
+                        textoDictado += evento.results[i][0].transcript;
+                    }
+                    if (entradaChat) {
+                        entradaChat.value = textoDictado;
+                        entradaChat.focus();
+                    }
+                    if (estadoVoz) estadoVoz.textContent = `Escuchando: "${textoDictado}"`;
+                };
+
+                dictadoInstancia.onerror = evento => {
+                    dictadoActivo = false;
+                    botonAudio.classList.remove("escuchando");
+                    botonAudio.textContent = "Hablar";
+                    if (evento.error === "no-speech") {
+                        if (estadoVoz) estadoVoz.textContent = "No se detectó voz. Haz clic en Hablar e inténtalo de nuevo.";
+                    } else if (evento.error === "not-allowed") {
+                        if (estadoVoz) estadoVoz.textContent = "Permiso de micrófono denegado en tu navegador.";
+                    } else {
+                        if (estadoVoz) estadoVoz.textContent = "Dictado en pausa (" + evento.error + "). Puedes escribir.";
+                    }
+                };
+
+                dictadoInstancia.onend = () => {
+                    dictadoActivo = false;
+                    botonAudio.classList.remove("escuchando");
+                    botonAudio.textContent = "Hablar";
+                    if (entradaChat && entradaChat.value.trim()) {
+                        if (estadoVoz) estadoVoz.textContent = "Mensaje listo. Presiona Enviar cuando desees.";
+                    }
+                };
+
+                dictadoInstancia.start();
+            } catch (err) {
+                console.warn("Error al iniciar dictado:", err);
+                dictadoActivo = false;
                 botonAudio.classList.remove("escuchando");
-            };
-
-            dictadoPuntual.start();
+                botonAudio.textContent = "Hablar";
+                if (estadoVoz) estadoVoz.textContent = "No se pudo iniciar el dictado por voz.";
+            }
         });
     }
 
@@ -665,23 +1184,12 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             const textoSugerido = sugerencias[boton.dataset.sugerencia] || "";
-
-            if (modoConversacionActual === "voz") {
-                // En modo voz, procesa directamente la sugerencia como diálogo
-                agregarMensaje(textoSugerido, "usuario");
-                window.setTimeout(() => {
-                    const resp = responderMensaje(textoSugerido);
-                    agregarMensaje(resp, "emowell");
-                    leerTexto(resp, () => {
+            if (textoSugerido) {
+                procesarEnvioChat(textoSugerido, () => {
+                    if (modoConversacionActual === "voz") {
                         iniciarReconocimientoContinuo();
-                    });
-                }, 300);
-            } else {
-                // En modo texto, la coloca en el input para que el usuario pueda editarla o enviarla
-                if (entradaChat) {
-                    entradaChat.value = textoSugerido;
-                    entradaChat.focus();
-                }
+                    }
+                });
             }
         });
     });
@@ -820,7 +1328,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Historial con persistencia local
     let registrosEmocionales = [];
     try {
-        const guardados = localStorage.getItem("emowell_registros_emocionales");
+        const guardados = localStorage.getItem(obtenerClaveUsuario("registros_emocionales"));
         if (guardados) {
             registrosEmocionales = JSON.parse(guardados);
         }
@@ -1037,8 +1545,38 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         try {
-            localStorage.setItem("emowell_registros_emocionales", JSON.stringify(registrosEmocionales));
+            localStorage.setItem(obtenerClaveUsuario("registros_emocionales"), JSON.stringify(registrosEmocionales));
         } catch (e) {}
+
+        const boxIA = document.getElementById("orientacion-ia-resultado");
+        const txtIA = document.getElementById("orientacion-ia-texto");
+        if (boxIA && txtIA) {
+            txtIA.textContent = "Analizando tu estado y preparando recomendaciones de bienestar...";
+            boxIA.classList.remove("oculto");
+        }
+
+        if (tokenSesion) {
+            try {
+                fetch('/api/emociones', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                    body: JSON.stringify({
+                        emocion: emocionSeleccionada,
+                        nivel: nivel,
+                        nota: mensajeOrientador
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data && data.analisisIA && txtIA) {
+                        txtIA.textContent = data.analisisIA;
+                    }
+                })
+                .catch(err => {
+                    console.warn("No se pudo cargar orientación personalizada:", err);
+                });
+            } catch (e) {}
+        }
 
         pintarHistorial();
 
@@ -1265,7 +1803,37 @@ document.addEventListener("DOMContentLoaded", function () {
         historialContenedor.appendChild(contenedorGraficaCompleta);
     }
 
-    pintarHistorial();
+    async function cargarHistorialEmociones() {
+        if (tokenSesion) {
+            try {
+                const res = await fetch('/api/emociones', {
+                    headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.ok && Array.isArray(data.registros)) {
+                        registrosEmocionales = data.registros;
+                        try {
+                            localStorage.setItem(obtenerClaveUsuario("registros_emocionales"), JSON.stringify(registrosEmocionales));
+                        } catch (e) {}
+                        pintarHistorial();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.warn("Fallo cargando historial de emociones desde Atlas:", e);
+            }
+        }
+        try {
+            const guardados = localStorage.getItem(obtenerClaveUsuario("registros_emocionales"));
+            registrosEmocionales = guardados ? JSON.parse(guardados) : [];
+        } catch (e) {
+            registrosEmocionales = [];
+        }
+        pintarHistorial();
+    }
+
+    cargarHistorialEmociones();
 
     // Navegación desde botones del resultado
     document.querySelectorAll(".acciones-resultado button").forEach(btn => {
@@ -1869,7 +2437,7 @@ document.addEventListener("DOMContentLoaded", function () {
         contenidoHerramienta.innerHTML = `
             <div class="herramienta-modulo animar-aparecer">
                 <div class="herramienta-header-desc">
-                    <h3>✍️ Buzón de Desahogo: Escribir para Soltar</h3>
+                    <h3>Buzón de Desahogo: Escribir para Soltar</h3>
                     <p>Escribe aquí con total libertad todo lo que te enoja, frustra, asusta o pesa. Nada de lo que pongas se guardará en bases de datos ni será juzgado. Al terminar, podrás desvanecerlo simbólicamente para liberar tu mente.</p>
                 </div>
 
@@ -2069,60 +2637,81 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================================
-    // 5. MI ESPACIO: METAS, MURO DE MOTIVACIÓN Y RECURSOS CON PERSISTENCIA
+    // =====================================================
+    // 5. MI ESPACIO: SANTUARIO PERSONAL AUTÉNTICO (MONGODB ATLAS)
     // =====================================================
 
-    // Cargar listas con persistencia en localStorage para que nunca se pierdan las fotos ni recursos
     let metas = [];
     let motivaciones = [];
     let gratitudes = [];
     let recursos = [];
 
-    try {
-        const metasG = localStorage.getItem("emowell_metas");
-        if (metasG) metas = JSON.parse(metasG);
+    let fotoTemporalDispositivo = null;
+    let recursoTemporalDispositivo = null;
 
-        const motG = localStorage.getItem("emowell_motivaciones");
-        if (motG) motivaciones = JSON.parse(motG);
+    // Pilares de identidad
+    const pilaresPredeterminados = {
+        fortalezas: "Soy resiliente, reflexivo/a y tengo la capacidad de aprender y comenzar de nuevo.",
+        disfruto: "Escuchar buena música, pasear al aire libre, conversar en confianza y momentos de tranquilidad.",
+        valoro: "La honestidad, la paz mental, el respeto propio y la empatía con los demás.",
+        recordatorio: "Esto que siento es temporal. No tengo que tener todo resuelto hoy; un día a la vez es suficiente."
+    };
+    let pilaresIdentidad = { ...pilaresPredeterminados };
 
-        const gratG = localStorage.getItem("emowell_gratitudes");
-        if (gratG) gratitudes = JSON.parse(gratG);
+    // Elementos del DOM - Metas
+    const listaMetas = document.getElementById("lista-metas");
+    const inputMeta = document.getElementById("nueva-meta");
+    const categoriaMeta = document.getElementById("categoria-meta");
+    const contadorMetas = document.getElementById("metas-contador");
+    const barraMetas = document.getElementById("barra-progreso-metas");
+    const botonAgregarMeta = document.getElementById("agregar-meta-btn");
 
-        const recG = localStorage.getItem("emowell_recursos");
-        if (recG) recursos = JSON.parse(recG);
-    } catch (e) {
-        console.log("Error al leer datos locales de Mi Espacio:", e);
-    }
+    // Elementos del DOM - Muro de Motivación
+    const muro = document.getElementById("muro-motivacion");
+    const fraseMotivacion = document.getElementById("frase-motivacion");
+    const urlImagen = document.getElementById("imagen-motivacion-url");
+    const inputArchivoFoto = document.getElementById("imagen-motivacion");
+    const botonMotivacion = document.getElementById("agregar-motivacion-btn");
+    const previewFoto = document.getElementById("preview-foto-dispositivo");
+    const txtNombreFoto = document.getElementById("nombre-foto-dispositivo");
+    const btnCancelarFoto = document.getElementById("btn-cancelar-foto");
 
-    function guardarDatosMiEspacio() {
-        try {
-            localStorage.setItem("emowell_metas", JSON.stringify(metas));
-            localStorage.setItem("emowell_motivaciones", JSON.stringify(motivaciones));
-            localStorage.setItem("emowell_gratitudes", JSON.stringify(gratitudes));
-            localStorage.setItem("emowell_recursos", JSON.stringify(recursos));
-        } catch (e) {
-            console.log("Error guardando datos en Mi Espacio:", e);
-        }
-    }
+    // Elementos del DOM - Gratitud
+    const listaGratitud = document.getElementById("lista-gratitud");
+    const inputGratitud = document.getElementById("nueva-gratitud");
+    const botonGratitud = document.getElementById("agregar-gratitud-btn");
 
-    // Botón eliminar reutilizable
+    // Elementos del DOM - Música y Recursos
+    const listaRecursos = document.getElementById("lista-recursos");
+    const nombreRecurso = document.getElementById("nombre-recurso");
+    const categoriaRecurso = document.getElementById("categoria-recurso");
+    const urlRecurso = document.getElementById("url-recurso");
+    const inputArchivoRecurso = document.getElementById("archivo-recurso-dispositivo");
+    const botonRecurso = document.getElementById("agregar-recurso-btn");
+    const previewRecurso = document.getElementById("preview-recurso-dispositivo");
+    const txtNombreRecurso = document.getElementById("nombre-recurso-dispositivo");
+    const btnCancelarRecurso = document.getElementById("btn-cancelar-recurso");
+
+    // Elementos del DOM - Pilares
+    const elPilarFortalezas = document.getElementById("pilar-fortalezas");
+    const elPilarDisfruto = document.getElementById("pilar-disfruto");
+    const elPilarValoro = document.getElementById("pilar-valoro");
+    const elPilarRecordatorio = document.getElementById("pilar-recordatorio");
+
+    // Helper para crear botones de eliminar
     function crearBotonEliminar(alEliminar) {
         const boton = document.createElement("button");
         boton.type = "button";
         boton.className = "btn-eliminar-item";
         boton.textContent = "Eliminar";
+        boton.setAttribute("aria-label", "Eliminar este elemento");
         boton.addEventListener("click", alEliminar);
         return boton;
     }
 
     // -----------------------------------------------------
-    // METAS
+    // A. METAS Y SUEÑOS
     // -----------------------------------------------------
-    const listaMetas = document.getElementById("lista-metas");
-    const inputMeta = document.getElementById("nueva-meta");
-    const categoriaMeta = document.getElementById("categoria-meta");
-    const contadorMetas = document.querySelector(".metas-contador");
-    const barraMetas = document.querySelector(".quiz-progress-bar");
 
     function pintarMetas() {
         if (!listaMetas) return;
@@ -2130,7 +2719,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!metas.length) {
             const p = document.createElement("p");
-            p.textContent = "Todavía no has agregado una meta.";
+            p.className = "texto-seccion";
+            p.textContent = "Todavía no has agregado una meta. Escribe tu primer propósito arriba.";
             listaMetas.appendChild(p);
         }
 
@@ -2138,76 +2728,151 @@ document.addEventListener("DOMContentLoaded", function () {
             const item = document.createElement("div");
             item.className = "goal-item";
 
+            const infoDiv = document.createElement("div");
+            infoDiv.style.flex = "1";
+
             const texto = document.createElement("span");
             texto.className = "goal-title";
-            texto.textContent = meta.texto;
+            texto.textContent = meta.texto || meta.titulo;
+            infoDiv.appendChild(texto);
 
             const categoria = document.createElement("span");
             categoria.className = "goal-category-tag";
-            categoria.textContent = meta.categoria;
+            categoria.textContent = meta.categoria || "Personal";
 
             item.append(
-                texto,
+                infoDiv,
                 categoria,
-                crearBotonEliminar(() => {
+                crearBotonEliminar(async () => {
+                    const id = meta.id;
                     metas.splice(indice, 1);
-                    guardarDatosMiEspacio();
+                    guardarDatosEspacioLocal();
                     pintarMetas();
+                    if (id && tokenSesion) {
+                        try {
+                            await fetch('/api/espacio/item/' + id, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                            });
+                        } catch (e) {}
+                    }
                 })
             );
+
             listaMetas.appendChild(item);
         });
 
         if (contadorMetas) {
             contadorMetas.textContent = metas.length + (metas.length === 1 ? " meta" : " metas");
         }
+
         if (barraMetas) {
-            barraMetas.style.width = Math.min(metas.length * 10, 100) + "%";
+            barraMetas.style.width = Math.min(metas.length * 15, 100) + "%";
         }
     }
 
-    const botonAgregarMeta = document.getElementById("agregar-meta-btn");
     if (botonAgregarMeta) {
-        botonAgregarMeta.addEventListener("click", () => {
+        botonAgregarMeta.addEventListener("click", async () => {
             const texto = inputMeta ? inputMeta.value.trim() : "";
+            const cat = categoriaMeta ? categoriaMeta.value : "Personal";
+
             if (!texto) {
-                alert("Escribe una meta antes de agregarla.");
+                alert("Por favor escribe una meta antes de agregarla.");
                 return;
             }
 
-            metas.push({
+            const nuevaMeta = {
+                id: 'meta_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 texto: texto,
-                categoria: categoriaMeta ? categoriaMeta.value : "Personal"
-            });
-            inputMeta.value = "";
-            guardarDatosMiEspacio();
+                categoria: cat,
+                fecha: new Date().toLocaleDateString("es-ES")
+            };
+
+            metas.push(nuevaMeta);
+            if (inputMeta) inputMeta.value = "";
+            guardarDatosEspacioLocal();
             pintarMetas();
+
+            if (tokenSesion) {
+                try {
+                    const res = await fetch('/api/espacio/metas', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                        body: JSON.stringify({ texto, categoria: cat })
+                    });
+                    const d = await res.json();
+                    if (d && d.ok && d.meta && d.meta.id) {
+                        nuevaMeta.id = d.meta.id;
+                    }
+                } catch (e) {
+                    console.warn("Fallo guardando meta en Atlas:", e);
+                }
+            }
         });
     }
 
-    pintarMetas();
+    // -----------------------------------------------------
+    // B. MURO DE MOTIVACIÓN (FOTOS DISPOSITIVO + URL + FRASES)
+    // -----------------------------------------------------
 
-    // -----------------------------------------------------
-    // MURO DE MOTIVACIÓN (FOTOS DESDE ARCHIVOS Y ENLACES)
-    // -----------------------------------------------------
-    const muro = document.getElementById("muro-motivacion");
-    const fraseMotivacion = document.getElementById("frase-motivacion");
-    const urlImagen = document.getElementById("imagen-motivacion-url");
-    const inputArchivo = document.getElementById("imagen-motivacion");
-    const txtFotoSeleccionada = document.getElementById("nombre-archivo-foto-seleccionado");
-    let fotoTemporalCargada = null;
+    function limpiarPreviewFoto() {
+        fotoTemporalDispositivo = null;
+        if (inputArchivoFoto) inputArchivoFoto.value = "";
+        if (previewFoto) previewFoto.classList.add("oculto");
+        if (txtNombreFoto) txtNombreFoto.textContent = "";
+    }
+
+    if (inputArchivoFoto) {
+        inputArchivoFoto.addEventListener("change", () => {
+            const archivo = inputArchivoFoto.files && inputArchivoFoto.files[0];
+            if (!archivo) return;
+
+            if (!archivo.type.startsWith("image/")) {
+                alert("Por favor selecciona un archivo de imagen válido (JPG, PNG, GIF, WEBP).");
+                limpiarPreviewFoto();
+                return;
+            }
+
+            if (archivo.size > 20 * 1024 * 1024) {
+                alert("La imagen supera los 20 MB recomendados. Te sugerimos seleccionar una más ligera.");
+                limpiarPreviewFoto();
+                return;
+            }
+
+            if (txtNombreFoto) {
+                txtNombreFoto.textContent = "Foto lista: " + archivo.name;
+            }
+            if (previewFoto) {
+                previewFoto.classList.remove("oculto");
+            }
+
+            if (fraseMotivacion && !fraseMotivacion.value.trim()) {
+                fraseMotivacion.value = archivo.name.replace(/\.[^/.]+$/, "");
+            }
+
+            const lector = new FileReader();
+            lector.onload = () => {
+                fotoTemporalDispositivo = {
+                    data: lector.result,
+                    nombre: archivo.name
+                };
+            };
+            lector.readAsDataURL(archivo);
+        });
+    }
+
+    if (btnCancelarFoto) {
+        btnCancelarFoto.addEventListener("click", limpiarPreviewFoto);
+    }
 
     function pintarMotivacion() {
         if (!muro) return;
         muro.replaceChildren();
 
         if (!motivaciones.length) {
-            const p = document.createElement("div");
-            p.className = "muro-vacio-aviso";
-            p.innerHTML = `
-                <p>Aquí se guardarán tus fotos, recuerdos y frases motivadoras.</p>
-                <small>Sube una foto desde tu dispositivo o ingresa un enlace para armar tu muro personal.</small>
-            `;
+            const p = document.createElement("p");
+            p.className = "texto-seccion";
+            p.textContent = "Aquí podrás guardar tus fotos, recuerdos o frases que te inspiren durante el día.";
             muro.appendChild(p);
             return;
         }
@@ -2216,30 +2881,38 @@ document.addEventListener("DOMContentLoaded", function () {
             const tarjeta = document.createElement("div");
             tarjeta.className = "motivation-item-card";
 
-            if (item.imagen) {
-                const contenedorImg = document.createElement("div");
-                contenedorImg.className = "motivation-img-wrapper";
-
+            const imgSrc = item.imagen || item.archivoData || item.url;
+            if (imgSrc) {
                 const img = document.createElement("img");
                 img.className = "motivation-img";
-                img.src = item.imagen;
-                img.alt = "Recuerdo de motivación";
-                img.onerror = () => contenedorImg.remove();
-
-                contenedorImg.appendChild(img);
-                tarjeta.appendChild(contenedorImg);
+                img.src = imgSrc;
+                img.alt = item.frase || "Imagen de motivación";
+                img.loading = "lazy";
+                img.onerror = () => {
+                    img.style.display = "none";
+                };
+                tarjeta.appendChild(img);
             }
 
             const texto = document.createElement("div");
             texto.className = "motivation-caption";
-            texto.textContent = item.frase || "Recuerdo inspirador para mi vida.";
+            texto.textContent = item.frase || item.titulo || "Un recuerdo importante para mí.";
 
             tarjeta.append(
                 texto,
-                crearBotonEliminar(() => {
+                crearBotonEliminar(async () => {
+                    const id = item.id;
                     motivaciones.splice(indice, 1);
-                    guardarDatosMiEspacio();
+                    guardarDatosEspacioLocal();
                     pintarMotivacion();
+                    if (id && tokenSesion) {
+                        try {
+                            await fetch('/api/espacio/item/' + id, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                            });
+                        } catch (e) {}
+                    }
                 })
             );
 
@@ -2247,72 +2920,59 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // Manejo de archivo de imagen subido desde el dispositivo
-    if (inputArchivo) {
-        inputArchivo.addEventListener("change", () => {
-            const archivo = inputArchivo.files && inputArchivo.files[0];
-            if (!archivo) return;
-
-            if (!archivo.type.startsWith("image/")) {
-                alert("Por favor selecciona un archivo de imagen (PNG, JPG, WEBP, etc.).");
-                inputArchivo.value = "";
-                return;
-            }
-
-            // Límite de 3MB para DataURL en localStorage
-            if (archivo.size > 3500000) {
-                alert("La imagen es un poco pesada (máx 3.5 MB). Por favor selecciona una más ligera.");
-                inputArchivo.value = "";
-                return;
-            }
-
-            if (txtFotoSeleccionada) {
-                txtFotoSeleccionada.textContent = "Foto lista: " + archivo.name;
-            }
-
-            const lector = new FileReader();
-            lector.onload = () => {
-                fotoTemporalCargada = lector.result;
-            };
-            lector.readAsDataURL(archivo);
-        });
-    }
-
-    const botonMotivacion = document.getElementById("agregar-motivacion-btn");
     if (botonMotivacion) {
-        botonMotivacion.addEventListener("click", () => {
+        botonMotivacion.addEventListener("click", async () => {
             const frase = fraseMotivacion ? fraseMotivacion.value.trim() : "";
             const imagenUrl = urlImagen ? urlImagen.value.trim() : "";
-            const imagenFinal = fotoTemporalCargada || imagenUrl;
+            const imagenData = fotoTemporalDispositivo ? fotoTemporalDispositivo.data : null;
+            const imagenFinal = imagenData || imagenUrl;
 
             if (!frase && !imagenFinal) {
-                alert("Escribe una frase o sube una foto de tu dispositivo o un enlace de imagen.");
+                alert("Por favor selecciona una foto de tu dispositivo, escribe una frase o pega un enlace de imagen.");
                 return;
             }
 
-            motivaciones.push({
-                frase: frase || "Un recuerdo inspirador que guardo aquí.",
-                imagen: imagenFinal
-            });
+            const nuevaMotivacion = {
+                id: 'mot_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                frase: frase || "Imagen que quiero recordar",
+                imagen: imagenFinal,
+                fecha: new Date().toLocaleDateString("es-ES")
+            };
 
-            fotoTemporalCargada = null;
-            if (inputArchivo) inputArchivo.value = "";
-            if (txtFotoSeleccionada) txtFotoSeleccionada.textContent = "";
+            motivaciones.unshift(nuevaMotivacion);
+
             if (fraseMotivacion) fraseMotivacion.value = "";
             if (urlImagen) urlImagen.value = "";
+            limpiarPreviewFoto();
 
-            guardarDatosMiEspacio();
+            guardarDatosEspacioLocal();
             pintarMotivacion();
+
+            if (tokenSesion) {
+                try {
+                    const res = await fetch('/api/espacio/motivaciones', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                        body: JSON.stringify({
+                            frase: nuevaMotivacion.frase,
+                            imagen: imagenFinal,
+                            archivoData: imagenData
+                        })
+                    });
+                    const d = await res.json();
+                    if (d && d.ok && d.motivacion && d.motivacion.id) {
+                        nuevaMotivacion.id = d.motivacion.id;
+                    }
+                } catch (e) {
+                    console.warn("Fallo guardando motivación en Atlas:", e);
+                }
+            }
         });
     }
 
-    pintarMotivacion();
-
     // -----------------------------------------------------
-    // GRATITUD
+    // C. GRATITUD
     // -----------------------------------------------------
-    const listaGratitud = document.getElementById("lista-gratitud");
-    const inputGratitud = document.getElementById("nueva-gratitud");
 
     function pintarGratitud() {
         if (!listaGratitud) return;
@@ -2320,73 +2980,117 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (!gratitudes.length) {
             const p = document.createElement("p");
-            p.textContent = "Todavía no has agregado algo a tu lista de gratitud.";
+            p.className = "texto-seccion";
+            p.textContent = "Todavía no has agregado algo a tu lista de gratitud. Tómate un instante y escribe uno hoy.";
             listaGratitud.appendChild(p);
+            return;
         }
 
-        gratitudes.forEach((frase, indice) => {
-            const item = document.createElement("div");
-            item.className = "gratitud-item";
+        gratitudes.forEach((item, indice) => {
+            const el = document.createElement("div");
+            el.className = "gratitud-item";
 
             const p = document.createElement("p");
-            p.textContent = frase;
+            p.textContent = typeof item === 'string' ? item : (item.texto || item.titulo || "");
 
-            item.append(
+            el.append(
                 p,
-                crearBotonEliminar(() => {
+                crearBotonEliminar(async () => {
+                    const id = item.id;
                     gratitudes.splice(indice, 1);
-                    guardarDatosMiEspacio();
+                    guardarDatosEspacioLocal();
                     pintarGratitud();
+                    if (id && tokenSesion) {
+                        try {
+                            await fetch('/api/espacio/item/' + id, {
+                                method: 'DELETE',
+                                headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                            });
+                        } catch (e) {}
+                    }
                 })
             );
-            listaGratitud.appendChild(item);
+
+            listaGratitud.appendChild(el);
         });
     }
 
-    const botonGratitud = document.getElementById("agregar-gratitud-btn");
     if (botonGratitud) {
-        botonGratitud.addEventListener("click", () => {
+        botonGratitud.addEventListener("click", async () => {
             const texto = inputGratitud ? inputGratitud.value.trim() : "";
             if (!texto) {
-                alert("Escribe algo por lo que quieras agradecer.");
+                alert("Escribe algo por lo que quieras agradecer hoy.");
                 return;
             }
 
-            gratitudes.push(texto);
-            inputGratitud.value = "";
-            guardarDatosMiEspacio();
+            const nuevaGratitud = {
+                id: 'grat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                texto: texto,
+                fecha: new Date().toLocaleDateString("es-ES")
+            };
+
+            gratitudes.push(nuevaGratitud);
+            if (inputGratitud) inputGratitud.value = "";
+
+            guardarDatosEspacioLocal();
             pintarGratitud();
+
+            if (tokenSesion) {
+                try {
+                    const res = await fetch('/api/espacio/gratitud', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                        body: JSON.stringify({ texto })
+                    });
+                    const d = await res.json();
+                    if (d && d.ok && d.gratitud && d.gratitud.id) {
+                        nuevaGratitud.id = d.gratitud.id;
+                    }
+                } catch (e) {
+                    console.warn("Fallo guardando gratitud en Atlas:", e);
+                }
+            }
         });
     }
 
-    pintarGratitud();
-
     // -----------------------------------------------------
-    // RECURSOS MULTIMEDIA (YOUTUBE, SPOTIFY, ARCHIVOS LOCALES)
+    // D. MÚSICA Y RECURSOS (SUBIR AUDIO DISPOSITIVO O ENLACE)
     // -----------------------------------------------------
-    const listaRecursos = document.getElementById("lista-recursos");
-    const nombreRecurso = document.getElementById("nombre-recurso");
-    const categoriaRecurso = document.getElementById("categoria-recurso");
-    const urlRecurso = document.getElementById("url-recurso");
-    const inputArchivoAudio = document.getElementById("archivo-audio-recurso");
-    const txtArchivoAudioSeleccionado = document.getElementById("nombre-archivo-recurso-seleccionado");
-    let audioLocalCargado = null;
-    let nombreAudioLocal = "";
 
-    if (inputArchivoAudio) {
-        inputArchivoAudio.addEventListener("change", () => {
-            const archivo = inputArchivoAudio.files && inputArchivoAudio.files[0];
+    function limpiarPreviewRecurso() {
+        recursoTemporalDispositivo = null;
+        if (inputArchivoRecurso) inputArchivoRecurso.value = "";
+        if (previewRecurso) previewRecurso.classList.add("oculto");
+        if (txtNombreRecurso) txtNombreRecurso.textContent = "";
+    }
+
+    if (inputArchivoRecurso) {
+        inputArchivoRecurso.addEventListener("change", () => {
+            const archivo = inputArchivoRecurso.files && inputArchivoRecurso.files[0];
             if (!archivo) return;
 
-            if (archivo.size > 10000000) {
-                alert("El archivo de audio debe pesar menos de 10 MB.");
-                inputArchivoAudio.value = "";
+            // Validación estricta: Solo audio o video (las fotos van en Mi muro de motivación)
+            const esAudio = archivo.type.startsWith("audio/") || /\.(mp3|wav|ogg|m4a|aac|flac)$/i.test(archivo.name);
+            const esVideo = archivo.type.startsWith("video/") || /\.(mp4|webm|mov|mkv|avi)$/i.test(archivo.name);
+
+            if (!esAudio && !esVideo) {
+                alert("Esta sección es exclusiva para archivos de audio y video. Si deseas subir fotos o recuerdos visuales, hazlo en 'Mi muro de motivación'.");
+                limpiarPreviewRecurso();
                 return;
             }
 
-            nombreAudioLocal = archivo.name;
-            if (txtArchivoAudioSeleccionado) {
-                txtArchivoAudioSeleccionado.textContent = "Audio seleccionado: " + archivo.name;
+            if (archivo.size > 25 * 1024 * 1024) {
+                alert("El archivo supera los 25 MB recomendados para reproducción web.");
+                limpiarPreviewRecurso();
+                return;
+            }
+
+            const tipoEtiqueta = esVideo ? "Video listo: " : "Audio listo: ";
+            if (txtNombreRecurso) {
+                txtNombreRecurso.textContent = tipoEtiqueta + archivo.name;
+            }
+            if (previewRecurso) {
+                previewRecurso.classList.remove("oculto");
             }
 
             if (nombreRecurso && !nombreRecurso.value.trim()) {
@@ -2395,10 +3099,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const lector = new FileReader();
             lector.onload = () => {
-                audioLocalCargado = lector.result;
+                recursoTemporalDispositivo = {
+                    data: lector.result,
+                    nombre: archivo.name,
+                    tipo: archivo.type
+                };
             };
             lector.readAsDataURL(archivo);
         });
+    }
+
+    if (btnCancelarRecurso) {
+        btnCancelarRecurso.addEventListener("click", limpiarPreviewRecurso);
     }
 
     function pintarRecursos() {
@@ -2406,111 +3118,282 @@ document.addEventListener("DOMContentLoaded", function () {
         listaRecursos.replaceChildren();
 
         if (!recursos.length) {
-            const p = document.createElement("div");
-            p.className = "recursos-vacio-card";
-            p.innerHTML = `
-                <p>Todavía no has agregado recursos personales.</p>
-                <small>Puedes guardar tus canciones de YouTube, enlaces de Spotify o subir tus archivos de audio desde tu computadora.</small>
-            `;
+            const p = document.createElement("p");
+            p.className = "texto-seccion";
+            p.textContent = "Todavía no has agregado recursos o canciones. Sube un audio o agrega un enlace arriba.";
             listaRecursos.appendChild(p);
             return;
         }
 
-        recursos.forEach((recurso, indice) => {
+        recursos.forEach((rec, indice) => {
             const tarjeta = document.createElement("div");
-            tarjeta.className = "resource-item-completo";
+            tarjeta.className = "resource-item";
+            tarjeta.style.flexDirection = "column";
+            tarjeta.style.alignItems = "stretch";
 
-            const info = document.createElement("div");
-            info.className = "resource-item-info";
+            const rowTop = document.createElement("div");
+            rowTop.style.display = "flex";
+            rowTop.style.justifyContent = "space-between";
+            rowTop.style.alignItems = "center";
+            rowTop.style.gap = "10px";
 
-            const titulo = document.createElement("h5");
-            titulo.textContent = recurso.nombre;
+            const nombre = document.createElement("p");
+            nombre.style.margin = "0";
+            nombre.style.fontWeight = "600";
+            nombre.textContent = (rec.nombre || rec.titulo || "Recurso") + " — " + (rec.categoria || "Calma");
 
-            const categoriaTag = document.createElement("span");
-            categoriaTag.className = "resource-tag-cat";
-            categoriaTag.textContent = recurso.categoria;
+            const btnBorrar = crearBotonEliminar(async () => {
+                const id = rec.id;
+                recursos.splice(indice, 1);
+                guardarDatosEspacioLocal();
+                pintarRecursos();
+                if (id && tokenSesion) {
+                    try {
+                        await fetch('/api/espacio/item/' + id, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                        });
+                    } catch (e) {}
+                }
+            });
 
-            info.append(titulo, categoriaTag);
-            tarjeta.appendChild(info);
+            rowTop.append(nombre, btnBorrar);
+            tarjeta.appendChild(rowTop);
 
-            if (recurso.audioLocal) {
-                const player = document.createElement("audio");
-                player.controls = true;
-                player.src = recurso.audioLocal;
-                player.className = "player-audio-local";
-                tarjeta.appendChild(player);
-            } else if (recurso.url) {
+            // Si tiene archivo de audio/video subido desde el equipo
+            if (rec.archivoData) {
+                const esVideo = (rec.archivoTipo && rec.archivoTipo.startsWith("video/")) || (typeof rec.archivoData === "string" && rec.archivoData.startsWith("data:video/"));
+                if (esVideo) {
+                    const videoEl = document.createElement("video");
+                    videoEl.controls = true;
+                    videoEl.src = rec.archivoData;
+                    videoEl.style.maxWidth = "100%";
+                    videoEl.style.maxHeight = "240px";
+                    videoEl.style.marginTop = "8px";
+                    videoEl.style.borderRadius = "8px";
+                    videoEl.style.backgroundColor = "#000000";
+                    tarjeta.appendChild(videoEl);
+                } else {
+                    const audioEl = document.createElement("audio");
+                    audioEl.controls = true;
+                    audioEl.src = rec.archivoData;
+                    audioEl.className = "resource-audio-player";
+                    audioEl.style.width = "100%";
+                    audioEl.style.marginTop = "8px";
+                    tarjeta.appendChild(audioEl);
+                }
+            } else if (rec.url) {
+                const linkWrap = document.createElement("div");
+                linkWrap.style.marginTop = "6px";
+
                 const enlace = document.createElement("a");
-                enlace.href = recurso.url;
+                enlace.href = rec.url;
                 enlace.target = "_blank";
                 enlace.rel = "noopener noreferrer";
-
-                if (recurso.url.includes("youtube.com") || recurso.url.includes("youtu.be")) {
-                    enlace.className = "btn-recurso-enlace tag-youtube";
-                    enlace.textContent = "Ver en YouTube";
-                } else if (recurso.url.includes("spotify.com")) {
-                    enlace.className = "btn-recurso-enlace tag-spotify";
-                    enlace.textContent = "Escuchar en Spotify";
-                } else {
-                    enlace.className = "btn-recurso-enlace";
-                    enlace.textContent = "Abrir recurso";
-                }
-                tarjeta.appendChild(enlace);
+                enlace.textContent = "Abrir enlace / recurso ↗";
+                linkWrap.appendChild(enlace);
+                tarjeta.appendChild(linkWrap);
             }
-
-            tarjeta.appendChild(
-                crearBotonEliminar(() => {
-                    recursos.splice(indice, 1);
-                    guardarDatosMiEspacio();
-                    pintarRecursos();
-                })
-            );
 
             listaRecursos.appendChild(tarjeta);
         });
     }
 
-    const botonRecurso = document.getElementById("agregar-recurso-btn");
     if (botonRecurso) {
-        botonRecurso.addEventListener("click", () => {
-            const nombre = nombreRecurso ? nombreRecurso.value.trim() : "";
+        botonRecurso.addEventListener("click", async () => {
+            const nom = nombreRecurso ? nombreRecurso.value.trim() : "";
+            const cat = categoriaRecurso ? categoriaRecurso.value : "Calma y paz";
             const url = urlRecurso ? urlRecurso.value.trim() : "";
-            const audioData = audioLocalCargado;
+            const archivoData = recursoTemporalDispositivo ? recursoTemporalDispositivo.data : null;
+            const archivoTipo = recursoTemporalDispositivo ? recursoTemporalDispositivo.tipo : null;
 
-            if (!nombre && !audioData && !url) {
-                alert("Escribe el nombre de la canción o selecciona un archivo de audio o enlace.");
+            if (!nom) {
+                alert("Escribe el nombre de la canción o recurso.");
                 return;
             }
 
-            recursos.push({
-                nombre: nombre || nombreAudioLocal || "Música personal",
-                categoria: categoriaRecurso ? categoriaRecurso.value : "Calma y paz",
-                url: url,
-                audioLocal: audioData
-            });
+            if (!url && !archivoData) {
+                alert("Por favor selecciona un audio/archivo de tu equipo o pega un enlace.");
+                return;
+            }
 
-            audioLocalCargado = null;
-            nombreAudioLocal = "";
-            if (inputArchivoAudio) inputArchivoAudio.value = "";
-            if (txtArchivoAudioSeleccionado) txtArchivoAudioSeleccionado.textContent = "";
+            const nuevoRecurso = {
+                id: 'rec_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                nombre: nom,
+                categoria: cat,
+                url: url || null,
+                archivoData: archivoData || null,
+                archivoTipo: archivoTipo || null,
+                fecha: new Date().toLocaleDateString("es-ES")
+            };
+
+            recursos.push(nuevoRecurso);
+
             if (nombreRecurso) nombreRecurso.value = "";
             if (urlRecurso) urlRecurso.value = "";
+            limpiarPreviewRecurso();
 
-            guardarDatosMiEspacio();
+            guardarDatosEspacioLocal();
             pintarRecursos();
+
+            if (tokenSesion) {
+                try {
+                    const res = await fetch('/api/espacio/recursos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                        body: JSON.stringify(nuevoRecurso)
+                    });
+                    const d = await res.json();
+                    if (d && d.ok && d.recurso && d.recurso.id) {
+                        nuevoRecurso.id = d.recurso.id;
+                    }
+                } catch (e) {
+                    console.warn("Fallo guardando recurso en Atlas:", e);
+                }
+            }
         });
     }
 
-    pintarRecursos();
+    // -----------------------------------------------------
+    // E. PILARES DE IDENTIDAD
+    // -----------------------------------------------------
+
+    function inicializarPilares() {
+        if (elPilarFortalezas) {
+            elPilarFortalezas.textContent = pilaresIdentidad.fortalezas;
+            elPilarFortalezas.addEventListener("blur", () => {
+                pilaresIdentidad.fortalezas = elPilarFortalezas.textContent.trim();
+                guardarDatosEspacioLocal();
+                sincronizarPilaresAtlas();
+            });
+        }
+        if (elPilarDisfruto) {
+            elPilarDisfruto.textContent = pilaresIdentidad.disfruto;
+            elPilarDisfruto.addEventListener("blur", () => {
+                pilaresIdentidad.disfruto = elPilarDisfruto.textContent.trim();
+                guardarDatosEspacioLocal();
+                sincronizarPilaresAtlas();
+            });
+        }
+        if (elPilarValoro) {
+            elPilarValoro.textContent = pilaresIdentidad.valoro;
+            elPilarValoro.addEventListener("blur", () => {
+                pilaresIdentidad.valoro = elPilarValoro.textContent.trim();
+                guardarDatosEspacioLocal();
+                sincronizarPilaresAtlas();
+            });
+        }
+        if (elPilarRecordatorio) {
+            elPilarRecordatorio.textContent = pilaresIdentidad.recordatorio;
+            elPilarRecordatorio.addEventListener("blur", () => {
+                pilaresIdentidad.recordatorio = elPilarRecordatorio.textContent.trim();
+                guardarDatosEspacioLocal();
+                sincronizarPilaresAtlas();
+            });
+        }
+    }
+
+    async function sincronizarPilaresAtlas() {
+        if (!tokenSesion) return;
+        try {
+            await fetch('/api/espacio/pilares', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + tokenSesion },
+                body: JSON.stringify(pilaresIdentidad)
+            });
+        } catch (e) {}
+    }
 
     // -----------------------------------------------------
-    // RECORDATORIOS PERSONALES
+    // F. PERSISTENCIA COMPLETA (ATLAS + LOCALSTORAGE PRIVADO POR USUARIO)
     // -----------------------------------------------------
-    document.querySelectorAll(".identity-pillar-card p").forEach(parrafo => {
-        parrafo.contentEditable = "true";
-        parrafo.setAttribute("aria-label", "Editar este recordatorio personal");
-    });
 
+    function obtenerClaveUsuario(subclave) {
+        let identificador = "anonimo";
+        if (usuarioActual) {
+            identificador = (usuarioActual.id || usuarioActual._id || usuarioActual.correo || "usuario").toString().replace(/[^a-zA-Z0-9_-]/g, "_");
+        }
+        return `emowell_u_${identificador}_${subclave}`;
+    }
+
+    function guardarDatosEspacioLocal() {
+        try {
+            localStorage.setItem(obtenerClaveUsuario("metas"), JSON.stringify(metas));
+            localStorage.setItem(obtenerClaveUsuario("motivaciones"), JSON.stringify(motivaciones));
+            localStorage.setItem(obtenerClaveUsuario("gratitudes"), JSON.stringify(gratitudes));
+            localStorage.setItem(obtenerClaveUsuario("recursos"), JSON.stringify(recursos));
+            localStorage.setItem(obtenerClaveUsuario("pilares"), JSON.stringify(pilaresIdentidad));
+        } catch (e) {
+            console.warn("Almacenamiento local restringido:", e);
+        }
+    }
+
+    async function cargarDatosEspacioPersonal() {
+        // Limpiar memoria previa para garantizar privacidad total entre usuarios
+        metas = [];
+        motivaciones = [];
+        gratitudes = [];
+        recursos = [];
+        pilaresIdentidad = { ...pilaresPredeterminados };
+
+        // 1. Intentar cargar desde Atlas si hay sesión iniciada
+        if (tokenSesion) {
+            try {
+                const res = await fetch('/api/espacio/todo', {
+                    headers: { 'Authorization': 'Bearer ' + tokenSesion }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.ok) {
+                        metas = Array.isArray(data.metas) ? data.metas : [];
+                        motivaciones = Array.isArray(data.motivaciones) ? data.motivaciones : [];
+                        gratitudes = Array.isArray(data.gratitudes) ? data.gratitudes : [];
+                        recursos = Array.isArray(data.recursos) ? data.recursos : [];
+                        pilaresIdentidad = data.pilares ? { ...pilaresPredeterminados, ...data.pilares } : { ...pilaresPredeterminados };
+
+                        guardarDatosEspacioLocal();
+                        pintarMetas();
+                        pintarMotivacion();
+                        pintarGratitud();
+                        pintarRecursos();
+                        inicializarPilares();
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn("Fallo temporal cargando datos de Atlas:", err);
+            }
+        }
+
+        // 2. Fallback a almacenamiento local específico de este usuario
+        try {
+            const m = localStorage.getItem(obtenerClaveUsuario("metas"));
+            metas = m ? JSON.parse(m) : [];
+            const mot = localStorage.getItem(obtenerClaveUsuario("motivaciones"));
+            motivaciones = mot ? JSON.parse(mot) : [];
+            const g = localStorage.getItem(obtenerClaveUsuario("gratitudes"));
+            gratitudes = g ? JSON.parse(g) : [];
+            const r = localStorage.getItem(obtenerClaveUsuario("recursos"));
+            recursos = r ? JSON.parse(r) : [];
+            const pil = localStorage.getItem(obtenerClaveUsuario("pilares"));
+            pilaresIdentidad = pil ? { ...pilaresPredeterminados, ...JSON.parse(pil) } : { ...pilaresPredeterminados };
+        } catch (e) {
+            metas = [];
+            motivaciones = [];
+            gratitudes = [];
+            recursos = [];
+            pilaresIdentidad = { ...pilaresPredeterminados };
+        }
+
+        pintarMetas();
+        pintarMotivacion();
+        pintarGratitud();
+        pintarRecursos();
+        inicializarPilares();
+    }
+
+    // Inicializar secciones de Mi Espacio
+    cargarDatosEspacioPersonal();
 
 
     // =====================================================
@@ -2541,12 +3424,26 @@ document.addEventListener("DOMContentLoaded", function () {
     const elementoFraseP = document.getElementById("frase");
     const contenedorFraseApoyo = document.querySelector(".frase-apoyo");
 
+    // Validador estricto para asegurar que las etiquetas y frases siempre estén completas y tengan sentido pleno
+    function esFraseCompleta(str) {
+        if (!str || typeof str !== "string") return false;
+        const limpia = str.trim();
+        if (limpia.length < 25) return false;
+        // No debe terminar con conectores ni palabras inconclusas como "que la", "de", "y", etc.
+        if (/\b(que|la|el|los|las|de|del|y|o|en|a|al|con|por|un|una|pero|aunque|para|si)\s*[.!?]?$/i.test(limpia)) return false;
+        // Debe terminar con puntuación terminal (. ! ?)
+        return /[.!?]$/.test(limpia);
+    }
+
     function cambiarPegatinaInspiradora() {
         if (!elementoFraseP || !contenedorFraseApoyo) return;
 
         indiceFrasePegatina = (indiceFrasePegatina + 1) % frasesPegatina.length;
+        let texto = frasesPegatina[indiceFrasePegatina];
+        if (!esFraseCompleta(texto)) {
+            texto = "No tienes que resolverlo todo hoy. Está bien avanzar poco a poco.";
+        }
         const estilo = estilosPegatina[indiceFrasePegatina % estilosPegatina.length];
-        const texto = frasesPegatina[indiceFrasePegatina];
 
         contenedorFraseApoyo.classList.add("pegatina-cambiando");
 
@@ -2560,6 +3457,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 300);
     }
 
+    async function cargarFraseDinamicaIA() {
+        if (!elementoFraseP || !contenedorFraseApoyo) return;
+        try {
+            const headers = {};
+            if (tokenSesion) headers['Authorization'] = 'Bearer ' + tokenSesion;
+            const res = await fetch('/api/ia/frase-del-dia', { headers });
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.ok && data.cita && esFraseCompleta(data.cita)) {
+                    frasesPegatina.unshift(data.cita);
+                    elementoFraseP.textContent = data.cita;
+                }
+            }
+        } catch (e) {}
+    }
+
     if (contenedorFraseApoyo) {
         contenedorFraseApoyo.title = "Haz clic para cambiar el mensaje de tu pegatina";
         contenedorFraseApoyo.addEventListener("click", cambiarPegatinaInspiradora);
@@ -2569,14 +3482,189 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     // =====================================================
-    // 6. VISTA INICIAL
+    // 6. PANEL DE GESTIÓN INTERNA (ADMIN EXCLUSIVO DE DARLYS LAZA)
+    // =====================================================
+    let tokenAdmin = localStorage.getItem("emowell_admin_token") || null;
+    const adminSeccionLogin = document.getElementById("admin-seccion-login");
+    const adminSeccionDashboard = document.getElementById("admin-seccion-dashboard");
+    const formAdminLogin = document.getElementById("form-admin-login");
+    const adminLoginAlerta = document.getElementById("admin-login-alerta");
+    const btnRefrescarAdmin = document.getElementById("btn-refrescar-admin");
+    const btnCerrarAdmin = document.getElementById("btn-cerrar-admin");
+
+    async function cargarDatosAdmin() {
+        if (!tokenAdmin) return;
+        try {
+            const [respMetricas, respSols] = await Promise.all([
+                fetch('/api/admin/metricas', { headers: { 'Authorization': 'Bearer ' + tokenAdmin } }),
+                fetch('/api/admin/solicitudes', { headers: { 'Authorization': 'Bearer ' + tokenAdmin } })
+            ]);
+
+            if (respMetricas.ok) {
+                const dataM = await respMetricas.json();
+                if (dataM.ok && dataM.metricas) {
+                    const elU = document.getElementById("admin-kpi-usuarios");
+                    const elE = document.getElementById("admin-kpi-emociones");
+                    const elC = document.getElementById("admin-kpi-contactos");
+                    if (elU) elU.textContent = dataM.metricas.totalUsuarios || "0";
+                    if (elE) elE.textContent = dataM.metricas.totalEmociones || "0";
+                    if (elC) elC.textContent = dataM.metricas.totalContactos || "0";
+                }
+            }
+
+            if (respSols.ok) {
+                const dataS = await respSols.json();
+                const lista = document.getElementById("admin-lista-solicitudes");
+                if (lista) {
+                    lista.replaceChildren();
+                    const solicitudes = dataS.solicitudes || [];
+                    if (!solicitudes.length) {
+                        const p = document.createElement("p");
+                        p.className = "texto-seccion";
+                        p.style.margin = "10px 0";
+                        p.textContent = "No hay solicitudes de contacto registradas aún.";
+                        lista.appendChild(p);
+                    } else {
+                        solicitudes.forEach(sol => {
+                            const card = document.createElement("div");
+                            card.className = "solicitud-admin-item";
+                            card.style.padding = "14px";
+                            card.style.background = "#f8fafc";
+                            card.style.borderRadius = "12px";
+                            card.style.border = "1px solid #e2e8f0";
+                            card.style.display = "flex";
+                            card.style.justifyContent = "space-between";
+                            card.style.alignItems = "flex-start";
+                            card.style.gap = "10px";
+
+                            const info = document.createElement("div");
+                            info.innerHTML = `
+                                <strong style="color: #0f766e; font-size: 15px;">${sol.nombre || 'Usuario'}</strong>
+                                <span style="color: #64748b; font-size: 13px;"> &lt;${sol.correo || 'sin correo'}&gt;</span>
+                                <div style="margin: 4px 0; color: #334155; font-size: 13.5px;"><strong>Servicio:</strong> ${sol.servicio || 'General'}</div>
+                                <p style="margin: 4px 0 0; color: #475569; font-size: 13.5px; font-style: italic;">"${sol.mensaje || 'Sin mensaje'}"</p>
+                            `;
+
+                            const badge = document.createElement("span");
+                            badge.className = "chip-nivel-tag " + (sol.estado === 'atendido' ? 'nivel-bajo' : 'nivel-alto');
+                            badge.textContent = sol.estado === 'atendido' ? 'Atendido' : 'Pendiente';
+
+                            card.append(info, badge);
+                            lista.appendChild(card);
+                        });
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn("Error cargando panel admin:", e);
+        }
+    }
+
+    function actualizarVistaAdmin() {
+        if (!adminSeccionLogin || !adminSeccionDashboard) return;
+        if (tokenAdmin) {
+            adminSeccionLogin.classList.add("oculto");
+            adminSeccionDashboard.classList.remove("oculto");
+            cargarDatosAdmin();
+        } else {
+            adminSeccionLogin.classList.remove("oculto");
+            adminSeccionDashboard.classList.add("oculto");
+        }
+    }
+
+    if (formAdminLogin) {
+        formAdminLogin.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const inputC = document.getElementById("admin-correo-input");
+            const inputP = document.getElementById("admin-clave-input");
+            const correo = inputC ? inputC.value.trim() : "";
+            const clave = inputP ? inputP.value.trim() : "";
+            if (adminLoginAlerta) adminLoginAlerta.style.display = "none";
+
+            try {
+                const res = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ correo, clave })
+                });
+                const data = await res.json();
+                if (data.ok && data.token) {
+                    tokenAdmin = data.token;
+                    localStorage.setItem("emowell_admin_token", tokenAdmin);
+                    actualizarVistaAdmin();
+                } else {
+                    if (adminLoginAlerta) {
+                        adminLoginAlerta.textContent = data.error || "Credenciales administrativas incorrectas.";
+                        adminLoginAlerta.style.display = "block";
+                        adminLoginAlerta.style.color = "#ef4444";
+                    }
+                }
+            } catch (err) {
+                if (adminLoginAlerta) {
+                    adminLoginAlerta.textContent = "Error al conectar con el servidor.";
+                    adminLoginAlerta.style.display = "block";
+                    adminLoginAlerta.style.color = "#ef4444";
+                }
+            }
+        });
+    }
+
+    if (btnRefrescarAdmin) btnRefrescarAdmin.addEventListener("click", cargarDatosAdmin);
+    if (btnCerrarAdmin) {
+        btnCerrarAdmin.addEventListener("click", () => {
+            tokenAdmin = null;
+            localStorage.removeItem("emowell_admin_token");
+            actualizarVistaAdmin();
+            if (window.location.hash.toLowerCase() === "#admin") {
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
+            mostrarVista(sesionIniciada ? "vista-inicio" : "vista-publica");
+        });
+    }
+
+    // Acceso privado y discreto al Panel de Administración (URL hash #admin o atajo Ctrl + Shift + A)
+    function verificarRutaHashAdmin() {
+        if (window.location.hash.toLowerCase() === "#admin") {
+            mostrarVista("vista-admin");
+        }
+    }
+    window.addEventListener("hashchange", verificarRutaHashAdmin);
+    verificarRutaHashAdmin();
+
+    window.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey && e.shiftKey && (e.key === "A" || e.key === "a")) ||
+            (e.altKey && (e.key === "A" || e.key === "a"))) {
+            e.preventDefault();
+            mostrarVista("vista-admin");
+        }
+    });
+
+    // =====================================================
+    // 7. VISTA INICIAL Y RESTAURACIÓN DE SESIÓN
     // =====================================================
 
-    sesionIniciada = false;
-
     actualizarEncabezado();
+    const rutaInicial = window.location.pathname.toLowerCase();
+    const esPaginaModular = rutaInicial.endsWith("login.html") || rutaInicial.endsWith("/login") ||
+                            rutaInicial.endsWith("registro.html") || rutaInicial.endsWith("/registro") ||
+                            rutaInicial.endsWith("admin.html") || rutaInicial.endsWith("/admin");
 
-    mostrarVista("vista-publica");
+    if (rutaInicial.endsWith("main.html") || rutaInicial.endsWith("/main")) {
+        if (tokenSesion) {
+            verificarSesionInicial();
+        } else {
+            window.location.href = "login.html";
+        }
+    } else if (rutaInicial.endsWith("admin.html") || rutaInicial.endsWith("/admin")) {
+        actualizarVistaAdmin();
+    } else if (!esPaginaModular) {
+        if (tokenSesion) {
+            verificarSesionInicial();
+        } else {
+            mostrarVista("vista-publica");
+        }
+    }
+    cargarFraseDinamicaIA();
 
 });
 

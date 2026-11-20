@@ -21,6 +21,50 @@ const Contacto = require('../models/Contacto');
 const Session = require('../models/Session');
 
 let isMongoConnected = false;
+let reconexionTimer = null;
+
+function iniciarReintentosMongo() {
+    if (reconexionTimer) return;
+    reconexionTimer = setInterval(async () => {
+        if (!isMongoConnected) {
+            try {
+                const uri = process.env.MONGODB_URI;
+                if (uri && (mongoose.connection.readyState === 0 || mongoose.connection.readyState === 3)) {
+                    await mongoose.connect(uri, {
+                        serverSelectionTimeoutMS: 6000,
+                        socketTimeoutMS: 30000,
+                        heartbeatFrequencyMS: 10000,
+                        retryWrites: true
+                    });
+                    isMongoConnected = true;
+                    console.log('[MongoDB] ¡Reconexión automática exitosa a MongoDB Atlas!');
+                }
+            } catch (e) {
+                // Mantiene el modo resiliente activo sin interrumpir el servicio
+            }
+        }
+    }, 15000);
+}
+
+// Monitoreo proactivo de la conexión con MongoDB Atlas
+mongoose.connection.on('connected', () => {
+    isMongoConnected = true;
+});
+
+mongoose.connection.on('disconnected', () => {
+    isMongoConnected = false;
+    console.warn('[MongoDB] Conexión con MongoDB Atlas pausada. Reintentando reconexión en segundo plano...');
+    iniciarReintentosMongo();
+});
+
+mongoose.connection.on('reconnected', () => {
+    isMongoConnected = true;
+    console.log('[MongoDB] ¡Reconectado exitosamente a MongoDB Atlas!');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.warn('[MongoDB] Evento de red en MongoDB Atlas:', err.message);
+});
 
 async function conectarMongoDB() {
     const uri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/emowell';
@@ -28,7 +72,10 @@ async function conectarMongoDB() {
     try {
         mongoose.set('strictQuery', false);
         await mongoose.connect(uri, {
-            serverSelectionTimeoutMS: 12000
+            serverSelectionTimeoutMS: 8000,
+            socketTimeoutMS: 45000,
+            heartbeatFrequencyMS: 10000,
+            retryWrites: true
         });
         isMongoConnected = true;
         console.log(`[MongoDB] ¡Conectado exitosamente a MongoDB Atlas! (${uri.split('@')[1] || uri})`);
@@ -57,13 +104,13 @@ async function conectarMongoDB() {
         }
     } catch (err) {
         isMongoConnected = false;
+        iniciarReintentosMongo();
         console.warn(`\n============================================================`);
-        console.warn(`[AVISO MONGODB - MODO RESILIENTE ACTIVADO]`);
-        console.warn(`No se detectó un servidor MongoDB activo en: ${uri}`);
-        console.warn(`Para garantizar que el evaluador pueda probar la aplicación al 100%`);
-        console.warn(`sin requerir instalar MongoDB, el sistema activó el almacenamiento`);
-        console.warn(`local persistente de respaldo.`);
-        console.warn(`Detalle del error:`, err.message);
+        console.warn(`[AVISO MONGODB - MODO RESILIENTE DE ALTA DISPONIBILIDAD ACTIVADO]`);
+        console.warn(`No se pudo enlazar de inmediato con MongoDB Atlas:`);
+        console.warn(`> ${err.message}`);
+        console.warn(`El sistema activó automáticamente el almacenamiento local`);
+        console.warn(`persistente y seguirá intentando reconectar a Atlas en segundo plano.`);
         console.warn(`============================================================\n`);
     }
 }
@@ -402,7 +449,7 @@ async function getEmociones(userId) {
 }
 
 // -------------------------------------------------------------
-// HISTORIAL DE CHAT IA
+// HISTORIAL DE CHAT
 // -------------------------------------------------------------
 
 async function getChatHistory(userId) {

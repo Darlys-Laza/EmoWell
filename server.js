@@ -142,10 +142,10 @@ app.get('/api/health', (req, res) => {
         nombre: 'EmoWell API Backend',
         version: '1.4.0',
         hora: new Date().toISOString(),
-        motorBaseDatos: isMongoConnected() ? 'MongoDB / Mongoose (Activo)' : 'Almacenamiento Resiliente Local (Fallback)',
+        motorBaseDatos: isMongoConnected() ? 'MongoDB / Mongoose (Activo)' : 'Almacenamiento Local (Fallback)',
         mongodbConectado: isMongoConnected(),
-        geminiConfigurado: !!process.env.GEMINI_API_KEY,
-        modeloIA: process.env.GEMINI_API_KEY ? 'Google Gemini 3.x' : 'Motor Psicológico Local'
+        servicioChat: 'Activo',
+        motorBienestar: 'Motor de Acompañamiento Emocional'
     });
 });
 
@@ -326,7 +326,7 @@ app.post('/api/auth/logout', authMiddleware, async (req, res) => {
 });
 
 // =========================================================
-// RUTAS DE CHAT CON INTELIGENCIA ARTIFICIAL (/api/chat)
+// RUTAS DE CHAT Y ACOMPAÑAMIENTO EMOCIONAL (/api/chat)
 // =========================================================
 
 // Enviar mensaje al chat
@@ -364,7 +364,7 @@ app.post('/api/chat', async (req, res) => {
         console.error('Error en /api/chat:', err);
         res.status(500).json({
             ok: false,
-            error: 'Error al procesar el mensaje con la IA',
+            error: 'Error al procesar el mensaje en el chat',
             respuesta: 'Hubo una dificultad técnica momentánea, pero estoy aquí para escucharte. ¿Quieres intentar nuevamente?'
         });
     }
@@ -417,10 +417,10 @@ app.delete('/api/chat/history', async (req, res) => {
 });
 
 // =========================================================
-// RUTAS DE DINAMISMO CON IA (/api/ia)
+// RUTAS DE REFLEXIÓN Y ORIENTACIÓN (/api/ia)
 // =========================================================
 
-// Reflexión o frase diaria inspiradora generada por IA
+// Reflexión o frase diaria inspiradora
 app.get('/api/ia/frase-del-dia', async (req, res) => {
     try {
         let nombre = null;
@@ -447,7 +447,7 @@ app.get('/api/ia/frase-del-dia', async (req, res) => {
     }
 });
 
-// Sugerencia dinámica de inspiración para notas o metas en el Espacio Personal
+// Sugerencia de inspiración para notas o metas en el Espacio Personal
 app.post('/api/ia/inspirar', async (req, res) => {
     try {
         const { categoria, tipo } = req.body || {};
@@ -463,7 +463,7 @@ app.post('/api/ia/inspirar', async (req, res) => {
 // RUTAS DE SEGUIMIENTO EMOCIONAL (/api/emociones)
 // =========================================================
 
-// Guardar registro emocional con orientación dinámica de IA
+// Guardar registro emocional con orientación personalizada
 app.post('/api/emociones', authMiddleware, async (req, res) => {
     try {
         const { emocion, respuestas, nivel, nota } = req.body;
@@ -480,7 +480,7 @@ app.post('/api/emociones', authMiddleware, async (req, res) => {
             nota: nota || ''
         });
 
-        // Generar análisis y orientación personalizada con IA
+        // Generar análisis y orientación personalizada
         const orientacion = await generarAnalisisEmocional({
             emocion,
             nivel: nivel || 'moderado',
@@ -719,7 +719,7 @@ const CATALOGO_SERVICIOS = [
         modalidad: "Virtual / Presencial",
         duracion: "45 minutos por sesión",
         precio: "Gratuito (Convenio Estudiantil)",
-        icono: "🌱",
+        icono: "",
         caracteristicas: [
             "Escucha activa y validación emocional",
             "Herramientas prácticas basadas en TCC",
@@ -734,8 +734,8 @@ const CATALOGO_SERVICIOS = [
         descripcion: "Espacios vivenciales para grupos estudiantiles donde se entrenan técnicas de respiración diafragmática, mindfulness, detención del pensamiento y gestión del tiempo.",
         modalidad: "Virtual en vivo",
         duracion: "4 sesiones de 1.5 horas",
-        precio: "$25.000 COP / Beca 100% UNAL",
-        icono: "🧘",
+        precio: "$25.000 COP / Beca 100% EmoWell",
+        icono: "",
         caracteristicas: [
             "Ejercicios prácticos de biofeedback y respiración",
             "Estrategias para afrontar exámenes finales",
@@ -747,13 +747,13 @@ const CATALOGO_SERVICIOS = [
         id: "serv-3",
         nombre: "Membresía EmoWell Pro Estudiantil",
         categoria: "Plataforma Digital",
-        descripcion: "Acceso ilimitado a todas las funciones premium de la plataforma: asistente IA con Gemini Pro sin límites, muro de metas avanzado y métricas evolutivas.",
+        descripcion: "Acceso ilimitado a todas las funciones premium de la plataforma: módulo de escucha activa y diálogo reflexivo continuo, muro de metas avanzado y métricas evolutivas.",
         modalidad: "100% Online",
         duracion: "Acceso semestral",
         precio: "Plan Abierto para Estudiantes",
-        icono: "⭐",
+        icono: "",
         caracteristicas: [
-            "Diálogos ilimitados con EmoWell IA (Gemini)",
+            "Diálogos ilimitados de escucha activa y orientación",
             "Muro personal multimedia sin límite de almacenamiento",
             "Reportes mensuales de estabilidad y progreso",
             "Comunidad segura y moderada de estudiantes"
@@ -767,7 +767,7 @@ const CATALOGO_SERVICIOS = [
         modalidad: "Institucional",
         duracion: "Anual con soporte 24/7",
         precio: "Consultar convenio",
-        icono: "🛡️",
+        icono: "",
         caracteristicas: [
             "Capacitación a docentes y representantes",
             "Canal de derivación de emergencias prioritarias",
@@ -829,7 +829,6 @@ app.post('/api/admin/login', (req, res) => {
 
     const usuariosValidos = [
         'darlys',
-        'dlazab@unal.edu.co',
         'darlys@emowell.org',
         'admin@emowell.org',
         'admin'
@@ -849,7 +848,7 @@ app.post('/api/admin/login', (req, res) => {
             token: adminToken,
             admin: {
                 nombre: 'Darlys Laza',
-                correo: 'dlazab@unal.edu.co',
+                correo: 'darlys@emowell.org',
                 rol: 'Administradora General'
             }
         });
@@ -918,16 +917,34 @@ app.get('*', (req, res, next) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Manejadores globales para evitar caídas imprevistas y garantizar alta disponibilidad
+process.on('uncaughtException', (err) => {
+    console.error('[Servidor Resiliente] Advertencia interceptada:', err.message);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('[Servidor Resiliente] Promesa rechazada interceptada:', reason);
+});
+
 // Iniciar servidor tras conectar a MongoDB Atlas
 async function iniciarServidor() {
     await conectarMongoDB();
-    app.listen(PORT, () => {
+    const servidor = app.listen(PORT, () => {
         console.log(`====================================================`);
-        console.log(`  Servidor EmoWell Backend v1.3.0 iniciado         `);
-        console.log(`  URL: http://localhost:${PORT}                   `);
-        console.log(`  MongoDB Atlas: ${isMongoConnected() ? 'Conectado y Listo' : 'Modo Resiliente'}`);
-        console.log(`  Modo Gemini: ${process.env.GEMINI_API_KEY ? 'Activado' : 'Heurístico Local'}`);
+        console.log(`  Servidor EmoWell Backend v1.4.0 iniciado          `);
+        console.log(`  URL: http://localhost:${PORT}                    `);
+        console.log(`  MongoDB: ${isMongoConnected() ? 'Conectado y Listo' : 'Modo Resiliente'}`);
+        console.log(`  Servicio de Chat: Activo                          `);
         console.log(`====================================================`);
+    });
+
+    servidor.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+            console.error(`[Servidor] El puerto ${PORT} ya está ocupado por otra instancia.`);
+            process.exit(1);
+        } else {
+            console.error('[Servidor] Error en socket:', err.message);
+        }
     });
 }
 

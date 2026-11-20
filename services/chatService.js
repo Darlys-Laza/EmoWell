@@ -1,7 +1,7 @@
 /**
- * Servicio de Inteligencia Emocional y Dinamismo para EmoWell
- * Integra modelos Google Gemini (v1beta API) y un motor heurístico de respaldo
- * con psicología cognitivo-conductual (TCC) y protocolo prioritario de crisis para Colombia.
+ * Servicio de Acompañamiento Emocional y Chat para EmoWell
+ * Motor de escucha activa con psicología cognitivo-conductual (TCC)
+ * y protocolo de atención prioritaria de crisis para Colombia.
  */
 
 const dns = require('dns');
@@ -41,7 +41,7 @@ const LINEAS_AYUDA = [
 ];
 
 /**
- * Llama a la API de Google Gemini intentando los modelos en orden de disponibilidad
+ * Realiza la petición al servicio conversacional intentando los modelos en orden de disponibilidad
  */
 async function llamarGemini(mensajesPrevios, mensajeUsuario, apiKey) {
     const contents = [];
@@ -375,18 +375,18 @@ async function procesarMensajeChat(mensaje, mensajesPrevios = [], apiKey = null)
         };
     }
 
-    // 2. Si se suministró API Key de Gemini o está en .env, usar los modelos Gemini 3.x
+    // 2. Si se suministró API Key o está en .env, conectar al servicio conversacional
     const claveGemini = apiKey || process.env.GEMINI_API_KEY;
     if (claveGemini) {
         try {
-            const respuestaIA = await llamarGemini(mensajesPrevios, textoLimpio, claveGemini);
+            const respuestaAPI = await llamarGemini(mensajesPrevios, textoLimpio, claveGemini);
             return {
-                respuesta: respuestaIA,
+                respuesta: respuestaAPI,
                 esAlerta: false,
-                proveedor: "gemini"
+                proveedor: "api"
             };
         } catch (err) {
-            console.warn("[Chat] Fallo temporal con Gemini API, recurriendo a motor psicológico local:", err.message);
+            console.warn("[Chat] Fallo temporal con API externa, recurriendo a motor local:", err.message);
         }
     }
 

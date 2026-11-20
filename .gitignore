@@ -10,7 +10,11 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Motor Node.js local de ejecución
+runtime/
+
 # Archivos del sistema operativo y copias de seguridad
 .DS_Store
 Thumbs.db
 *.bak
+*.log

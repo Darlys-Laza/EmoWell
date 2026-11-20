@@ -1,7 +1,7 @@
 {
   "name": "emowell",
   "version": "2.0.0",
-  "description": "EmoWell - Plataforma Full Stack de Bienestar y Gestión Emocional para Jóvenes (React + Node + MongoDB + Gemini IA)",
+  "description": "EmoWell - Plataforma Web Full Stack de Bienestar y Gestión Emocional para Estudiantes",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -14,13 +14,13 @@
     "emowell",
     "react",
     "nodejs",
+    "express",
     "mongodb",
-    "gemini",
     "bienestar",
     "salud-mental",
-    "jovenes-creativos"
+    "salud-estudiantil"
   ],
-  "author": "EmoWell Team",
+  "author": "Darlys Laza",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
