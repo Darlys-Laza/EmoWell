@@ -294,13 +294,25 @@ app.post('/api/auth/login', async (req, res) => {
         const userId = usuario._id ? usuario._id.toString() : usuario.id;
         await createSession(token, userId);
 
-        const userObj = { id: userId, nombre: usuario.nombre, correo: usuario.correo };
+        const rol = usuario.rol || (correoNormalizado === 'dlazab@unal.edu.co' ? 'admin' : 'usuario');
+        let adminToken = null;
+        if (rol === 'admin') {
+            adminToken = 'admin_tok_' + Date.now() + '_' + crypto.randomBytes(8).toString('hex');
+            const db = readDB();
+            if (!db.adminSessions) db.adminSessions = [];
+            db.adminSessions.push({ token: adminToken, createdAt: new Date().toISOString() });
+            writeDB(db);
+        }
+
+        const userObj = { id: userId, nombre: usuario.nombre, correo: usuario.correo, rol };
         res.json({
             ok: true,
             mensaje: 'Sesión iniciada correctamente',
             user: userObj,
             usuario: userObj,
             token,
+            adminToken,
+            rol,
             bd: isMongoConnected() ? 'mongodb' : 'local'
         });
     } catch (err) {

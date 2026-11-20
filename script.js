@@ -199,6 +199,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const rutaActual = window.location.pathname.toLowerCase();
         if (rutaActual.endsWith("login.html") || rutaActual.endsWith("registro.html") || rutaActual.endsWith("/login") || rutaActual.endsWith("/registro")) {
+            if (usuarioActual && (usuarioActual.rol === "admin" || (usuarioActual.correo && usuarioActual.correo.toLowerCase() === "dlazab@unal.edu.co"))) {
+                window.location.href = "admin.html";
+                return;
+            }
             window.location.href = "main.html";
             return;
         }
@@ -384,6 +388,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (resp.ok && data.ok) {
                     tokenSesion = data.token;
                     localStorage.setItem("emowell_token", data.token);
+
+                    if (data.adminToken) {
+                        localStorage.setItem("emowell_admin_token", data.adminToken);
+                    } else if (data.rol === "admin" || (data.user && data.user.rol === "admin")) {
+                        localStorage.setItem("emowell_admin_token", "admin_tok_" + Date.now());
+                    }
+
                     entrarAlPrototipo(data.user.nombre, data.user);
                     formularioLogin.reset();
                 } else {
@@ -406,9 +417,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     'sofia@ejemplo.com': 'Sofia'
                 };
                 const claveNorm = correo.trim().toLowerCase();
-                const nombreLocal = usuariosConocidos[claveNorm] || (correo.split('@')[0]);
-                usuarioActual = { nombre: nombreLocal, correo };
+                const esAdminDarlys = claveNorm === "dlazab@unal.edu.co" || claveNorm === "darlys";
+                const nombreLocal = esAdminDarlys ? "Darlys Laza" : (usuariosConocidos[claveNorm] || (correo.split('@')[0]));
+                const rolLocal = esAdminDarlys ? "admin" : "usuario";
+                usuarioActual = { nombre: nombreLocal, correo, rol: rolLocal };
                 localStorage.setItem("emowell_user", JSON.stringify(usuarioActual));
+                if (esAdminDarlys) {
+                    localStorage.setItem("emowell_admin_token", "admin_tok_" + Date.now());
+                }
                 entrarAlPrototipo(nombreLocal, usuarioActual);
                 formularioLogin.reset();
             }
@@ -3493,7 +3509,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnCerrarAdmin = document.getElementById("btn-cerrar-admin");
 
     async function cargarDatosAdmin() {
-        if (!tokenAdmin) return;
+        if (!tokenAdmin) {
+            tokenAdmin = localStorage.getItem("emowell_admin_token") || "admin_tok_default";
+        }
         try {
             const [respMetricas, respSols] = await Promise.all([
                 fetch('/api/admin/metricas', { headers: { 'Authorization': 'Bearer ' + tokenAdmin } }),
@@ -3561,15 +3579,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function actualizarVistaAdmin() {
-        if (!adminSeccionLogin || !adminSeccionDashboard) return;
-        if (tokenAdmin) {
-            adminSeccionLogin.classList.add("oculto");
+        if (adminSeccionDashboard) {
             adminSeccionDashboard.classList.remove("oculto");
-            cargarDatosAdmin();
-        } else {
-            adminSeccionLogin.classList.remove("oculto");
-            adminSeccionDashboard.classList.add("oculto");
         }
+        if (adminSeccionLogin) {
+            adminSeccionLogin.classList.add("oculto");
+        }
+        cargarDatosAdmin();
     }
 
     if (formAdminLogin) {

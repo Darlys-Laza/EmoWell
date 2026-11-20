@@ -8,6 +8,15 @@
       "salt": "4625ceea0453d3ad7957156062b851fb",
       "createdAt": "2026-11-20T01:49:08.229Z",
       "_id": "6affa71466e9384a98952ed1"
+    },
+    {
+      "id": "usr_admin_1795142071440",
+      "nombre": "Darlys Laza",
+      "correo": "dlazab@unal.edu.co",
+      "passwordHash": "bba83a7a01324adedde76eef460ee3452e14c57d07a935f3dd138954ce94b682a6f224b4922d2e9c93b5946453dd5974ceb5ab237d9305623e631c33ea0b69d8",
+      "salt": "c1e235a4054291d7b79e874253a56cf2",
+      "rol": "admin",
+      "createdAt": "2026-11-20T02:34:31.440Z"
     }
   ],
   "sessions": [
@@ -15,6 +24,11 @@
       "token": "b6758f6014ff7ad345644b39dd8f32ce767ad0dcc35b56e5a01cfbe1d8a2e56c",
       "userId": "6affa71466e9384a98952ed1",
       "createdAt": "2026-11-20T01:49:08.386Z"
+    },
+    {
+      "token": "86b0d831829275aec9a1a90fba483ac435cda243772620c3edc8fa3cfec01561",
+      "userId": "6affb1b7c7e4239a3c4c5686",
+      "createdAt": "2026-11-20T02:49:45.744Z"
     }
   ],
   "emociones": [],
