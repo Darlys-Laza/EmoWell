@@ -487,18 +487,32 @@ app.post('/api/ia/inspirar', async (req, res) => {
 // Guardar registro emocional con orientación personalizada
 app.post('/api/emociones', authMiddleware, async (req, res) => {
     try {
-        const { emocion, respuestas, nivel, nota } = req.body;
+        const { emocion, respuestas, nivel, etiqueta, mensajeOrientador, fecha, hora, semanaMes, nota } = req.body;
 
         if (!emocion) {
             return res.status(400).json({ ok: false, error: 'La emoción es obligatoria' });
         }
 
+        const ahora = new Date();
+        const fechaDef = fecha || ahora.toLocaleDateString("es-CO");
+        const horaDef = hora || ahora.toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+        const diaMes = ahora.getDate();
+        const numSemana = Math.ceil(diaMes / 7);
+        const mesesCortos = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+        const anioCorto = String(ahora.getFullYear()).slice(-2);
+        const semanaMesDef = semanaMes || `${mesesCortos[ahora.getMonth()]} S${numSemana} ${anioCorto}`;
+
         const nuevoRegistro = await createEmocion({
             userId: req.user.id,
             emocion,
             respuestas: respuestas || [],
-            nivel: nivel || 'moderado',
-            nota: nota || ''
+            nivel: nivel || '3.0',
+            etiqueta: etiqueta || 'Moderado',
+            mensajeOrientador: mensajeOrientador || nota || '',
+            fecha: fechaDef,
+            hora: horaDef,
+            semanaMes: semanaMesDef,
+            nota: nota || mensajeOrientador || ''
         });
 
         // Generar análisis y orientación personalizada

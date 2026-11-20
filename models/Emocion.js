@@ -11,8 +11,24 @@ const EmocionSchema = new mongoose.Schema({
         required: true
     },
     nivel: {
+        type: mongoose.Schema.Types.Mixed,
+        default: '3.0'
+    },
+    etiqueta: {
         type: String,
-        default: 'moderado'
+        default: 'Moderado'
+    },
+    mensajeOrientador: {
+        type: String,
+        default: ''
+    },
+    semanaMes: {
+        type: String,
+        default: ''
+    },
+    hora: {
+        type: String,
+        default: ''
     },
     respuestas: {
         type: Array,

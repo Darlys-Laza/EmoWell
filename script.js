@@ -769,7 +769,10 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        // Cancelar cualquier reproducción previa y detener el micrófono antes de hablar
         window.speechSynthesis.cancel();
+        detenerReconocimientoContinuo();
+
         const voz = new SpeechSynthesisUtterance(texto);
         voz.lang = "es-CO";
 
@@ -785,13 +788,12 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (eVoz) {}
 
         reproduciendoVozIA = true;
-        detenerReconocimientoContinuo(); // Detener el micrófono inmediatamente para que la IA no se escuche a sí misma
         if (ondaVoz) ondaVoz.classList.add("activa");
 
         const finalizar = () => {
             reproduciendoVozIA = false;
             if (ondaVoz && !escuchaActiva) ondaVoz.classList.remove("activa");
-            // Dar una pausa de 600ms antes de reactivar el micrófono para evitar ecos residuales
+            // Dar una pausa de silencio antes de reactivar el micrófono para evitar ecos residuales
             window.setTimeout(() => {
                 if (alFinalizar) alFinalizar();
             }, 600);
@@ -1150,18 +1152,18 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (e) {}
     }
 
-    function detenerReconocimientoContinuo() {
+    function detenerReconocimientoContinuo(cancelarVoz = false) {
         escuchaActiva = false;
         if (reconocimientoContinuo) {
             try {
                 reconocimientoContinuo.stop();
             } catch (e) {}
         }
-        if (window.speechSynthesis) {
+        if (cancelarVoz && window.speechSynthesis) {
             window.speechSynthesis.cancel();
+            reproduciendoVozIA = false;
         }
-        reproduciendoVozIA = false;
-        if (ondaVoz) {
+        if (ondaVoz && !reproduciendoVozIA) {
             ondaVoz.classList.remove("activa");
         }
     }
@@ -1212,12 +1214,17 @@ document.addEventListener("DOMContentLoaded", function () {
     if (btnToggleVoz) {
         btnToggleVoz.addEventListener("click", () => {
             if (escuchaActiva) {
-                detenerReconocimientoContinuo();
+                detenerReconocimientoContinuo(false);
                 if (textoEstadoVoz) {
                     textoEstadoVoz.textContent = "Escucha pausada. Haz clic en Reactivar para hablar.";
                 }
                 btnToggleVoz.textContent = "Reactivar escucha";
             } else {
+                // Si el usuario lo activa manualmente mientras la IA habla, silenciar a la IA y escucharlo
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                    reproduciendoVozIA = false;
+                }
                 iniciarReconocimientoContinuo();
             }
         });
@@ -1675,7 +1682,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const anioCorto = String(ahora.getFullYear()).slice(-2);
         const etiquetaEjeX = `${mesesCortos[ahora.getMonth()]} S${numSemana} ${anioCorto}`;
 
-        registrosEmocionales.push({
+        const nuevoItemRegistro = {
             emocion: emocionSeleccionada,
             nivel: nivel,
             etiqueta: etiqueta,
@@ -1683,7 +1690,9 @@ document.addEventListener("DOMContentLoaded", function () {
             fecha: fechaTxt,
             hora: horaTxt,
             semanaMes: etiquetaEjeX
-        });
+        };
+
+        registrosEmocionales.push(nuevoItemRegistro);
 
         try {
             localStorage.setItem(obtenerClaveUsuario("registros_emocionales"), JSON.stringify(registrosEmocionales));
@@ -1704,6 +1713,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     body: JSON.stringify({
                         emocion: emocionSeleccionada,
                         nivel: nivel,
+                        etiqueta: etiqueta,
+                        mensajeOrientador: mensajeOrientador,
+                        fecha: fechaTxt,
+                        hora: horaTxt,
+                        semanaMes: etiquetaEjeX,
                         nota: mensajeOrientador
                     })
                 })
@@ -1711,6 +1725,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 .then(data => {
                     if (data && data.analisisIA && txtIA) {
                         txtIA.textContent = data.analisisIA;
+                    }
+                    if (data && data.ok && data.registro) {
+                        // Si el backend devolvió el ID, sincronizarlo
+                        nuevoItemRegistro.id = data.registro.id || data.registro._id;
+                        try {
+                            localStorage.setItem(obtenerClaveUsuario("registros_emocionales"), JSON.stringify(registrosEmocionales));
+                        } catch (e) {}
                     }
                 })
                 .catch(err => {
@@ -1786,27 +1807,30 @@ document.addEventListener("DOMContentLoaded", function () {
             return 4;
         }
 
-        // Construir datos de puntos exclusivamente a partir de los registros reales del usuario
+        // Construir datos de puntos exclusivamente a partir de los registros reales de este usuario
         let datosGrafica = [];
-        if (registrosEmocionales && registrosEmocionales.length > 0) {
+        const tieneRegistros = Array.isArray(registrosEmocionales) && registrosEmocionales.length > 0;
+
+        if (tieneRegistros) {
             const ultimos = registrosEmocionales.slice(-10);
             datosGrafica = ultimos.map((reg) => ({
                 emocion: reg.emocion,
-                etiquetaX: reg.semanaMes || reg.fecha,
+                etiquetaX: reg.semanaMes || reg.fecha || "Hoy",
                 valorY: obtenerIndiceY(reg.emocion),
                 conteo: Math.max(1, Math.round(parseFloat(reg.nivel) || 1))
             }));
         } else {
-            // Usuario nuevo sin registros aún: mostrar mensaje amigable sin inventar fechas pasadas
-            historialContenedor.innerHTML = `
-                <div class="estado-vacio" style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 16px; border: 1px dashed #cbd5e1; margin-top: 15px;">
-                    <h3 style="color: #334155; margin-bottom: 8px;">Aún no tienes registros emocionales</h3>
-                    <p style="color: #64748b; font-size: 14px; max-width: 480px; margin: 0 auto 16px;">
-                        Aquí verás cómo cambian tus emociones con el tiempo. Comienza evaluando lo que sientes hoy en la sección de arriba.
-                    </p>
-                </div>
-            `;
-            return;
+            // Si el usuario aún no tiene registros, mostramos la cuadrícula limpia con la fecha actual
+            const ahoraRef = new Date();
+            const diaMes = ahoraRef.getDate();
+            const numSemana = Math.ceil(diaMes / 7);
+            const mesesCortos = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+            const anioCorto = String(ahoraRef.getFullYear()).slice(-2);
+            const fechaActualEtiqueta = `${mesesCortos[ahoraRef.getMonth()]} S${numSemana} ${anioCorto}`;
+
+            datosGrafica = [
+                { emocion: "tranquilidad", etiquetaX: fechaActualEtiqueta, valorY: 4, conteo: 0, esPlaceholder: true }
+            ];
         }
 
         const contenedorGraficaCompleta = document.createElement("div");
@@ -1866,6 +1890,16 @@ document.addEventListener("DOMContentLoaded", function () {
         let etiquetasXHtml = "";
 
         puntosCoordenadas.forEach((pt, idx) => {
+            if (pt.esPlaceholder) {
+                // Si es solo la grilla inicial sin registros aún
+                etiquetasXHtml += `
+                    <text x="${pt.x}" y="${altoSvg - paddingBottom + 22}" text-anchor="end" transform="rotate(-30, ${pt.x}, ${altoSvg - paddingBottom + 22})" fill="#718096" font-size="11" font-weight="500">
+                        ${pt.etiquetaX}
+                    </text>
+                `;
+                return;
+            }
+
             const colorPunto = pt.valorY <= 2 ? "#ec4899" : pt.valorY === 3 ? "#dc2626" : "#6366f1";
 
             // Halo semitransparente
@@ -1883,6 +1917,8 @@ document.addEventListener("DOMContentLoaded", function () {
             `;
         });
 
+        const rutaSvgConectar = (!tieneRegistros || puntosCoordenadas.length <= 1) ? "" : `<polyline points="${rutaPuntos}" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />`;
+
         const svgGrafica = `
             <div class="grafica-svg-scroll-wrapper">
                 <svg viewBox="0 0 ${anchoSvg} ${altoSvg}" class="svg-tendencia-emocional" xmlns="http://www.w3.org/2000/svg">
@@ -1890,7 +1926,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     ${lineasVerticales}
                     ${etiquetasYHtml}
                     ${etiquetasXHtml}
-                    <polyline points="${rutaPuntos}" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                    ${rutaSvgConectar}
                     ${elementosPuntos}
                 </svg>
             </div>
