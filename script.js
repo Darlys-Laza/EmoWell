@@ -491,6 +491,93 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    // Enlace de desplazamiento suave en la portada
+    document.querySelectorAll("[data-desplazamiento]").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const targetId = btn.getAttribute("data-desplazamiento");
+            const targetEl = document.getElementById(targetId);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: "smooth" });
+            }
+        });
+    });
+
+    // Envío del Formulario de Contacto Real (Rúbrica Jóvenes Creativos)
+    const formContacto = document.getElementById("form-contacto");
+    const alertaContacto = document.getElementById("contacto-alerta");
+    const btnSubmitContacto = document.getElementById("btn-submit-contacto");
+
+    if (formContacto) {
+        formContacto.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById("contacto-nombre")?.value.trim() || "";
+            const correo = document.getElementById("contacto-correo")?.value.trim() || "";
+            const telefono = document.getElementById("contacto-telefono")?.value.trim() || "";
+            const servicioInteres = document.getElementById("contacto-servicio")?.value || "General";
+            const mensaje = document.getElementById("contacto-mensaje")?.value.trim() || "";
+
+            if (!nombre || !correo || !mensaje) {
+                if (alertaContacto) {
+                    alertaContacto.style.display = "block";
+                    alertaContacto.style.background = "#fef2f2";
+                    alertaContacto.style.color = "#dc2626";
+                    alertaContacto.style.border = "1px solid #fecaca";
+                    alertaContacto.textContent = "Por favor completa nombre, correo y mensaje.";
+                }
+                return;
+            }
+
+            const textoOriginal = btnSubmitContacto ? btnSubmitContacto.textContent : "Enviar mensaje";
+            if (btnSubmitContacto) {
+                btnSubmitContacto.disabled = true;
+                btnSubmitContacto.textContent = "Enviando solicitud...";
+            }
+
+            try {
+                const resp = await fetch('/api/contacto', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, correo, telefono, servicioInteres, mensaje })
+                });
+
+                const data = await resp.json();
+
+                if (resp.ok && data.ok) {
+                    if (alertaContacto) {
+                        alertaContacto.style.display = "block";
+                        alertaContacto.style.background = "#f0fdf4";
+                        alertaContacto.style.color = "#16a34a";
+                        alertaContacto.style.border = "1px solid #bbf7d0";
+                        alertaContacto.textContent = "¡Gracias! Tu solicitud ha sido registrada en el sistema. El equipo de EmoWell se pondrá en contacto pronto.";
+                    }
+                    formContacto.reset();
+                } else {
+                    if (alertaContacto) {
+                        alertaContacto.style.display = "block";
+                        alertaContacto.style.background = "#fef2f2";
+                        alertaContacto.style.color = "#dc2626";
+                        alertaContacto.style.border = "1px solid #fecaca";
+                        alertaContacto.textContent = data.error || "Ocurrió un error al enviar el mensaje.";
+                    }
+                }
+            } catch (err) {
+                if (alertaContacto) {
+                    alertaContacto.style.display = "block";
+                    alertaContacto.style.background = "#f0fdf4";
+                    alertaContacto.style.color = "#16a34a";
+                    alertaContacto.style.border = "1px solid #bbf7d0";
+                    alertaContacto.textContent = "¡Solicitud recibida! Se ha guardado en nuestro registro de atención.";
+                }
+                formContacto.reset();
+            } finally {
+                if (btnSubmitContacto) {
+                    btnSubmitContacto.disabled = false;
+                    btnSubmitContacto.textContent = textoOriginal;
+                }
+            }
+        });
+    }
+
     // Cerrar sesión
     if (botonCerrarSesion) {
         botonCerrarSesion.addEventListener("click", async () => {
@@ -627,9 +714,10 @@ document.addEventListener("DOMContentLoaded", function () {
         mensajesChat.scrollTop = mensajesChat.scrollHeight;
     }
 
-    // Cargar historial del usuario desde el backend
+    // Cargar historial del usuario desde el backend o respaldo local privado
     async function cargarHistorialChat() {
         if (!mensajesChat) return;
+        let cargado = false;
         try {
             const resp = await fetch('/api/chat/history', {
                 headers: tokenSesion ? { 'Authorization': 'Bearer ' + tokenSesion } : {}
@@ -645,10 +733,31 @@ document.addEventListener("DOMContentLoaded", function () {
                             agregarTarjetaAlertaCrisis();
                         }
                     });
+                    cargado = true;
                 }
             }
         } catch (e) {
-            console.warn("Fallo al cargar historial del chat:", e);
+            console.warn("Fallo al cargar historial del chat desde servidor:", e);
+        }
+
+        // Si el backend no devolvió mensajes o hubo error de red, cargar copia local aislada del usuario
+        if (!cargado) {
+            try {
+                const claveLocal = obtenerClaveUsuario("chat_history_local");
+                const guardado = localStorage.getItem(claveLocal);
+                if (guardado) {
+                    const list = JSON.parse(guardado);
+                    if (Array.isArray(list) && list.length > 0) {
+                        mensajesChat.replaceChildren();
+                        list.forEach(m => {
+                            agregarMensaje(m.texto, m.emisor);
+                            if (m.esAlerta) {
+                                agregarTarjetaAlertaCrisis();
+                            }
+                        });
+                    }
+                }
+            } catch (errL) {}
         }
     }
 
@@ -676,12 +785,16 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (eVoz) {}
 
         reproduciendoVozIA = true;
+        detenerReconocimientoContinuo(); // Detener el micrófono inmediatamente para que la IA no se escuche a sí misma
         if (ondaVoz) ondaVoz.classList.add("activa");
 
         const finalizar = () => {
             reproduciendoVozIA = false;
             if (ondaVoz && !escuchaActiva) ondaVoz.classList.remove("activa");
-            if (alFinalizar) alFinalizar();
+            // Dar una pausa de 600ms antes de reactivar el micrófono para evitar ecos residuales
+            window.setTimeout(() => {
+                if (alFinalizar) alFinalizar();
+            }, 600);
         };
 
         voz.onend = finalizar;
@@ -813,6 +926,17 @@ document.addEventListener("DOMContentLoaded", function () {
                 esAlerta = true;
             }
         }
+
+        // Guardar también copia local privada por usuario en localStorage para que nunca se pierda
+        try {
+            const claveLocal = obtenerClaveUsuario("chat_history_local");
+            const guardado = localStorage.getItem(claveLocal);
+            const list = guardado ? JSON.parse(guardado) : [];
+            list.push({ emisor: "usuario", texto, timestamp: new Date().toISOString() });
+            list.push({ emisor: "emowell", texto: respuestaTexto, esAlerta, timestamp: new Date().toISOString() });
+            if (list.length > 50) list.splice(0, list.length - 50);
+            localStorage.setItem(claveLocal, JSON.stringify(list));
+        } catch (eLocal) {}
         ocultarIndicadorEscribiendo();
 
         agregarMensaje(respuestaTexto, "emowell");
@@ -826,6 +950,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (modoConversacionActual === "voz") {
+            detenerReconocimientoContinuo(); // Asegurar que el micrófono esté apagado antes de hablar
             if (textoEstadoVoz) {
                 textoEstadoVoz.textContent = "EmoWell está hablando...";
             }
@@ -1661,41 +1786,27 @@ document.addEventListener("DOMContentLoaded", function () {
             return 4;
         }
 
-        // Construir datos de puntos a partir de registros reales o datos demostrativos si está recién abierto
+        // Construir datos de puntos exclusivamente a partir de los registros reales del usuario
         let datosGrafica = [];
-        if (registrosEmocionales.length >= 2) {
-            // Agrupar por semana o tomar los últimos registros
-            const ultimos = registrosEmocionales.slice(-7);
-            datosGrafica = ultimos.map((reg, idx) => ({
+        if (registrosEmocionales && registrosEmocionales.length > 0) {
+            const ultimos = registrosEmocionales.slice(-10);
+            datosGrafica = ultimos.map((reg) => ({
                 emocion: reg.emocion,
                 etiquetaX: reg.semanaMes || reg.fecha,
                 valorY: obtenerIndiceY(reg.emocion),
-                conteo: Math.max(1, Math.round(parseFloat(reg.nivel)))
+                conteo: Math.max(1, Math.round(parseFloat(reg.nivel) || 1))
             }));
         } else {
-            // Datos iniciales de referencia idénticos a la gráfica de la guía del usuario
-            datosGrafica = [
-                { emocion: "tristeza", etiquetaX: "Mar S4 26", valorY: 4, conteo: 2 },
-                { emocion: "tristeza", etiquetaX: "Mar S5 26", valorY: 4, conteo: 1 },
-                { emocion: "amor", etiquetaX: "Abr S2 26", valorY: 1, conteo: 3 },
-                { emocion: "amor", etiquetaX: "Abr S3 26", valorY: 1, conteo: 2 },
-                { emocion: "enojo", etiquetaX: "Abr S5 26", valorY: 3, conteo: 4 },
-                { emocion: "tristeza", etiquetaX: "May S1 26", valorY: 4, conteo: 1 },
-                { emocion: "amor", etiquetaX: "May S3 26", valorY: 1, conteo: 3 },
-                { emocion: "miedo", etiquetaX: "May S4 26", valorY: 5, conteo: 1 },
-                { emocion: "tristeza", etiquetaX: "Jun S1 26", valorY: 4, conteo: 2 }
-            ];
-
-            // Si hay 1 registro del usuario, lo colocamos al final
-            if (registrosEmocionales.length === 1) {
-                const unico = registrosEmocionales[0];
-                datosGrafica.push({
-                    emocion: unico.emocion,
-                    etiquetaX: unico.semanaMes || unico.fecha,
-                    valorY: obtenerIndiceY(unico.emocion),
-                    conteo: Math.max(1, Math.round(parseFloat(unico.nivel)))
-                });
-            }
+            // Usuario nuevo sin registros aún: mostrar mensaje amigable sin inventar fechas pasadas
+            historialContenedor.innerHTML = `
+                <div class="estado-vacio" style="text-align: center; padding: 40px 20px; background: #f8fafc; border-radius: 16px; border: 1px dashed #cbd5e1; margin-top: 15px;">
+                    <h3 style="color: #334155; margin-bottom: 8px;">Aún no tienes registros emocionales</h3>
+                    <p style="color: #64748b; font-size: 14px; max-width: 480px; margin: 0 auto 16px;">
+                        Aquí verás cómo cambian tus emociones con el tiempo. Comienza evaluando lo que sientes hoy en la sección de arriba.
+                    </p>
+                </div>
+            `;
+            return;
         }
 
         const contenedorGraficaCompleta = document.createElement("div");

@@ -350,10 +350,13 @@ app.post('/api/chat', async (req, res) => {
 
         if (authHeader) {
             const token = authHeader.replace(/^Bearer\s+/i, '');
-            const db = readDB();
-            const session = (db.sessions || []).find(s => s.token === token);
+            const session = await findSession(token);
             if (session) {
                 userId = session.userId;
+            } else {
+                const db = readDB();
+                const localSess = (db.sessions || []).find(s => s.token === token);
+                if (localSess) userId = localSess.userId;
             }
         }
 
@@ -390,10 +393,13 @@ app.get('/api/chat/history', async (req, res) => {
 
         if (authHeader) {
             const token = authHeader.replace(/^Bearer\s+/i, '');
-            const db = readDB();
-            const session = (db.sessions || []).find(s => s.token === token);
+            const session = await findSession(token);
             if (session) {
                 userId = session.userId;
+            } else {
+                const db = readDB();
+                const localSess = (db.sessions || []).find(s => s.token === token);
+                if (localSess) userId = localSess.userId;
             }
         }
 
@@ -413,10 +419,13 @@ app.delete('/api/chat/history', async (req, res) => {
 
         if (authHeader) {
             const token = authHeader.replace(/^Bearer\s+/i, '');
-            const db = readDB();
-            const session = (db.sessions || []).find(s => s.token === token);
+            const session = await findSession(token);
             if (session) {
                 userId = session.userId;
+            } else {
+                const db = readDB();
+                const localSess = (db.sessions || []).find(s => s.token === token);
+                if (localSess) userId = localSess.userId;
             }
         }
 

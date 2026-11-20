@@ -41,6 +41,10 @@
             <button type="button" class="boton-sobre" data-desplazamiento="sobre-emowell">
                 Sobre EmoWell
             </button>
+
+            <button type="button" class="boton-sobre" data-desplazamiento="seccion-contacto">
+                Contáctanos
+            </button>
         </div>
     </header>
 
@@ -125,6 +129,55 @@
                 <h2>¿Necesitas ayuda inmediata?</h2>
                 <p>Si estás pasando por un momento difícil y necesitas ayuda inmediata, puedes consultar nuestras líneas de apoyo.</p>
                 <a href="login.html" class="boton-acceso" style="display: inline-block; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 600;">Ver líneas de ayuda</a>
+            </section>
+
+            <!-- Sección Formulario de Contacto Real (Requisito Rúbrica) -->
+            <section id="seccion-contacto" class="seccion-contacto" style="padding: 50px 20px; background: #f8fafc; border-radius: 20px; margin: 40px auto; max-width: 800px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center;">
+                <p class="etiqueta-sobre" style="color: #2f8f8a; font-weight: 700; letter-spacing: 1px; font-size: 13px; margin-bottom: 8px;">ESTAMOS PARA TI</p>
+                <h2 style="color: #1e293b; font-size: 28px; margin-bottom: 12px;">Contáctanos o Solicita Orientación</h2>
+                <p style="color: #64748b; font-size: 15px; max-width: 550px; margin: 0 auto 28px;">
+                    ¿Tienes dudas, deseas una sesión de orientación psicológica o quieres que EmoWell llegue a tu institución educativa? Escríbenos.
+                </p>
+
+                <div id="contacto-alerta" class="mensaje-alerta-acceso" style="display: none; margin-bottom: 20px; padding: 12px; border-radius: 8px;"></div>
+
+                <form id="form-contacto" style="text-align: left; max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="contacto-nombre" style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Nombre completo</label>
+                            <input type="text" id="contacto-nombre" name="nombre" placeholder="Tu nombre" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label for="contacto-correo" style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Correo electrónico</label>
+                            <input type="email" id="contacto-correo" name="correo" placeholder="tucorreo@ejemplo.com" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div>
+                            <label for="contacto-telefono" style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Teléfono / WhatsApp (Opcional)</label>
+                            <input type="tel" id="contacto-telefono" name="telefono" placeholder="+57 300 000 0000" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+                        </div>
+                        <div>
+                            <label for="contacto-servicio" style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Servicio de interés</label>
+                            <select id="contacto-servicio" name="servicio" style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; background: white; box-sizing: border-box;">
+                                <option value="Orientación Emocional">Orientación Emocional Individual</option>
+                                <option value="Talleres Estudiantiles">Talleres de Bienestar para Colegios/U</option>
+                                <option value="Soporte y Dudas">Dudas sobre la Plataforma EmoWell</option>
+                                <option value="Alianzas y Voluntariado">Alianzas y Voluntariado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="contacto-mensaje" style="font-size: 13px; font-weight: 600; color: #475569; display: block; margin-bottom: 6px;">Mensaje o motivo de contacto</label>
+                        <textarea id="contacto-mensaje" name="mensaje" rows="4" placeholder="Cuéntanos cómo podemos ayudarte o qué necesitas..." required style="width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; resize: vertical; box-sizing: border-box;"></textarea>
+                    </div>
+
+                    <button type="submit" id="btn-submit-contacto" class="boton-acceso" style="margin-top: 10px; width: 100%; padding: 14px; font-size: 15px; font-weight: 600; cursor: pointer; border-radius: 8px; border: none; background: #2f8f8a; color: white;">
+                        Enviar mensaje a EmoWell
+                    </button>
+                </form>
             </section>
 
             <!-- Invitación final -->
